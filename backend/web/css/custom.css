@@ -1,0 +1,173 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : May 26, 2016, 11:54:57 PM
+    Author     : nguye_000
+*/
+
+.login_wrapper .login_form{
+    position: relative;
+}
+.txtWarning{
+    color: red;
+}
+.txtWarning ul {
+    list-style-type: none;
+}
+.error_input{
+    border: 1px solid red;
+}
+.fTextAssist_bottom.txtWarning{
+    display: inline-block;
+    padding-top: 10px;
+}
+.table.table-striped th.icon-sort a{
+    width: 100%;
+    display: inline-block;
+}
+.form-group .custom{
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.table.table-striped th.icon-sort a::before{
+    content: "\e156";
+    display: inline-block;
+    font-family: "Glyphicons Halflings";
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-right: 5px;
+    position: relative;
+    top: 1px;
+}
+.table.table-striped th.icon-sort a.asc::before{
+    content: "\e155";
+    display: inline-block;
+    font-family: "Glyphicons Halflings";
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-right: 5px;
+    position: relative;
+    top: 1px;
+}
+.table.table-striped th.icon-sort a::after ,.tableYoko th.icon-sort a.asc::after{
+    content: "";
+}
+.action{
+    text-align: center;
+}
+.action a{
+    font-size: 16px;
+    padding-right: 10px;
+}
+.form-horizontal .control-label.text-left{
+    text-align: left;
+}
+.form-group .help-block{
+    display: block;
+    margin-top: 2px;
+    margin-bottom: 0px;
+}
+.x_title.custom h2{
+    width: 100%;
+    min-height: 35px;
+}
+.x_title.custom h2.vietcombank{
+    background: url('../images/icon-bank/vietcom.png') bottom left no-repeat;
+    padding-left: 90px;
+}
+.x_title.custom h2.acbbank{
+    background: url('../images/icon-bank/acb.png') top left no-repeat;
+}
+.x_title.custom h2.agribank{
+    background: url('../images/icon-bank/agribank.png') top left no-repeat;
+}
+.x_title.custom h2.techbank{
+    background: url('../images/icon-bank/tech.png') top left no-repeat;
+}
+.x_title.custom h2.vietinbank{
+    background: url('../images/icon-bank/vietin.png') top left no-repeat;
+}
+.x_title.custom h2.vpbank{
+    background: url('../images/icon-bank/icon-vpbank.png') top left no-repeat;
+}
+.x_title.custom h2.america-bank{
+    background: url('../images/icon-bank/icon-bank-of-america.png') top left no-repeat;
+}
+.x_title.custom h2.citibank{
+    background: url('../images/icon-bank/icon-citibank.png') top left no-repeat;
+}
+.x_title.custom h2.agribank{
+    background: url('../images/icon-bank/agribank.png') top left no-repeat;
+}
+.content{
+    width: 35%;
+}
+.message-tabel table.table tbody tr{
+    cursor: pointer;
+}
+.excerpt {
+    word-wrap: break-word;
+}
+.custom-message li div.block {
+    margin: 0 0 0 220px;
+}
+.custom-message li div.block div.tags{
+    width: 200px;
+}
+.custom-message{
+    overflow: auto;
+    max-height: 400px;
+}
+.fa.fa-circle.read, .fa.fa-circle-o.not-read{
+    color: rgba(38,185,154,0.88);
+    font-size: 20px;
+}
+
+.input-group.form-sm .form-group{
+    margin-bottom: 0;
+}
+
+.input-group.form-sm .form-group .help-block{
+    position: absolute;
+    top: 35px;
+}
+
+.x_content.x_sm {
+    max-height: 340px;
+    overflow: auto;
+}
+#donate .panel_toolbox{
+    min-width: 20px;
+}
+.messages span.date{
+    font-weight: normal;
+    font-size: 13px;
+}
+.login_form div.field-loginform-captcha input[type="text"]{
+    width: 50%;
+    display: inline-block;
+    float: left;
+}
+.login_form div.field-loginform-captcha img{
+    height: 34px;
+}
+.basic-info div.col-md-10 label{
+    word-wrap: break-word;
+}
+img#refresh-captcha{
+    cursor: pointer;
+    display: inline-block;
+    height: 25px;
+    margin-right: 16px;
+    width: 20px;
+}
+body.nav-md.modal-open.scroll{
+    overflow: scroll !important;
+}
