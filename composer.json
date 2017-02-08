@@ -18,7 +18,7 @@
         "yiisoft/yii2": ">=2.0.6",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-		"bryglen/yii2-apns-gcm": "^1.0",
+        "bryglen/yii2-apns-gcm": "^1.0",
         "kartik-v/yii2-tree-manager": "@dev"
     },
     "require-dev": {
