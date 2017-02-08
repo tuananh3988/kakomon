@@ -1,0 +1,3 @@
+[submodule "vendor/kartik-v/yii2-tree-manager"]
+	path = vendor/kartik-v/yii2-tree-manager
+	url = ../../kartik-v/yii2-tree-manager.git
