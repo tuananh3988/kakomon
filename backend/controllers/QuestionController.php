@@ -8,17 +8,15 @@ use yii\web\Controller;
 use backend\models\LoginForm;
 use yii\filters\VerbFilter;
 
-
 class QuestionController extends Controller {
-    
-    public function behaviors()
-    {
+
+    public function behaviors() {
         return [
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'save'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -27,14 +25,24 @@ class QuestionController extends Controller {
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    //'logout' => ['post'],
+                //'logout' => ['post'],
                 ],
             ],
         ];
     }
-    
-     public function actionIndex()
-    {
+
+    public function actionIndex() {
         return $this->render('index');
     }
+    
+    /*
+     * Auth : 
+     * 
+     * Method :
+     * Create : 09-02-2017
+     */
+    public function actionSave() {
+        return $this->render('save');
+    }
+
 }
