@@ -18,6 +18,15 @@ echo TreeView::widget([
     'cacheSettings' => [        
         'enableCache' => true   // defaults to true
     ],
+    'iconEditSettings'=> [
+        'show' => 'none',
+    ],
+    'defaultChildNodeIcon' => '',
+    'defaultParentNodeIcon' => '',
+    'defaultParentNodeOpenIcon' => '',
+    'rootOptions' => [
+        'label' => 'Category'
+    ],
     'toolbar' => [
         TreeView::BTN_MOVE_UP => false,
         TreeView::BTN_MOVE_DOWN =>false,
