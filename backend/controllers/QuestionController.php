@@ -9,7 +9,7 @@ use backend\models\LoginForm;
 use yii\filters\VerbFilter;
 
 
-class CategoryController extends Controller {
+class QuestionController extends Controller {
     
     public function behaviors()
     {

@@ -44,7 +44,9 @@ AppAsset::register($this);
                 <ul class="nav side-menu">
                     <li><a href="<?= Url::to(['/']); ?>"><i class="fa fa-home"></i> Home </a>
                     </li>
-                    <li><a href="<?= Url::to(['/category/index']); ?>"><i class="fa fa-home"></i> Category </a>
+                    <li><a href="<?= Url::to(['/category/index']); ?>"><i class="glyphicon glyphicon-tags"></i> &nbsp;&nbsp;&nbsp;&nbsp;Category </a>
+                    </li>
+                    <li><a href="<?= Url::to(['/question/index']); ?>"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Question </a>
                     </li>
                     <li>
                       <a><i class="fa fa-connectdevelop"></i> Push Notification <span class="fa fa-chevron-down"></span></a>
