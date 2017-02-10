@@ -1,6 +1,6 @@
-<div class="col-sm-3">
-    <div class="easyui-panel" style="padding:5px">
-        <ul class="easyui-tree">
+<div class="col-sm-4">
+    <div class="easy-tree">
+        <ul>
             <li>
                 <span>Category</span>
                 <?php

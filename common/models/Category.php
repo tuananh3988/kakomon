@@ -6,9 +6,6 @@ use Yii;
  
 class Category extends \kartik\tree\models\Tree
 {
-    use \kartik\tree\models\TreeTrait {
-        isDisabled as parentIsDisabled; // note the alias
-    }
  
     /**
      * @var string the classname for the TreeQuery that implements the NestedSetQueryBehavior.

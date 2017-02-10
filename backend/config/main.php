@@ -51,6 +51,7 @@ return [
             'rules' => [
                 'login' => 'site/login',
                 'logout' => 'site/logout',
+                'category/detail/<id:\w+>' => 'category/detail',
             ],
         ],
         'request' => [

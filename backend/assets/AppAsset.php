@@ -27,8 +27,9 @@ class AppAsset extends AssetBundle
         'css/custom.css',
         'css/maps/jquery-jvectormap-2.0.3.css',
 //        'css/tree/style.css',
-        'css/icon.css',
-        'css/easyui.css',
+//        'css/icon.css',
+//        'css/easyui.css',
+        'css/easyTree.css',
     ];
     public $js = [
 //        'vendors/jquery/dist/jquery.min.js',
@@ -59,7 +60,9 @@ class AppAsset extends AssetBundle
         'js/tree/jquery-ui.js',
         'js/tree/jquery.tree.js',
         'js/bootstrap-notify/bootstrap-notify.min.js',
-        'js/jquery.easyui.min.js',
+//        'js/jquery.easyui.min.js',
+        'js/easyTree.js',
+        'js/category.js',
         
     ];
     public $jsOptions = array(
