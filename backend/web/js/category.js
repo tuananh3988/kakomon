@@ -11,7 +11,6 @@
 
 $(document).ready(function () {
     var idCat = $('#hidden-cat').val();
-    console.log(idCat);
     if (idCat) {
         $('#'+idCat).addClass('li_selected');
     //    $('html, body').animate({

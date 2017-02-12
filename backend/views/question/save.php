@@ -19,67 +19,90 @@ $this->title = 'Add Question!';
             <div class="x_panel">
                 <div class="x_content">
                     <?php $form = ActiveForm::begin(['options' => ['class' => 'form-horizontal form-label-left', 'role' => 'form']]); ?>
-                    <div class="col-md-3 col-xs-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Category</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <select class="form-control">
-                                    <option>Choose option</option>
-                                    <option>Option one</option>
-                                    <option>Option two</option>
-                                    <option>Option three</option>
-                                    <option>Option four</option>
-                                </select>
-                            </div>
+                    <div class="form-group"> 
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Category</label>
+                        <div class="col-md-5 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'id_cat_root', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($rootCat, ['prompt' => 'Select category', 'class' => 'form-control select-root-cat'])->label('') ?>
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat1</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <select class="form-control">
-                                    <option>Choose option</option>
-                                    <option>Option one</option>
-                                    <option>Option two</option>
-                                    <option>Option three</option>
-                                    <option>Option four</option>
-                                </select>
-                            </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat1</label>
+                        <div class="col-md-5 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'id_sub1', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList([], ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat'])->label('') ?>
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat2</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <select class="form-control">
-                                    <option>Choose option</option>
-                                    <option>Option one</option>
-                                    <option>Option two</option>
-                                    <option>Option three</option>
-                                    <option>Option four</option>
-                                </select>
-                            </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat2</label>
+                        <div class="col-md-5 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'id_sub2', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList([], ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat'])->label('') ?>
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat3</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <select class="form-control">
-                                    <option>Choose option</option>
-                                    <option>Option one</option>
-                                    <option>Option two</option>
-                                    <option>Option three</option>
-                                    <option>Option four</option>
-                                </select>
-                            </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat3</label>
+                        <div class="col-md-5 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'id_sub3', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList([], ['prompt' => 'Select sub3 category', 'class' => 'form-control'])->label('') ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Content Question <span class="required">*</span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'content_question')->textarea(['class' => 'form-control','rows' => '4'])->label(false) ?>
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="textarea">Content Question <span class="required">*</span></label>
-                        <div class="col-md-12 col-xs-12">
-                            <textarea id="textarea" required="required" name="textarea" class="form-control col-md-7 col-xs-12"></textarea>
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer A<span class="required">*</span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'answer_1')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer B<span class="required">*</span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'answer_2')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer C<span class="required">*</span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'answer_3')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer D<span class="required">*</span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <?= $form->field($question, 'answer_4')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Correct Answer<span class="required">*</span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <?=
+                                $form->field($question, 'correct_answer')
+                                    ->radioList(
+                                        [1 => 'Answer A:', 2 => 'Answer B:', 3 => 'Answer C:', 4 => 'Answer D:'],
+                                        [
+                                            'item' => function($index, $label, $name, $checked, $value) {
+
+                                                $return = $label;
+                                                $return .= '<input type="radio" class="flat" name="' . $name . '" value="' . $value . '" tabindex="3">';
+                                                return $return;
+                                            }
+                                        ]
+                                    )
+                                ->label(false);
+                            ?>
+                        </div>
+                    </div>
+                    <div class="ln_solid"></div>
+
+                    <div class="form-group">
+                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                            <?= Html::submitButton('Submit', ['class' => 'btn btn-success', 'name' => 'button_create']) ?>
                         </div>
                     </div>
                     <?php ActiveForm::end(); ?>

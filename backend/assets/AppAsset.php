@@ -63,6 +63,7 @@ class AppAsset extends AssetBundle
 //        'js/jquery.easyui.min.js',
         'js/easyTree.js',
         'js/category.js',
+        'js/main.js',
         
     ];
     public $jsOptions = array(

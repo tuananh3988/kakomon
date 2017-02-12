@@ -53,6 +53,7 @@ return [
                 'login' => 'site/login',
                 'logout' => 'site/logout',
                 'category/detail/<id:\w+>' => 'category/detail',
+                'question/getsubcategory/<id:\w+>/<level:\w+>' => 'question/getsubcategory',
             ],
         ],
         'request' => [
