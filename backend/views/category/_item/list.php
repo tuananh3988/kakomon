@@ -4,7 +4,7 @@
             <li>
                 <span>Category</span>
                 <?php
-                    foreach ($listMenu as $r) {
+                    foreach ($listCategory as $r) {
                         echo  $r;
                     }
                 ?>

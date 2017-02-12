@@ -19,6 +19,7 @@ return [
             // other module settings, refer detailed documentation
         ]
     ],
+    'language' => 'en',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -61,6 +62,9 @@ return [
             'cookieValidationKey' => 'xxxxxxx',
         ],
         
+    ],
+    'as beforeAction' => [
+        'class' => 'backend\components\setCategory'
     ],
     'params' => $params,
 ];

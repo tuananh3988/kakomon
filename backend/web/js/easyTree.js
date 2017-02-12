@@ -45,15 +45,15 @@
                     var children = $(this).find(' > ul');
                     $(children).remove();
                     text = $(this).text();
-                    $(this).html('<span><span class="glyphicon"></span><a href="javascript: void(0);"></a> </span>');
-                    $(this).find(' > span > span').addClass('glyphicon-folder-open');
+                    $(this).html('<span><span class="fa"></span><a href="javascript: void(0);"></a> </span>');
+                    $(this).find(' > span > span').addClass('fa-minus-square-o');
                     $(this).find(' > span > a').text(text);
                     $(this).append(children);
                 }
                 else {
                     text = $(this).text();
-                    $(this).html('<span><span class="glyphicon"></span><a href="javascript: void(0);"></a> </span>');
-                    $(this).find(' > span > span').addClass('glyphicon-file');
+                    $(this).html('<span><span class="fa"></span><a href="javascript: void(0);"></a> </span>');
+                    $(this).find(' > span > span').addClass('fa-file');
                     $(this).find(' > span > a').text(text);
                 }
             });
@@ -67,7 +67,7 @@
 
             // addable
             if (options.addable) {
-                $(easyTree).find('.easy-tree-toolbar').append('<div class="create"><button class="btn btn-default btn-sm btn-success"><span class="glyphicon glyphicon-plus"></span></button></div> ');
+                $(easyTree).find('.easy-tree-toolbar').append('<div class="create"><button class="btn btn-default btn-sm btn-success"><span class="fa fa-plus"></span></button></div> ');
                 $(easyTree).find('.easy-tree-toolbar .create > button').attr('title', options.i18n.addTip).click(function () {
                     var createBlock = $(easyTree).find('.easy-tree-toolbar .create');
                     $(createBlock).append(createInput);
@@ -77,7 +77,7 @@
                         if ($(createInput).find('input').val() === '')
                             return;
                         var selected = getSelectedItems();
-                        var item = $('<li><span><span class="glyphicon glyphicon-file"></span><a href="javascript: void(0);">' + $(createInput).find('input').val() + '</a> </span></li>');
+                        var item = $('<li><span><span class="fa fa-file"></span><a href="javascript: void(0);">' + $(createInput).find('input').val() + '</a> </span></li>');
                         $(item).find(' > span > span').attr('title', options.i18n.collapseTip);
                         $(item).find(' > span > a').attr('title', options.i18n.selectTip);
                         if (selected.length <= 0) {
@@ -89,7 +89,7 @@
                             if ($(selected).hasClass('parent_li')) {
                                 $(selected).find(' > ul').append(item);
                             } else {
-                                $(selected).addClass('parent_li').find(' > span > span').addClass('glyphicon-folder-open').removeClass('glyphicon-file');
+                                $(selected).addClass('parent_li').find(' > span > span').addClass('fa-minus-square-o').removeClass('fa-file');
                                 $(selected).append($('<ul></ul>')).find(' > ul').append(item);
                             }
                         }
@@ -141,7 +141,7 @@
 
             // editable
             if (options.editable) {
-                $(easyTree).find('.easy-tree-toolbar').append('<div class="edit"><button class="btn btn-default btn-sm btn-primary disabled"><span class="glyphicon glyphicon-edit"></span></button></div> ');
+                $(easyTree).find('.easy-tree-toolbar').append('<div class="edit"><button class="btn btn-default btn-sm btn-primary disabled"><span class="fa fa-edit"></span></button></div> ');
                 $(easyTree).find('.easy-tree-toolbar .edit > button').attr('title', options.i18n.editTip).click(function () {
                     $(easyTree).find('input.easy-tree-editor').remove();
                     $(easyTree).find('li > span > a:hidden').show();
@@ -176,7 +176,7 @@
 
             // deletable
             if (options.deletable) {
-                $(easyTree).find('.easy-tree-toolbar').append('<div class="remove"><button class="btn btn-default btn-sm btn-danger disabled"><span class="glyphicon glyphicon-remove"></span></button></div> ');
+                $(easyTree).find('.easy-tree-toolbar').append('<div class="remove"><button class="btn btn-default btn-sm btn-danger disabled"><span class="fa fa-remove"></span></button></div> ');
                 $(easyTree).find('.easy-tree-toolbar .remove > button').attr('title', options.i18n.deleteTip).click(function () {
                     var selected = getSelectedItems();
                     if (selected.length <= 0) {
@@ -190,7 +190,7 @@
                         $(easyTree).find('.alert .alert-content .confirm').on('click', function () {
                             $(selected).find(' ul ').remove();
                             if($(selected).parent('ul').find(' > li').length <= 1) {
-                                $(selected).parents('li').removeClass('parent_li').find(' > span > span').removeClass('glyphicon-folder-open').addClass('glyphicon-file');
+                                $(selected).parents('li').removeClass('parent_li').find(' > span > span').removeClass('fa-minus-square-o').addClass('fa-file');
                                 $(selected).parent('ul').remove();
                             }
                             $(selected).remove();
@@ -206,15 +206,15 @@
                 if (children.is(':visible')) {
                     children.hide('fast');
                     $(this).attr('title', options.i18n.expandTip)
-                        .find(' > span.glyphicon')
-                        .addClass('glyphicon-folder-close')
-                        .removeClass('glyphicon-folder-open');
+                        .find(' > span.fa')
+                        .addClass('fa-plus-square-o')
+                        .removeClass('fa-minus-square-o');
                 } else {
                     children.show('fast');
                     $(this).attr('title', options.i18n.collapseTip)
-                        .find(' > span.glyphicon')
-                        .addClass('glyphicon-folder-open')
-                        .removeClass('glyphicon-folder-close');
+                        .find(' > span.fa')
+                        .addClass('fa-minus-square-o')
+                        .removeClass('fa-plus-square-o');
                 }
                 e.stopPropagation();
             });

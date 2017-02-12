@@ -7,8 +7,9 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use backend\models\LoginForm;
 use yii\filters\VerbFilter;
-use common\models\Menu;
+use common\models\Category;
 use yii\web\Response;
+use yii\web\Session;
 
 class CategoryController extends Controller {
 
@@ -34,13 +35,59 @@ class CategoryController extends Controller {
     }
 
     public function actionIndex() {
-        $menu = new Menu();
-        $listMenu = $menu->renderListMenu();
+        $session = Yii::$app->session;
+        $request = Yii::$app->request;
+        $category = new Category();
+        $listCategory = $category->renderListMenu();
         //find one first record menu
-        $firstMenu = Menu::find()->orderBy(['cid' => SORT_ASC])->one();
+        if (isset($session['category_id']) && $session['category_id'] != NULL) {
+            $firstCategory = Category::findOne(['id' => $session->get('category_id')]);
+        } else {
+            $firstCategory = Category::find()->orderBy(['id' => SORT_ASC])->one();
+            if (!$firstCategory) {
+                $firstCategory = $category;
+            }
+        }
+        //set type and idParent
+        if ($firstCategory) {
+            $firstCategory->type = 0;
+            $firstCategory->idParent = $firstCategory->id;
+        }
+        //request post
+        if ($request->isPost) {
+            $dataPost = $request->Post();
+            if ($dataPost['Category']['type'] == 0) {
+                $firstCategory = Category::findOne(['id' => $dataPost['Category']['id']]);
+            }
+            $firstCategory->load($dataPost);
+            if ($firstCategory->validate()) {
+                $id = $firstCategory->addCategory();
+                if ($id) {
+                    $session->set('category_id', $id);
+                    $message ='';
+                    if ($firstCategory->type == 0) {
+                        $message = 'Your update successfully category!';
+                    } elseif($firstCategory->type == 1){
+                        $message = 'You successfully created sub category!';
+                    } elseif($firstCategory->type == 2) {
+                        $message = 'You successfully created category!';
+                    }
+                    $session->setFlash('sucess',$message);
+                    return Yii::$app->response->redirect(['/category/index']);
+                } else {
+                    return Yii::$app->response->redirect(['/site/error']);
+                }
+            } 
+        }
+        $breadCrumbs = $this->renderBreadCrumbs($firstCategory->id);
+        if ($firstCategory->id == NULL) {
+            $firstCategory->type = 2;
+            $breadCrumbs = 'Untitled';
+        }
         return $this->render('index', [
-            'listMenu' => $listMenu,
-            'firstMenu' => $firstMenu
+            'listCategory' => $listCategory,
+            'firstCategory' => $firstCategory,
+            'breadCrumbs' => $breadCrumbs
         ]);
     }
 
@@ -54,14 +101,14 @@ class CategoryController extends Controller {
         $result = [];
         $request = Yii::$app->request;
         $id = $request->getQueryParam('id');
-        $detail = Menu::findOne(['cid' => $id]);
-        $this->renderCrumb($id);
+        $detail = Category::findOne(['id' => $id]);
         if ($detail) {
             $result['success'] = 1;
             $result['data'] = [
-                'cid' => $detail->cid,
+                'id' => $detail->id,
                 'name' => $detail->name,
-                'level' => $detail->level
+                'level' => $detail->level,
+                'breadcrumbs' => $this->renderBreadCrumbs($id)
             ];
         } else {
             $result['success'] = 0;
@@ -77,15 +124,15 @@ class CategoryController extends Controller {
      * Create Date : 10-02-2017
      */
     
-    public function renderCrumb($id){
-        $textCrumb = '';
+    public function renderBreadCrumbs($id){
+        $textBreadCrumbs = '';
         $result = [];
-        $menu = Menu::findOne(['cid' => $id]);
+        $menu = Category::findOne(['id' => $id]);
         if ($menu) {
             $parentId = $menu->parent;
             $result[] = '<span class="kv-crumb-active">' . $menu->name . '</span>';
             while ($parentId > 0) {
-                $query = Menu::findOne(['cid' => $parentId]);
+                $query = Category::findOne(['id' => $parentId]);
                 if ($query) {
                     $result[] = $query->name;
                     $parentId = $query->parent;
@@ -94,10 +141,16 @@ class CategoryController extends Controller {
         }
         if (count($result) > 0) {
             krsort($result);
+            $i = 0;
             foreach ($result as $key => $value) {
-                $textCrumb .= $value . " » ";
+                $i ++;
+                if ($i == count($result)) {
+                    $textBreadCrumbs .= $value;
+                } else {
+                    $textBreadCrumbs .= $value . " » ";
+                }
             }
         }
-        var_dump($textCrumb);die;
+        return $textBreadCrumbs;
     }
 }
