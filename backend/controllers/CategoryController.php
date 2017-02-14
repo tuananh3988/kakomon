@@ -41,9 +41,9 @@ class CategoryController extends Controller {
         $listCategory = $category->renderListMenu();
         //find one first record menu
         if (isset($session['category_id']) && $session['category_id'] != NULL) {
-            $firstCategory = Category::findOne(['id' => $session->get('category_id')]);
+            $firstCategory = Category::findOne(['cateory_id' => $session->get('category_id')]);
         } else {
-            $firstCategory = Category::find()->orderBy(['id' => SORT_ASC])->one();
+            $firstCategory = Category::find()->orderBy(['cateory_id' => SORT_ASC])->one();
             if (!$firstCategory) {
                 $firstCategory = $category;
             }
@@ -51,13 +51,13 @@ class CategoryController extends Controller {
         //set type and idParent
         if ($firstCategory) {
             $firstCategory->type = 0;
-            $firstCategory->idParent = $firstCategory->id;
+            $firstCategory->idParent = $firstCategory->cateory_id;
         }
         //request post
         if ($request->isPost) {
             $dataPost = $request->Post();
             if ($dataPost['Category']['type'] == 0) {
-                $firstCategory = Category::findOne(['id' => $dataPost['Category']['id']]);
+                $firstCategory = Category::findOne(['cateory_id' => $dataPost['Category']['cateory_id']]);
             }
             $firstCategory->load($dataPost);
             if ($firstCategory->validate()) {
@@ -78,12 +78,13 @@ class CategoryController extends Controller {
                     return Yii::$app->response->redirect(['/site/error']);
                 }
             } 
-        }
-        $breadCrumbs = $this->renderBreadCrumbs($firstCategory->id);
-        if ($firstCategory->id == NULL) {
+        } 
+        $breadCrumbs = $this->renderBreadCrumbs($firstCategory->cateory_id);
+        if ($firstCategory->cateory_id == NULL) {
             $firstCategory->type = 2;
             $breadCrumbs = 'Untitled';
         }
+        
         return $this->render('index', [
             'listCategory' => $listCategory,
             'firstCategory' => $firstCategory,
@@ -101,11 +102,11 @@ class CategoryController extends Controller {
         $result = [];
         $request = Yii::$app->request;
         $id = $request->getQueryParam('id');
-        $detail = Category::findOne(['id' => $id]);
+        $detail = Category::findOne(['cateory_id' => $id]);
         if ($detail) {
             $result['success'] = 1;
             $result['data'] = [
-                'id' => $detail->id,
+                'id' => $detail->cateory_id,
                 'name' => $detail->name,
                 'level' => $detail->level,
                 'breadcrumbs' => $this->renderBreadCrumbs($id)
@@ -127,15 +128,15 @@ class CategoryController extends Controller {
     public function renderBreadCrumbs($id){
         $textBreadCrumbs = '';
         $result = [];
-        $menu = Category::findOne(['id' => $id]);
+        $menu = Category::findOne(['cateory_id' => $id]);
         if ($menu) {
-            $parentId = $menu->parent;
+            $parentId = $menu->parent_id;
             $result[] = '<span class="kv-crumb-active">' . $menu->name . '</span>';
             while ($parentId > 0) {
-                $query = Category::findOne(['id' => $parentId]);
+                $query = Category::findOne(['cateory_id' => $parentId]);
                 if ($query) {
                     $result[] = $query->name;
-                    $parentId = $query->parent;
+                    $parentId = $query->parent_id;
                 }
             }
         }

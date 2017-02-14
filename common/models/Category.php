@@ -3,31 +3,62 @@
 namespace common\models;
 
 use Yii;
-use yii\helpers\Url;
 use yii\db\ActiveRecord;
-
-class Category extends \yii\db\ActiveRecord {
-
+/**
+ * This is the model class for table "category".
+ *
+ * @property integer $cateory_id
+ * @property integer $parent_id
+ * @property string $name
+ * @property integer $level
+ * @property string $created_date
+ * @property string $updated_date
+ */
+class Category extends \yii\db\ActiveRecord
+{
     public $idParent;
     public $type;
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'category';
     }
-    
+
     public static $TYPE = [0, 1, 2];
     public static $MAXCAT = 4;
-
-
-
-
-    public function rules() {
+    
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
         return [
+//            [['cateory_id'], 'required'],
+            [['parent_id', 'level'], 'integer'],
+            [['created_date', 'updated_date'], 'safe'],
+            [['name'], 'string', 'max' => 255],
             [['name'], 'required', 'message' => \Yii::t('app', 'required')],
             ['idParent', 'validateIdParent'],
             ['type', 'validateType'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'cateory_id' => 'Cateory ID',
+            'parent_id' => 'Parent ID',
+            'name' => 'Name',
+            'level' => 'Level',
+            'created_date' => 'Created Date',
+            'updated_date' => 'Updated Date',
+            'type' => 'Type',
+            'idParent' => 'idParent'
         ];
     }
     
@@ -48,16 +79,6 @@ class Category extends \yii\db\ActiveRecord {
         return ['idParent', 'type'];
     }
     
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels() {
-        return [
-            'type' => 'Type',
-            'idParent' => 'idParent'
-        ];
-    }
-    
     /*
      * Auth :
      * 
@@ -67,13 +88,13 @@ class Category extends \yii\db\ActiveRecord {
         $connection = Yii::$app->getDb();
         if (!is_array($user_tree_array))
             $user_tree_array = array();
-        $sql = "SELECT `id`, `name`, `parent` FROM `category` WHERE 1 AND `parent` = $parent ORDER BY id ASC";
+        $sql = "SELECT `cateory_id`, `name`, `parent_id` FROM `category` WHERE 1 AND `parent_id` = $parent ORDER BY cateory_id ASC";
         $query = $connection->createCommand($sql)->queryAll();
         if (count($query) > 0) {
             $user_tree_array[] = "<ul>";
             foreach ($query as $key => $value) {
-                $user_tree_array[] = "<li class='select_cat' id='".$value['id']."'>" . $value['name'] . "";
-                $user_tree_array = $this->renderListMenu($value['id'], $user_tree_array);
+                $user_tree_array[] = "<li class='select_cat' id='".$value['cateory_id']."'>" . $value['name'] . "";
+                $user_tree_array = $this->renderListMenu($value['cateory_id'], $user_tree_array);
                 $user_tree_array[] ='</li>';
             }
             $user_tree_array[] = "</ul>";
@@ -91,7 +112,7 @@ class Category extends \yii\db\ActiveRecord {
     
     public function validateIdParent($attribute){
         if ($this->type == 1) {
-            $category = Category::findOne(['id' => $this->$attribute]);
+            $category = Category::findOne(['cateory_id' => $this->$attribute]);
             if (!$category) {
                 $this->addError($attribute, \Yii::t('app', 'exit', ['attribute' => $this->attributeLabels()[$attribute]]));
             } else {
@@ -122,41 +143,33 @@ class Category extends \yii\db\ActiveRecord {
      */
     
     public function addCategory(){
-        $transaction = \yii::$app->getDb()->beginTransaction();
-        try {
-            //update category
-            if ($this->type == 0) {
-                $this->upd_user = Yii::$app->user->identity->id;
-                $this->update_date = date('Y-m-d H:i:s');
-                $this->save(false);
-                return $this->id;
-            }
-            //add sub category
-            if ($this->type == 1) {
-                $parentCat = Category::findOne(['id' => $this->idParent]);
-                $category = new Category();
-                $category->name = $this->name;
-                $category->parent = $this->idParent;
-                $category->level = $parentCat->level + 1;
-                $category->create_user = Yii::$app->user->identity->id;
-                $category->create_date = date('Y-m-d H:i:s');
-                $category->save();
-                return $category->id;
-            }
-            // add root category
-            if ($this->type == 2) {
-                $categoryRoot = new Category();
-                $categoryRoot->name = $this->name;
-                $categoryRoot->parent = 0;
-                $categoryRoot->level = 1;
-                $categoryRoot->create_user = Yii::$app->user->identity->id;
-                $categoryRoot->create_date = date('Y-m-d H:i:s');
-                $categoryRoot->save();
-                return $categoryRoot->id;
-            }
-        } catch (Exception $exc) {
-            $transaction->rollBack();
-            return FALSE;
+        //update category
+        if ($this->type == 0) {
+            $this->updated_date = date('Y-m-d H:i:s');
+            $this->save(false);
+            return $this->cateory_id;
+        }
+        //add sub category
+        if ($this->type == 1) {
+            $parentCat = Category::findOne(['cateory_id' => $this->idParent]);
+            $category = new Category();
+            $category->name = $this->name;
+            $category->parent_id = $this->idParent;
+            $category->level = $parentCat->level + 1;
+            $category->created_date = date('Y-m-d H:i:s');
+            $category->save();
+            return $category->cateory_id;
+        }
+        // add root category
+        if ($this->type == 2) {
+            $categoryRoot = new Category();
+            $categoryRoot->name = $this->name;
+            $categoryRoot->parent_id = 0;
+            $categoryRoot->level = 1;
+            $categoryRoot->created_date = date('Y-m-d H:i:s');
+
+            $categoryRoot->save();
+            return $categoryRoot->cateory_id;
         }
     }
 }

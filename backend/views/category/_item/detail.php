@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
     <div id="w0-detail" class="kv-detail-container">
         <div class="kv-detail-heading">
             <div class="pull-right">
-                <button type="button" class="btn btn-default tooltip-f" id="add-sub-cat" title="add-sub-category" <?php if($firstCategory->id == NULL) echo 'disabled="disabled"'?>>
+                <button type="button" class="btn btn-default tooltip-f" id="add-sub-cat" title="add-sub-category" <?php if($firstCategory->cateory_id == NULL || $firstCategory->level == 4) echo 'disabled="disabled"'?>>
                     <i class="fa fa-plus"></i>
                 </button>
                 <button type="button" class="btn btn-default tooltip-f" id="add-cat" title="add-category">
@@ -34,14 +34,14 @@ use yii\widgets\ActiveForm;
                 <?php endif; ?>
                 <div class="alert alert-danger hide"><div></div></div>
                 <div class="alert alert-warning hide"><div></div></div>
-                <div class="alert alert-info <?= ($firstCategory->id == NULL) ? '' : 'hide'?>"><div><?= ($firstCategory->id == NULL) ? 'Currently there is no category that you please create a new category.' : ''; ?></div></div>
+                <div class="alert alert-info <?= ($firstCategory->cateory_id == NULL) ? '' : 'hide'?>"><div><?= ($firstCategory->cateory_id == NULL) ? 'Currently there is no category that you please create a new category.' : ''; ?></div></div>
             </div>
-            <?php if ($firstCategory->id == NULL) $firstCategory->id = '(New)';?>
+            <?php if ($firstCategory->cateory_id == NULL) $firstCategory->cateory_id = '(New)';?>
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group field-category-id">
                         <label class="control-label" for="category-id">ID</label>
-                        <?= $form->field($firstCategory, 'id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control', 'id' => 'id-cat', 'readonly' => ''])->label(''); ?>
+                        <?= $form->field($firstCategory, 'cateory_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control', 'id' => 'id-cat', 'readonly' => ''])->label(''); ?>
                     </div>
                 </div>
                 <div class="col-sm-8">

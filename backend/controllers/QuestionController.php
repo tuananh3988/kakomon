@@ -8,7 +8,8 @@ use yii\web\Controller;
 use backend\models\LoginForm;
 use yii\filters\VerbFilter;
 use common\models\Category;
-use common\models\Question;
+use common\models\Answer;
+use common\models\Quiz;
 use yii\web\Response;
 
 class QuestionController extends Controller {
@@ -45,17 +46,31 @@ class QuestionController extends Controller {
      * Create : 09-02-2017
      */
     
-    public function actionSave() {
+    public function actionSave($quizId = null) {
         $request = Yii::$app->request;
-        $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('id')->column();
-        $question = new Question();
+        $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
+        $question = new Quiz();
+        $answer = [
+            'answer1' => new Answer(),
+            'answer2' => new Answer(),
+            'answer3' => new Answer(),
+            'answer4' => new Answer(),
+            'answer5' => new Answer(),
+            'answer6' => new Answer(),
+            'answer7' => new Answer(),
+            'answer8' => new Answer()
+        ];
+        if (!empty($userId)) {
+            
+        }
         if ($request->isPost) {
             $dataPost = $request->Post();
             var_dump($dataPost);die;
         }
         return $this->render('save', [
             'rootCat' => $rootCat,
-            'question' => $question
+            'question' => $question,
+            'answer' => $answer
         ]);
     }
     /*
@@ -70,7 +85,7 @@ class QuestionController extends Controller {
         $request = Yii::$app->request;
         $id = $request->getQueryParam('id');
         $level = $request->getQueryParam('level');
-        $subCat = Category::find()->select('name')->where(['parent' => $id])->indexBy('id')->column();
+        $subCat = Category::find()->select('name')->where(['parent_id' => $id])->indexBy('cateory_id')->column();
         $result['success'] = 1;
         $data = '<option value="">Select sub'.$level.' category</option>';
         if (count($subCat) > 0) {
