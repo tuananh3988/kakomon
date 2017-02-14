@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2017-02-14 16:16:17
+Date: 2017-02-14 16:20:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -48,6 +48,7 @@ CREATE TABLE `quiz` (
   `answer_5` varchar(255) DEFAULT NULL,
   `answer` tinyint(4) DEFAULT NULL,
   `staff_create` int(11) DEFAULT NULL,
+  `delete_flag` tinyint(4) DEFAULT NULL COMMENT '0: active, 1: delete',
   `created_date` datetime DEFAULT NULL,
   `updated_date` datetime DEFAULT NULL,
   PRIMARY KEY (`quiz_id`)
