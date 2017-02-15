@@ -12,6 +12,7 @@ use common\models\Answer;
 use common\models\Quiz;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use yii\web\Session;
 
 class QuestionController extends Controller {
 
@@ -37,7 +38,19 @@ class QuestionController extends Controller {
     }
 
     public function actionIndex() {
-        return $this->render('index');
+        $request = Yii::$app->request;
+        $formSearch = new Quiz();
+        $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
+        $param = $request->queryParams;
+        if (!empty($param['Quiz'])) {
+            $formSearch->setAttributes($param['Quiz']);
+        }
+        $dataProvider = $formSearch->getData();
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'formSearch' => $formSearch,
+            'rootCat' => $rootCat
+        ]);
     }
     
     /*
@@ -48,6 +61,7 @@ class QuestionController extends Controller {
      */
     
     public function actionSave($quizId = null) {
+        $session = Yii::$app->session;
         $request = Yii::$app->request;
         $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
         $question = new Quiz();
@@ -68,7 +82,6 @@ class QuestionController extends Controller {
         if ($request->isPost) {
             $dataPost = $request->Post();
             $question->addQuiz($dataPost, $answer, $flag);
-
         }
         return $this->render('save', [
             'rootCat' => $rootCat,

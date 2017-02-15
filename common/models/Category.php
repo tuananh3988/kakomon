@@ -172,4 +172,20 @@ class Category extends \yii\db\ActiveRecord
             return $categoryRoot->cateory_id;
         }
     }
+    
+    /*
+     * get Detail name categoty
+     * 
+     * Auth: 
+     * Create : 15-02-2017
+     */
+    
+    public static function getDetailNameCategory($id){
+        $name = '';
+        if ($id) {
+            $category = Category::findOne(['cateory_id'=> $id]);
+            $name = $category->name;
+        }
+        return $name;
+    }
 }

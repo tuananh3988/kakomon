@@ -7,4 +7,10 @@ return [
     'aosApikey' => 'AIzaSyAX-0NOcdzcHUuVlOrKkXOe-xLodbqYNw8',
     'domainImg' => 'http://purelamo.com/wp-content/uploads/',
     'domain' => 'http://purelamo.com/',
+    'pageSize' => 10,
+    'imgPath' => 'E:/XAMPP/htdocs/kakomon/',
+    'imgUpload' => [
+        'question' => 'uploads/question/',
+        'answer' => 'uploads/answer/'
+    ],
 ];
