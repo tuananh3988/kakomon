@@ -11,6 +11,7 @@ use common\models\Category;
 use common\models\Answer;
 use common\models\Quiz;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 class QuestionController extends Controller {
 
@@ -60,12 +61,14 @@ class QuestionController extends Controller {
             'answer7' => new Answer(),
             'answer8' => new Answer()
         ];
+        $flag = 0;
         if (!empty($userId)) {
-            
+            $flag = 1;
         }
         if ($request->isPost) {
             $dataPost = $request->Post();
-            var_dump($dataPost);die;
+            $question->addQuiz($dataPost, $answer, $flag);
+
         }
         return $this->render('save', [
             'rootCat' => $rootCat,

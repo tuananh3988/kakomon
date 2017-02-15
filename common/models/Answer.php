@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "answer".
@@ -13,40 +15,71 @@ use Yii;
  * @property string $created_date
  * @property string $updated_date
  */
-class Answer extends \yii\db\ActiveRecord
-{
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'answer';
-    }
+class Answer extends \yii\db\ActiveRecord {
+
+    public $answer_img;
 
     /**
      * @inheritdoc
      */
-    public function rules()
+    public static function tableName() {
+        return 'answer';
+    }
+
+    public function behaviors()
     {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                          ActiveRecord::EVENT_BEFORE_INSERT => ['created_date'],
+                          ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_date'],
+                ],
+                'value' => date('Y-m-d H:i:s'),
+            ],
+        ];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
         return [
             [['quiz_id'], 'required'],
             [['quiz_id'], 'integer'],
             [['created_date', 'updated_date'], 'safe'],
             [['content'], 'string', 'max' => 255],
+            [['answer_img'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'answer_id' => 'Answer ID',
             'quiz_id' => 'Quiz ID',
             'content' => 'Content',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
+            'answer_img' => 'Answer Img'
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function safeAttributes() {
+        $safe = parent::safeAttributes();
+        return array_merge($safe, $this->extraFields());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function extraFields() {
+        return ['answer_img'];
+    }
+
 }
