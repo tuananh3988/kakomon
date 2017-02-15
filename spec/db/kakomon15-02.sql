@@ -10,10 +10,27 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2017-02-15 10:23:46
+Date: 2017-02-15 15:18:06
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for answer
+-- ----------------------------
+DROP TABLE IF EXISTS `answer`;
+CREATE TABLE `answer` (
+  `answer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `quiz_id` int(11) NOT NULL,
+  `content` varchar(255) DEFAULT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `updated_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`answer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of answer
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for category
@@ -31,6 +48,42 @@ CREATE TABLE `category` (
 
 -- ----------------------------
 -- Records of category
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for exam
+-- ----------------------------
+DROP TABLE IF EXISTS `exam`;
+CREATE TABLE `exam` (
+  `exam_id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: create, 1: active, 2: end',
+  `type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '1: free, 2:paid',
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `updated_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`exam_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of exam
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for exam_quiz
+-- ----------------------------
+DROP TABLE IF EXISTS `exam_quiz`;
+CREATE TABLE `exam_quiz` (
+  `exam_quiz_id` int(11) NOT NULL AUTO_INCREMENT,
+  `exam_id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `updated_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`exam_quiz_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of exam_quiz
 -- ----------------------------
 
 -- ----------------------------
@@ -102,12 +155,7 @@ CREATE TABLE `quiz` (
   `category_id_2` int(11) DEFAULT NULL,
   `category_id_3` int(11) DEFAULT NULL,
   `category_id_4` int(11) DEFAULT NULL,
-  `answer_1` varchar(255) DEFAULT NULL,
-  `answer_2` varchar(255) DEFAULT NULL,
-  `answer_3` varchar(255) DEFAULT NULL,
-  `answer_4` varchar(255) DEFAULT NULL,
-  `answer_5` varchar(255) DEFAULT NULL,
-  `answer` tinyint(4) DEFAULT NULL,
+  `answer_id` tinyint(4) DEFAULT NULL,
   `staff_create` int(11) DEFAULT NULL,
   `delete_flag` tinyint(4) DEFAULT NULL COMMENT '0: active, 1: delete',
   `created_date` datetime DEFAULT NULL,
