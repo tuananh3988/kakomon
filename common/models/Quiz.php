@@ -147,14 +147,11 @@ class Quiz extends \yii\db\ActiveRecord
         $transaction = \yii::$app->getDb()->beginTransaction();
         try {
             $this->load($dataPost);
-            $answer['answer1']->setAttributes($dataPost['Answer']['answer1']);
-            $answer['answer2']->setAttributes($dataPost['Answer']['answer2']);
-            $answer['answer3']->setAttributes($dataPost['Answer']['answer3']);
-            $answer['answer4']->setAttributes($dataPost['Answer']['answer4']);
-            $answer['answer5']->setAttributes($dataPost['Answer']['answer5']);
-            $answer['answer6']->setAttributes($dataPost['Answer']['answer6']);
-            $answer['answer7']->setAttributes($dataPost['Answer']['answer7']);
-            $answer['answer8']->setAttributes($dataPost['Answer']['answer8']);
+            for ($i = 1; $i <= 8; $i++) {
+                $answer['answer'.$i]->setAttributes($dataPost['Answer']['answer'.$i]);
+                $answer['answer'.$i]->answer_img = UploadedFile::getInstance($answer['answer'.$i], '[answer'. $i .']answer_img');
+            }
+            
             
             if ($this->validate() && $this->validateAnswer($dataPost, $answer)) {
                 $utility = new Utility();
@@ -210,6 +207,7 @@ class Quiz extends \yii\db\ActiveRecord
         $query->select(['quiz.*'])
                 ->from('quiz');
         $query->andFilterWhere(['=', 'type' , 1]);
+        $query->andFilterWhere(['=', 'delete_flag' , 0]);
         $query->andFilterWhere(['=', 'category_id_1' , $this->category_id_1]);
         $query->andFilterWhere(['=', 'category_id_2' , $this->category_id_2]);
         $query->andFilterWhere(['=', 'category_id_3' , $this->category_id_3]);

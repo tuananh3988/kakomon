@@ -26,10 +26,8 @@ class AppAsset extends AssetBundle
         'build/css/custom.css',
         'css/custom.css',
         'css/maps/jquery-jvectormap-2.0.3.css',
-//        'css/tree/style.css',
-//        'css/icon.css',
-//        'css/easyui.css',
         'css/easyTree.css',
+        'css/dialog/dialog_box.css',
     ];
     public $js = [
 //        'vendors/jquery/dist/jquery.min.js',
@@ -64,6 +62,8 @@ class AppAsset extends AssetBundle
         'js/easyTree.js',
         'js/category.js',
         'js/main.js',
+        'js/dialog/dialog_box.js',
+        'js/dialog/set_dialog.js',
         
     ];
     public $jsOptions = array(

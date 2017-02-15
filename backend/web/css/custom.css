@@ -40,3 +40,13 @@ span.fa{
     padding-right: 5px;
     color: #31708f;
 }
+
+
+.custom_x_content div.form-group{
+    width: 100%;
+    display: inline-block;
+}
+.custom_x_content div.form-group img.avatar{
+    min-height: 100px;
+    min-width: 100px;
+}

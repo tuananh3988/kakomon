@@ -188,4 +188,20 @@ class Category extends \yii\db\ActiveRecord
         }
         return $name;
     }
+    
+    /*
+     * get sub category
+     * 
+     * Auth : 
+     * Create : 12-02-2017
+     */
+    
+    public static function getsubcategory($id) {
+        $subCat = Category::find()->select('name')->where(['parent_id' => $id])->indexBy('cateory_id')->column();
+        $data = [];
+        if (count($subCat) > 0) {
+            $data = $subCat;
+        }
+        return $data;
+    }
 }

@@ -1,0 +1,22 @@
+@charset "utf-8";
+#dialog{position:absolute;width:425px;z-index:100;background:#fff}
+#dialog-header{display:block;position:relative;width:425px;padding:7px 6px 9px;height:30px;font-size:14px;font-weight:normal;}
+#dialog-title{float:left}
+#dialog-close{float:right;cursor:pointer;margin:0 3px 0 0;padding:2px;height:13px;width:13px;background:#999 url(images/dialog_close.gif) no-repeat 3px 3px;}
+#dialog-content{display:block;height:auto;padding:6px;color:#333;font-size:13px}
+#dialog-mask{position:absolute;top:0;left:0;min-height:100%;width:100%;background:#333;opacity:.75;filter:alpha(opacity=75);z-index:100;}
+.error{background:#fff url(images/error_bg.jpg) bottom right no-repeat;border:1px solid #924949;border-top:none}
+.errorheader{background:url(images/error_header.gif) repeat-x;color:#6f2c2c;border:1px solid #924949;border-bottom:none}
+.warning{background:#fff url(images/warning_bg.jpg) bottom right no-repeat;border:1px solid #c5a524;border-top:none}
+.warningheader{background:url(images/warning_header.gif) repeat-x;color:#957c17;border:1px solid #c5a524;border-bottom:none}
+.success{background:#fff url(images/success_bg.jpg) bottom right no-repeat;border:1px solid #60a174;border-top:none}
+.successheader{background:url(images/success_header.gif) repeat-x;color:#3c7f51;border:1px solid #60a174;border-bottom:none}
+.prompt{}
+.promptheader{background:#333;color:#000;border-bottom:none;}
+/* 追加 START */
+#dialog-title{color:#fff;line-height:140%;font-size:12px;font-weight:bold;white-space:nowrap;}
+.confirm_text{margin:20px;text-align:left;}
+.dialogItem{margin:20px auto;width:100%;text-align:center;line-height:180%}
+.dialogItem form, .dialogItem input{display:inline;}
+.confirm_ok, .confirm_cancel, .confirm_close{margin:0px 5px;width:100px;height:30px;}
+/* 追加 END */

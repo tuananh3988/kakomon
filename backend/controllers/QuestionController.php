@@ -22,7 +22,7 @@ class QuestionController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'save', 'getsubcategory'],
+                        'actions' => ['index', 'save', 'getsubcategory', 'detail'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -46,12 +46,33 @@ class QuestionController extends Controller {
             $formSearch->setAttributes($param['Quiz']);
         }
         $dataProvider = $formSearch->getData();
+        if ($request->isPost) {
+            $post = $request->post();
+            var_dump($post);die;
+        }
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'formSearch' => $formSearch,
             'rootCat' => $rootCat
         ]);
     }
+    
+    /**
+     * Detail question
+     *
+     * @date : 15-02-2017
+     *
+     */
+    public function actionDetail($quizId) {
+        $model = new Quiz();
+        $quizItem = $model->find()->where(['quiz_id' => $quizId, 'delete_flag' => 0])->one();
+        if (empty($quizItem)) {
+            Yii::$app->response->redirect(['/error/error']);
+        }
+        
+        return $this->render('detail', ['quizItem' => $quizItem]);
+    }
+    
     
     /*
      * Auth : 
@@ -76,7 +97,45 @@ class QuestionController extends Controller {
             'answer8' => new Answer()
         ];
         $flag = 0;
-        if (!empty($userId)) {
+        if (!empty($quizId)) {
+            $answer = [];
+            for ($i =1 ; $i <= 8; $i++) {
+                $key = 'answer' .$i;
+                $modelAnswer = Answer::findOne(['quiz_id' => $quizId, 'order' => $i]);
+                $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
+                $answer[$key] = $modelAnswer;
+            }
+//            $answer1 = Answer::findOne(['quiz_id' => $quizId, 'order' => 1]);
+//            $answer2 = Answer::findOne(['quiz_id' => $quizId, 'order' => 2]);
+//            $answer3 = Answer::findOne(['quiz_id' => $quizId, 'order' => 3]);
+//            $answer4 = Answer::findOne(['quiz_id' => $quizId, 'order' => 4]);
+//            $answer5 = Answer::findOne(['quiz_id' => $quizId, 'order' => 5]);
+//            $answer6 = Answer::findOne(['quiz_id' => $quizId, 'order' => 6]);
+//            $answer7 = Answer::findOne(['quiz_id' => $quizId, 'order' => 7]);
+//            $answer8 = Answer::findOne(['quiz_id' => $quizId, 'order' => 8]);
+//            $answer1 = ($answer1) ? $answer1 : new Answer();
+//            $answer2 = ($answer2) ? $answer2 : new Answer();
+//            $answer3 = ($answer3) ? $answer3 : new Answer();
+//            $answer4 = ($answer4) ? $answer4 : new Answer();
+//            $answer5 = ($answer5) ? $answer5 : new Answer();
+//            $answer6 = ($answer6) ? $answer6 : new Answer();
+//            $answer7 = ($answer7) ? $answer7 : new Answer();
+//            $answer8 = ($answer8) ? $answer8 : new Answer();
+//            $answer = [
+//                'answer1' => $answer1,
+//                'answer2' => $answer2,
+//                'answer3' => $answer3,
+//                'answer4' => $answer4,
+//                'answer5' => $answer5,
+//                'answer6' => $answer6,
+//                'answer7' => $answer7,
+//                'answer8' => $answer8
+//            ];
+            
+            $question = Quiz::find()->where(['quiz_id' => $quizId, 'delete_flag' => 0])->one();
+            if (!$question) {
+                return Yii::$app->response->redirect(['error/error']);
+            }
             $flag = 1;
         }
         if ($request->isPost) {

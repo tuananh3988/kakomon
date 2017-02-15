@@ -4,9 +4,21 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\Quiz;
-//use kartik\file\FileInput;
+use common\models\Category;
 
 $this->title = 'Add Question!';
+$subCat1 = [];
+$subCat2 = [];
+$subCat3 = [];
+if ($question->category_id_1) {
+    $subCat1 = Category::getsubcategory($question->category_id_1);
+}
+if ($question->category_id_2) {
+    $subCat2 = Category::getsubcategory($question->category_id_2);
+}
+if ($question->category_id_3) {
+    $subCat3 = Category::getsubcategory($question->category_id_3);
+}
 ?>
 
 <div class="">
@@ -30,19 +42,19 @@ $this->title = 'Add Question!';
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat1</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_2', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList([], ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_id_2', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat'])->label('') ?>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat2</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_3', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList([], ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_id_3', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat'])->label('') ?>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat3</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_4', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList([], ['prompt' => 'Select sub3 category', 'class' => 'form-control'])->label('') ?>
+                            <?= $form->field($question, 'category_id_4', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat3, ['prompt' => 'Select sub3 category', 'class' => 'form-control'])->label('') ?>
                         </div>
                     </div>
                     <div class="form-group">
