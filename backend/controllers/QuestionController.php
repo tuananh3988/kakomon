@@ -45,7 +45,7 @@ class QuestionController extends Controller {
         if (!empty($param['Quiz'])) {
             $formSearch->setAttributes($param['Quiz']);
         }
-        $dataProvider = $formSearch->getData();
+        $dataProvider = $formSearch->getData(1);
         if ($request->isPost) {
             $post = $request->post();
             if ($post['idQuestion']){
@@ -114,10 +114,12 @@ class QuestionController extends Controller {
                 $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
                 $answer[$key] = $modelAnswer;
             }
-            $question = Quiz::find()->where(['quiz_id' => $quizId, 'delete_flag' => 0])->one();
+            $question = Quiz::find()->where(['quiz_id' => $quizId, 'type' => 0, 'delete_flag' => 0])->one();
             if (!$question) {
                 return Yii::$app->response->redirect(['error/error']);
             }
+            $answerId = Answer::findOne(['quiz_id' => $quizId, 'answer_id' => $question->answer_id]);
+            $question->answer_id = $answerId->order;
             $flag = 1;
         }
         if ($request->isPost) {
@@ -145,7 +147,7 @@ class QuestionController extends Controller {
         $level = $request->getQueryParam('level');
         $subCat = Category::find()->select('name')->where(['parent_id' => $id])->indexBy('cateory_id')->column();
         $result['success'] = 1;
-        $data = '<option value="">Select sub'.$level.' category</option>';
+        $data = '<option value="">Select sub'. ($level-1) .' category</option>';
         if (count($subCat) > 0) {
             foreach ($subCat as $key => $value) {
                 $data .= '<option value="'.$key.'">'.$value.'</option>';

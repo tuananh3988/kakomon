@@ -56,6 +56,9 @@ return [
                 'question/detail/<quizId:\w+>' => 'question/detail',
                 'question/edit/<quizId:\w+>' => 'question/save',
                 'question/getsubcategory/<id:\w+>/<level:\w+>' => 'question/getsubcategory',
+                'collect/detail/<quizId:\w+>' => 'collect/detail',
+                'exam/detail/<examId:\w+>' => 'exam/detail',
+                'exam/edit/<examId:\w+>' => 'exam/save',
             ],
         ],
         'request' => [

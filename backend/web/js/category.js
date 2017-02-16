@@ -32,6 +32,8 @@ $(".select_cat > span > a").click(function (event) {
         success: function (data) {
             if (data.success == 1) {
                 $('.alert-success').addClass('hide');
+                $('.field-name').removeClass('has-error');
+                $('.help-block').html('');
                 $('#id-cat').val(data.data.id);
                 $('#name').val(data.data.name);
                 $('#id-parent').val(data.data.id);

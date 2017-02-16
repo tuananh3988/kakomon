@@ -23,7 +23,7 @@ function getSubCategoty(id, sub_level){
                 if (data.success == 1) {
                     var html = '';
                     for (i = sub_level; i < 5; i++) {
-                        html = '<option value="">Select sub' + i + 'category</option>';
+                        html = '<option value="">Select sub' + (i-1) + ' category</option>';
                         $('#quiz-category_id_' + i).html(html);
                     }
                     $('#quiz-category_id_' + sub_level).html(data.data);
@@ -40,7 +40,7 @@ function getSubCategoty(id, sub_level){
     } else {
         var html = '';
         for (i = sub_level; i < 5; i++) {
-            html = '<option value="">Select sub' + i + 'category</option>';
+            html = '<option value="">Select sub' + (i-1) + ' category</option>';
             $('#quiz-category_id_' + i).html(html);
         }
     }

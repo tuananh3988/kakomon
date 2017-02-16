@@ -68,4 +68,23 @@ class Utility extends Component
         }
         return TRUE;
     }
+    
+    /*
+     * check exit file
+     */
+    
+    public function checkExitImages($type, $idParent, $id = null){
+        $folder = ['question', 'answer'];
+        if (!in_array($type, $folder)) {
+            return $image;
+        }
+        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        if ($id) {
+            $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+        }
+        if (file_exists($path)) {
+            return TRUE;
+        }
+        return FALSE;
+    }
 }

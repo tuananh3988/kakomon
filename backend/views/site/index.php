@@ -6,6 +6,6 @@ $this->title = 'Wellcome Purelamo!';
 ?>
 <div class="site-index">
     <div class="jumbotron">
-        <h1>Wellcome Purelamo!</h1>
+        <h1>Wellcome Kakomon!</h1>
     </div>
 </div>

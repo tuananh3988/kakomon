@@ -127,13 +127,23 @@ class Quiz extends \yii\db\ActiveRecord
      * Auth :
      * Create : 15-02-2017
      */
-    public function validateAnswer($dataPost, $answer){
+    public function validateAnswer($dataPost, $answer, $flag, $idQuiz = null){
         if ($this->answer_id) {
-            if (empty($answer['answer'.$this->answer_id]->content) && UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL) {
-                $this->addError('answer_id', 'Answer not map');
-                return false;
+            if ($flag == 0) {
+                if (empty($answer['answer'.$this->answer_id]->content) && UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL) {
+                    $this->addError('answer_id', 'Answer not map');
+                    return false;
+                }
+                return TRUE;
+            } elseif ($flag == 1) {
+                $utility = new Utility();
+                if (empty($answer['answer'.$this->answer_id]->content) && UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL && (!$utility->checkExitImages('answer', $idQuiz, $this->answer_id) || $answer['answer'.$this->answer_id]->remove_img_flg == 1)) {
+                    $this->addError('answer_id', 'Answer not map');
+                    return false;
+                }
+                return TRUE;
             }
-            return TRUE;
+            
         } else {
             return TRUE;
         }
@@ -154,8 +164,11 @@ class Quiz extends \yii\db\ActiveRecord
                 $answer['answer'.$i]->setAttributes($dataPost['Answer']['answer'.$i]);
                 $answer['answer'.$i]->answer_img = UploadedFile::getInstance($answer['answer'.$i], '[answer'. $i .']answer_img');
             }
-            
-            if ($this->validate() && $this->validateAnswer($dataPost, $answer)) {
+            $idQuiz = '';
+            if ($flag == 1){
+                $idQuiz = $this->quiz_id;
+            }
+            if ($this->validate() && $this->validateAnswer($dataPost, $answer, $flag, $idQuiz)) {
                 $utility = new Utility();
                 //insert table quiz
                 $this->staff_create = Yii::$app->user->identity->id;
@@ -187,17 +200,25 @@ class Quiz extends \yii\db\ActiveRecord
                     }
                     //update images ans
                     if ($flag == 1) {
+                        //update content ans if content null
+                        if ($answer[$key]->order != NULL && empty($answer[$key]->content)) {
+                            $answer[$key]->save();
+                        }
                         if ($answer[$key]->remove_img_flg == 1) {
                             $utility->removeImages('answer', $this->quiz_id, $order);
                         }
                         if (UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') != NULL) {
                             $utility->uploadImages(UploadedFile::getInstance($answer[$key], '['.$key.']answer_img'), 'answer', $this->quiz_id,  $order);
                         }
+                        //delete ans
+                        if (empty($answer[$key]->content) && UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') == NULL && !$utility->checkExitImages('answer', $this->quiz_id, $order)) {
+                            $answer[$key]->delete();
+                        }
                     }
                 }
                 //update answer_id
                 if ($this->answer_id) {
-                    $answer = Answer::findOne(['order' => $this->answer_id]);
+                    $answer = Answer::findOne(['quiz_id' => $this->quiz_id,'order' => $this->answer_id]);
                     $this->answer_id = $answer->answer_id;
                     $this->save(FALSE);
                 }
@@ -222,11 +243,11 @@ class Quiz extends \yii\db\ActiveRecord
      * get list user
      * @Date 15-02-2017
      */
-    public function getData() {
+    public function getData($type) {
         $query = new \yii\db\Query();
         $query->select(['quiz.*'])
                 ->from('quiz');
-        $query->andFilterWhere(['=', 'type' , 1]);
+        $query->andFilterWhere(['=', 'type' , $type]);
         $query->andFilterWhere(['=', 'delete_flag' , 0]);
         $query->andFilterWhere(['=', 'category_id_1' , $this->category_id_1]);
         $query->andFilterWhere(['=', 'category_id_2' , $this->category_id_2]);

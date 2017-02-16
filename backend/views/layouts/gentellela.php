@@ -33,7 +33,7 @@ AppAsset::register($this);
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?= Url::to(['']); ?>" class="site_title"><i class="fa fa-paw"></i> <span>Purelamo</span></a>
+              <a href="<?= Url::to(['']); ?>" class="site_title"><i class="fa fa-paw"></i> <span>Kakomon</span></a>
             </div>
             <div class="clearfix"></div>
             <br />
@@ -42,16 +42,26 @@ AppAsset::register($this);
               <div class="menu_section">
                 <h3>General</h3>
                 <ul class="nav side-menu">
-                    <li><a href="<?= Url::to(['/']); ?>"><i class="fa fa-home"></i> Home </a>
+                    <li><a href="<?= Url::to(['/']); ?>"><i class="fa fa-home"></i>&nbsp;&nbsp;Home </a>
                     </li>
                     <li><a href="<?= Url::to(['/category/index']); ?>"><i class="glyphicon glyphicon-tags"></i> &nbsp;&nbsp;&nbsp;&nbsp;Category </a>
                     </li>
+                    
                     <li><a href="javascript:void(0)"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Question  <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="<?= Url::to(['/question/index']); ?>"><i class="glyphicon glyphicon-th-list"></i>&nbsp;&nbsp;&nbsp;List Question</a></li>
                             <li><a href="<?= Url::to(['/question/save']); ?>"><i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;&nbsp;Add Question</a></li>
                         </ul>
                     </li>
+                    
+                    <li><a href="javascript:void(0)"><i class="glyphicon glyphicon-education"></i> &nbsp;&nbsp;&nbsp;&nbsp;Exam  <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="<?= Url::to(['/exam/index']); ?>"><i class="glyphicon glyphicon-th-list"></i>&nbsp;&nbsp;&nbsp;List Exam</a></li>
+                            <li><a href="<?= Url::to(['/exam/save']); ?>"><i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;&nbsp;Add Exam</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li><a href="<?= Url::to(['/collect/index']); ?>"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Collect </a>
                     <li>
                       <a><i class="fa fa-connectdevelop"></i> Push Notification <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu" >
