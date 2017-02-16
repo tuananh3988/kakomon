@@ -27,7 +27,7 @@ $(".select_cat > span > a").click(function (event) {
     jQuery.ajax({
         url: '/backend/category/detail/' + id,
         beforeSend: function () {
-            //$('#detail-category').addClass('test');
+            showLoadmore();
         },
         success: function (data) {
             if (data.success == 1) {
@@ -49,16 +49,18 @@ $(".select_cat > span > a").click(function (event) {
             }
         },
         complete: function () {
-//            $.unblockUI();
+            hiddenLoadmore();
         },
         fail: function () {
-//            $.unblockUI();
+            hiddenLoadmore();
         }
     });
 });
 
 $('#add-sub-cat').click(function (event) {
     event.preventDefault();
+    //show load more
+    showLoadmore();
     $('#add-sub-cat').attr('disabled', 'disabled');
     $('.kv-detail-crumbs').find('span').removeClass('kv-crumb-active');
     var text_breadcrumbs = $('.kv-detail-crumbs').html();
@@ -67,14 +69,31 @@ $('#add-sub-cat').click(function (event) {
     $('#id-cat').val('(new)');
     $('#type').val('1');
     $('#name').val('');
+    //hidden load more
+    hiddenLoadmore();
 });
 
 $('#add-cat').click(function (event) {
     event.preventDefault();
+    //show load more
+    showLoadmore();
     $('#add-sub-cat').attr('disabled', 'disabled');
+    $('#delete-cat').attr('disabled', 'disabled');
     var text_breadcrumbs = '<span class="kv-crumb-active">Untitled</span>';
     $('.kv-detail-crumbs').html(text_breadcrumbs);
     $('#id-cat').val('(new)');
     $('#type').val('2');
     $('#name').val('');
+    //hidden load more
+    hiddenLoadmore();
 });
+
+function showLoadmore(){
+    $('#detail-category').addClass('show-loadmore');
+}
+function hiddenLoadmore(){
+    setTimeout(function(){
+        $('#detail-category').removeClass('show-loadmore');
+    }, 500);
+    
+}

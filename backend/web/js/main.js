@@ -50,12 +50,21 @@ function getSubCategoty(id, sub_level){
 function ConfirmDeleteQuestion(id){
     var contents = "";
         contents += '<p class=confirm_text>You want to delete this question？</p><div class=dialogItem>';
-        contents += '<input name="id-question" type="hidden" value="'+id+'"/>';
-        contents += '<input class="confirm_ok" type="button" value="OK" onclick="submitformDelete();"/>';
+        contents += '<input class="confirm_ok" type="button" value="OK" onclick="submitformDelete('+id+');"/>';
         contents += '<input type="button" value="Cancer" class="confirm_cancel" onclick="hideDialog();"></div>';   
     showDialog('Confirm Delete', contents, 'prompt');
 }
 
-function submitformDelete(){
-        $('form#form').submit();
-    }
+function submitformDelete(id){
+    $('#id-delete').val(id);
+    $('form#form').submit();
+}
+
+function removeImgAns(id){
+    $('#img-ans-'+id).html('');
+    $('#answer-answer'+ id + '-remove_img_flg').val('1');
+}
+function removeImgQuestion(){
+    $('#img-question').html('');
+    $('#quiz-remove_img_question_flg').val('1');
+}

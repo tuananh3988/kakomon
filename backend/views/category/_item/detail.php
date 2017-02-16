@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
                 <button type="button" class="btn btn-default tooltip-f" id="add-cat" title="add-category">
                     <i class="fa fa-tree"></i>
                 </button>
-                <button type="button" class="btn btn-default tooltip-f" title="delete-category">
+                <button type="button" class="btn btn-default tooltip-f" id="delete-cat" title="delete-category">
                     <i class="fa fa-trash"></i>
                 </button>
             </div>

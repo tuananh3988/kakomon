@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\Quiz;
 use common\models\Category;
+use common\components\Utility;
 
 $this->title = 'Add Question!';
 $subCat1 = [];
@@ -20,7 +21,8 @@ if ($question->category_id_3) {
     $subCat3 = Category::getsubcategory($question->category_id_3);
 }
 ?>
-
+<link rel="stylesheet" href="<?= Yii::$app->request->baseUrl; ?>/css/colorbox.css" />
+<script src="<?= Yii::$app->request->baseUrl; ?>/js/jquery.colorbox.js"></script>
 <div class="">
     <div class="page-title">
         <div class="title_left">
@@ -65,133 +67,56 @@ if ($question->category_id_3) {
                         
                     </div>
                     
+                    <?php if ($flag == 1) : ?>
+                    <?php $img = Utility::getImage('question', $question->quiz_id);?>
+                        <?php if ($img) : ?>
+                            <div class="form-group detail-img" id="img-question">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
+                                <div class="col-md-9 col-sm-9 col-xs-12 img-answer">
+                                    <a href="<?= $img ?>" class="group1"><img src="<?= $img ?>" class="avatar" style="max-width: 100px;"/></a><br/>
+                                    <a href="javascript:void(0)" class="remove" onclick="removeImgQuestion()"><i class="glyphicon glyphicon-trash"></i>&nbsp;</a>
+                                </div>
+                            </div>
+                        <?php endif;?>
+                    <?= $form->field($question, 'remove_img_question_flg')->hiddenInput()->label(false);?>
+                    <?php endif;?>
+                    
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Question Img</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
                             <?= $form->field($question, 'question_img')->fileInput()->label(false) ?>
                         </div>
-                        
                     </div>
 
+                    <?php for ($i= 1; $i <= 8; $i++) : ?>
                     <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 1</label>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer <?= $i;?></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer1'], '[answer1]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                            <?= $form->field($answer['answer'.$i], '[answer'.$i.']content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 1 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer1'], '[answer1]answer_img')->fileInput()->label(false) ?>
+                    <?php if ($flag == 1) : ?>
+                    <?php $img = Utility::getImage('answer', $question->quiz_id, $i);?>
+                        <?php if ($img) : ?>
+                        <div class="form-group detail-img" id="img-ans-<?=$i?>">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
+                            <div class="col-md-9 col-sm-9 col-xs-12 img-answer">
+                                <a href="<?= $img ?>" class="group1"><img src="<?= $img ?>" class="avatar" style="max-width: 100px;"/></a>
+                                <a href="javascript:void(0)" class="remove" onclick="removeImgAns(<?=$i?>)"><i class="glyphicon glyphicon-trash"></i>&nbsp;</a>
+                            </div>
                         </div>
-                        
-                    </div>
-                    
+                        <?php endif;?>
+                    <?php endif;?>
+                    <?= $form->field($answer['answer'.$i], '[answer'.$i.']remove_img_flg')->hiddenInput()->label(false);?>
                     <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 2</label>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer <?= $i; ?> Img</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer2'], '[answer2]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 2 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer2'], '[answer2]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 3</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer3'], '[answer3]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                            <?= $form->field($answer['answer'.$i], '[answer'.$i.']answer_img')->fileInput()->label(false) ?>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 3 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer3'], '[answer3]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 4</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer4'], '[answer4]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 4 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer4'], '[answer4]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 5</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer5'], '[answer5]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 5 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer5'], '[answer5]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 6</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer6'], '[answer6]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 6 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer6'], '[answer6]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 7</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer7'], '[answer7]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 7 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer7'], '[answer7]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 8</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer8'], '[answer8]content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer 8 Img</label>
-                        <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer8'], '[answer8]answer_img')->fileInput()->label(false) ?>
-                        </div>
-                        
-                    </div>
+                    <?php endfor;?>
                     
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Correct Answer<span class="required">*</span></label>
@@ -230,3 +155,14 @@ if ($question->category_id_3) {
         </div>
     </div>
 </div>
+<script>
+    jQuery(function ($) {
+        $(document).ready(function(){
+            $(".group1").colorbox({
+                'photo':true, width:"50%",
+                onOpen:function(){ $('body').addClass('scroll'); },
+                onClosed:function(){ $('body').removeClass('scroll'); }
+            });
+        });
+    });
+</script>

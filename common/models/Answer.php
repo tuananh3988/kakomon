@@ -18,6 +18,7 @@ use yii\behaviors\TimestampBehavior;
 class Answer extends \yii\db\ActiveRecord {
 
     public $answer_img;
+    public $remove_img_flg;
 
     /**
      * @inheritdoc
@@ -38,6 +39,11 @@ class Answer extends \yii\db\ActiveRecord {
                 'value' => date('Y-m-d H:i:s'),
             ],
         ];
+    }
+    
+    public function __construct()
+    {
+        $this->remove_img_flg = 0;
     }
     
     /**
@@ -63,7 +69,8 @@ class Answer extends \yii\db\ActiveRecord {
             'content' => 'Content',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
-            'answer_img' => 'Answer Img'
+            'answer_img' => 'Answer Img',
+            'remove_img_flg' => 'Remove Img Flg'
         ];
     }
 
@@ -79,7 +86,7 @@ class Answer extends \yii\db\ActiveRecord {
      * @inheritdoc
      */
     public function extraFields() {
-        return ['answer_img'];
+        return ['answer_img', 'remove_img_flg'];
     }
 
 }

@@ -29,6 +29,7 @@ use yii\web\Session;
 class Quiz extends \yii\db\ActiveRecord
 {
     public $question_img;
+    public $remove_img_question_flg;
 
     const TYPE_DEFAULT = 1;
     /**
@@ -63,6 +64,7 @@ class Quiz extends \yii\db\ActiveRecord
     public function __construct()
     {
         $this->type = self::TYPE_DEFAULT;
+        $this->remove_img_question_flg = 0;
     }
     
     /**
@@ -97,7 +99,8 @@ class Quiz extends \yii\db\ActiveRecord
             'delete_flag' => 'Delete Flag',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
-            'question_img' => 'Question Img'
+            'question_img' => 'Question Img',
+            'remove_img_question_flg' => 'remove_img_question_flg'
         ];
     }
     
@@ -115,7 +118,7 @@ class Quiz extends \yii\db\ActiveRecord
      */
     public function extraFields()
     {
-        return ['question_img', 'answer'];
+        return ['question_img', 'answer', 'remove_img_question_flg'];
     }
     
     /*
@@ -152,7 +155,6 @@ class Quiz extends \yii\db\ActiveRecord
                 $answer['answer'.$i]->answer_img = UploadedFile::getInstance($answer['answer'.$i], '[answer'. $i .']answer_img');
             }
             
-            
             if ($this->validate() && $this->validateAnswer($dataPost, $answer)) {
                 $utility = new Utility();
                 //insert table quiz
@@ -162,17 +164,35 @@ class Quiz extends \yii\db\ActiveRecord
                 if (UploadedFile::getInstance($this, 'question_img') != NULL) {
                     $utility->uploadImages(UploadedFile::getInstance($this, 'question_img'), 'question', $this->quiz_id);
                 }
+                //update image question
+                if ($flag == 1) {
+                    if ($this->remove_img_question_flg == 1) {
+                        $utility->removeImages('question', $this->quiz_id);
+                    }
+                    if (UploadedFile::getInstance($this, 'question_img') != NULL) {
+                        $utility->uploadImages(UploadedFile::getInstance($this, 'question_img'), 'question', $this->quiz_id);
+                    }
+                }
                 //insert table answer
                 foreach ($dataPost['Answer'] as $key => $value) {
+                    $order = (int) filter_var($key,FILTER_SANITIZE_NUMBER_INT);
                     if (!empty($answer[$key]->content) || UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') != NULL) {
-                        $order = (int) filter_var($key,FILTER_SANITIZE_NUMBER_INT);
                         $answer[$key]->quiz_id = $this->quiz_id;
                         $answer[$key]->order = $order;
                         $answer[$key]->save();
                     }
-                    //
+                    //upload images ans
                     if (UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') != NULL) {
                         $utility->uploadImages(UploadedFile::getInstance($answer[$key], '['.$key.']answer_img'), 'answer', $this->quiz_id,  $order);
+                    }
+                    //update images ans
+                    if ($flag == 1) {
+                        if ($answer[$key]->remove_img_flg == 1) {
+                            $utility->removeImages('answer', $this->quiz_id, $order);
+                        }
+                        if (UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') != NULL) {
+                            $utility->uploadImages(UploadedFile::getInstance($answer[$key], '['.$key.']answer_img'), 'answer', $this->quiz_id,  $order);
+                        }
                     }
                 }
                 //update answer_id

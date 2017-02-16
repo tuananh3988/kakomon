@@ -35,6 +35,12 @@ if ($formSearch->category_id_3) {
         <?= Yii::$app->session->getFlash('sucess_question') ?>
     </div>
 <?php endif; ?>
+<!-- complete message -->
+<?php if (Yii::$app->session->hasFlash('message_delete')) : ?>
+    <div class="alert alert-danger alert-dismissible fade in" role="alert"><?= Yii::$app->session->getFlash('message_delete') ?></div>
+<?php endif; ?>
+<!-- /complete message -->
+
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
@@ -80,7 +86,8 @@ if ($formSearch->category_id_3) {
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_content">
-                <?php ActiveForm::begin(['options' => ['id' => 'form']]); ?>`
+                <?php ActiveForm::begin(['options' => ['id' => 'form']]); ?>
+                <?= Html::hiddenInput('idQuestion', '', ['id' => 'id-delete']) ?>
                 <div id="datatable_wrapper" class="table-responsive">
                     <?php if ($dataProvider->getTotalCount() == 0) : ?>
                         <p class="txtWarning"><span class="iconNo">Data does not exist</span></p>

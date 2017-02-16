@@ -46,7 +46,28 @@ span.fa{
     width: 100%;
     display: inline-block;
 }
-.custom_x_content div.form-group img.avatar{
+.custom_x_content div.form-group img.avatar, .detail-img img.avatar{
     min-height: 100px;
     min-width: 100px;
+}
+
+.show-loadmore{
+    background: #ddd url('../images/loading.gif') center center no-repeat;
+    min-height: 250px;
+    opacity: 0.7;
+}
+.show-loadmore div.kv-detail-container{
+    overflow: hidden;
+    display: none;
+}
+
+.detail-img div.img-answer{
+    position: relative;
+}
+.detail-img div.img-answer a.remove {
+    position: absolute;
+    bottom: 0px;
+    z-index: 999;
+    font-size: 20px;
+    padding-left: 15px;
 }

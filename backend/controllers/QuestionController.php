@@ -48,7 +48,16 @@ class QuestionController extends Controller {
         $dataProvider = $formSearch->getData();
         if ($request->isPost) {
             $post = $request->post();
-            var_dump($post);die;
+            if ($post['idQuestion']){
+                $questionDelete = Quiz::findOne(['quiz_id' => $post['idQuestion']]);
+                $message = '';
+                if ($questionDelete) {
+                    $questionDelete->delete_flag = 1;
+                    $questionDelete->save();
+                    $message = 'You just delete a question!';
+                    Yii::$app->session->setFlash('message_delete', $message);
+                }
+            }
         }
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -105,33 +114,6 @@ class QuestionController extends Controller {
                 $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
                 $answer[$key] = $modelAnswer;
             }
-//            $answer1 = Answer::findOne(['quiz_id' => $quizId, 'order' => 1]);
-//            $answer2 = Answer::findOne(['quiz_id' => $quizId, 'order' => 2]);
-//            $answer3 = Answer::findOne(['quiz_id' => $quizId, 'order' => 3]);
-//            $answer4 = Answer::findOne(['quiz_id' => $quizId, 'order' => 4]);
-//            $answer5 = Answer::findOne(['quiz_id' => $quizId, 'order' => 5]);
-//            $answer6 = Answer::findOne(['quiz_id' => $quizId, 'order' => 6]);
-//            $answer7 = Answer::findOne(['quiz_id' => $quizId, 'order' => 7]);
-//            $answer8 = Answer::findOne(['quiz_id' => $quizId, 'order' => 8]);
-//            $answer1 = ($answer1) ? $answer1 : new Answer();
-//            $answer2 = ($answer2) ? $answer2 : new Answer();
-//            $answer3 = ($answer3) ? $answer3 : new Answer();
-//            $answer4 = ($answer4) ? $answer4 : new Answer();
-//            $answer5 = ($answer5) ? $answer5 : new Answer();
-//            $answer6 = ($answer6) ? $answer6 : new Answer();
-//            $answer7 = ($answer7) ? $answer7 : new Answer();
-//            $answer8 = ($answer8) ? $answer8 : new Answer();
-//            $answer = [
-//                'answer1' => $answer1,
-//                'answer2' => $answer2,
-//                'answer3' => $answer3,
-//                'answer4' => $answer4,
-//                'answer5' => $answer5,
-//                'answer6' => $answer6,
-//                'answer7' => $answer7,
-//                'answer8' => $answer8
-//            ];
-            
             $question = Quiz::find()->where(['quiz_id' => $quizId, 'delete_flag' => 0])->one();
             if (!$question) {
                 return Yii::$app->response->redirect(['error/error']);
@@ -145,7 +127,8 @@ class QuestionController extends Controller {
         return $this->render('save', [
             'rootCat' => $rootCat,
             'question' => $question,
-            'answer' => $answer
+            'answer' => $answer,
+            'flag' => $flag
         ]);
     }
     /*
