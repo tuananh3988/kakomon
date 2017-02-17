@@ -57,6 +57,11 @@ class ExamController extends Controller {
         if (!empty($examId)) {
             $flag = 1;
         }
+        if ($request->isPost) {
+            $dataPost = $request->Post();
+            $exam->load($dataPost);
+            
+        }
         return $this->render('save', [
             'exam' => $exam,
             'flag' => $flag

@@ -27,14 +27,14 @@ $this->title = $title;
                     <div class="form-group"> 
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Type</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($exam, 'type', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList(Exam::$TYPEEXAM, ['prompt' => 'Select type', 'class' => 'form-control'])->label(false) ?>
+                            <?= $form->field($exam, 'title', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12'])->label(false); ?>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="controls">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Start Date</label>
                             <div class="col-md-5 col-sm-9 col-xs-12">
-                                <?= $form->field($exam, 'start_date', ['options' => ['class' => ''], 'template' => '<div class="col-md-12 xdisplay_inputx form-group has-feedback">{input}{error}<span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span></div>'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12 has-feedback-left', 'id' => 'start-time'])->label(false); ?>
+                                <?= $form->field($exam, 'start_date', ['options' => ['class' => ''], 'template' => '<div class="xdisplay_inputx form-group has-feedback">{input}{error}<span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span></div>'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12 has-feedback-left', 'id' => 'start-time'])->label(false); ?>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@ $this->title = $title;
                         <div class="controls">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">End Date</label>
                             <div class="col-md-5 col-sm-9 col-xs-12">
-                                <?= $form->field($exam, 'end_date', ['options' => ['class' => ''], 'template' => '<div class="col-md-12 xdisplay_inputx form-group has-feedback">{input}{error}<span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span></div>'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12 has-feedback-left', 'id' => 'end-time'])->label(false); ?>
+                                <?= $form->field($exam, 'end_date', ['options' => ['class' => ''], 'template' => '<div class="xdisplay_inputx form-group has-feedback">{input}{error}<span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span></div>'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12 has-feedback-left', 'id' => 'end-time'])->label(false); ?>
                             </div>
                         </div>
                     </div>
@@ -61,12 +61,14 @@ $this->title = $title;
 </div>
 <script>
     $(document).ready(function() {
-        $('#end-time').daterangepicker({
-            "singleDatePicker": true,
-            "timePicker": true,
-            "timePicker24Hour": true,
-            "timePickerSeconds": true,
-            "autoApply": true,
+        $('#end-time, #start-time').daterangepicker({
+            singleDatePicker: true,
+            timePicker: true,
+            timePicker24Hour: true,
+            format: 'YYYY-MM-DD hh:mm:ss',
+            timePickerSeconds: true,
+            autoApply: true,
+            timePickerIncrement: 1
         });
     });
     

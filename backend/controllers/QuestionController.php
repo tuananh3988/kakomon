@@ -114,7 +114,7 @@ class QuestionController extends Controller {
                 $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
                 $answer[$key] = $modelAnswer;
             }
-            $question = Quiz::find()->where(['quiz_id' => $quizId, 'type' => 0, 'delete_flag' => 0])->one();
+            $question = Quiz::find()->where(['quiz_id' => $quizId, 'type' => 1, 'delete_flag' => 0])->one();
             if (!$question) {
                 return Yii::$app->response->redirect(['error/error']);
             }

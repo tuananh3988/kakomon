@@ -35,8 +35,9 @@ class Exam extends \yii\db\ActiveRecord
     {
         return [
             [['status', 'type', ' total_quiz'], 'integer'],
-            [['start_date', 'end_date'], 'required'],
+            [['start_date', 'end_date', 'title'], 'required'],
             [['start_date', 'end_date', 'created_date', 'updated_date'], 'safe'],
+            [['start_date', 'end_date'], 'datetime'],
         ];
     }
 
@@ -71,9 +72,10 @@ class Exam extends \yii\db\ActiveRecord
     {
         return [
             'exam_id' => 'Exam ID',
+            'title' => 'Title',
             'status' => 'Status',
             'type' => 'Type',
-            ' total_quiz' => 'Total Quiz',
+            'total_quiz' => 'Total Quiz',
             'start_date' => 'Start Date',
             'end_date' => 'End Date',
             'created_date' => 'Created Date',
