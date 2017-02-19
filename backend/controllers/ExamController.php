@@ -5,11 +5,11 @@ namespace backend\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use backend\models\LoginForm;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\web\Session;
 use common\models\Exam;
+use common\models\ExamQuiz;
 
 class ExamController extends Controller {
 
@@ -35,7 +35,16 @@ class ExamController extends Controller {
     }
 
     public function actionIndex() {
+        $request = Yii::$app->request;
+        $formSearch = new Exam();
+        $param = $request->queryParams;
+        if (!empty($param['Exam'])) {
+            $formSearch->setAttributes($param['Exam']);
+        }
+        $dataProvider = $formSearch->getData();
         return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'formSearch' => $formSearch
         ]);
     }
 
@@ -46,7 +55,17 @@ class ExamController extends Controller {
      */
     
     public function actionDetail($examId){
-        return $this->render('detail', []);
+        $model = new Exam();
+        $examItem = $model->find()->where(['exam_id' => $examId])->one();
+        $modelExamQuiz = new ExamQuiz();
+        $dataProvider = $modelExamQuiz->listQuiz($examId);
+        if (empty($examItem)) {
+            return Yii::$app->response->redirect(['/error/error']);
+        }
+        return $this->render('detail', [
+            'examItem' => $examItem,
+            'dataProvider' => $dataProvider
+        ]);
     }
     
     public function actionSave($examId = NULL) {
@@ -55,12 +74,22 @@ class ExamController extends Controller {
         $exam = new Exam();
         $flag = 0;
         if (!empty($examId)) {
+            $exam = Exam::find()->where(['exam_id' => $examId])->one();
             $flag = 1;
         }
         if ($request->isPost) {
             $dataPost = $request->Post();
             $exam->load($dataPost);
-            
+            if ($exam->validate()) {
+                $exam->save();
+                if ($flag == 0) {
+                    $message = 'Your create successfully exam!';
+                } elseif($flag == 1){
+                    $message = 'You update successfully exam!';
+                }
+                Yii::$app->session->setFlash('sucess_exam',$message);
+                return Yii::$app->response->redirect(['/exam/index']);
+            }
         }
         return $this->render('save', [
             'exam' => $exam,

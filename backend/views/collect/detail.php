@@ -13,6 +13,7 @@ Yii::$app->view->title = 'Detail Question Collect';
 <link rel="stylesheet" href="<?= Yii::$app->request->baseUrl; ?>/css/colorbox.css" />
 <script src="<?= Yii::$app->request->baseUrl; ?>/js/jquery.colorbox.js"></script>
 <div>
+    <?php $form = ActiveForm::begin(['options' => ['class' => '', 'role' => 'form']]); ?>
     <div class="page-title">
         <div class="title_left">
             <h3>Detail Question Collect</h3>
@@ -24,36 +25,50 @@ Yii::$app->view->title = 'Detail Question Collect';
             <div class="x_panel">
                 <div class="x_title">
                     <h2>Basic Information Question Collect</h2>
+                    <ul class="nav navbar-right panel_toolbox custom_toolbox">
+                        <?= $form->field($modelExamQuiz, 'exam_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($listExam, ['prompt' => 'Select Exam', 'class' => 'form-control select-sub1-cat'])->label('') ?>
+                        <?= Html::submitButton('Add Exam', ['class' => 'btn btn-success', 'name' => 'button_create']) ?>
+                    </ul>
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content basic-info">
                     <br>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Question:</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Question :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
-                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= $quizItem->question ?></label>
+                            <label class="control-label col-md-12 col-sm-3 col-xs-12"><?= $quizItem->question ?></label>
                         </div>
                     </div>
+                    <?php $img = Utility::getImage('question', $quizItem->quiz_id);?>
+                    <?php if ($img) : ?>
+                        <div class="form-group row detail-img" id="img-question">
+                            <label class="control-label col-md-2 col-sm-3 col-xs-12">Img Question</label>
+                            <div class="col-md-10 col-sm-9 col-xs-12 img-answer">
+                                <a href="<?= $img ?>" class="group1"><img src="<?= $img ?>" class="avatar" style="max-width: 100px;"/></a><br/>
+                            </div>
+                        </div>
+                    <?php endif;?>
+                    
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Category root</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Category root :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_1); ?></label>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub1 category</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub1 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_2);?></label>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub2 category</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub2 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_3);?></label>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub3 category</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub3 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_4);?></label>
                         </div>
@@ -128,6 +143,7 @@ Yii::$app->view->title = 'Detail Question Collect';
             </div>
         </div>
     </div>
+    <?php ActiveForm::end(); ?>
 </div>
 <script>
     jQuery(function ($) {

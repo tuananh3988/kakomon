@@ -71,3 +71,11 @@ span.fa{
     font-size: 20px;
     padding-left: 15px;
 }
+
+.custom_toolbox{
+    display: inline-block;
+}
+.custom_toolbox div.field-examquiz-exam_id{
+    float: left;
+    margin-right: 15px;
+}

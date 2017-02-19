@@ -25,9 +25,15 @@ $this->title = $title;
                 <div class="x_content">
                     <?php $form = ActiveForm::begin(['options' => ['class' => 'form-horizontal form-label-left', 'role' => 'form']]); ?>
                     <div class="form-group"> 
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Type</label>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Name</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($exam, 'title', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12'])->label(false); ?>
+                            <?= $form->field($exam, 'name', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12'])->label(false); ?>
+                        </div>
+                    </div>
+                    <div class="form-group"> 
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Total Question</label>
+                        <div class="col-md-5 col-sm-9 col-xs-12">
+                            <?= $form->field($exam, 'total_quiz', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12'])->label(false); ?>
                         </div>
                     </div>
                     <div class="form-group">
@@ -62,13 +68,15 @@ $this->title = $title;
 <script>
     $(document).ready(function() {
         $('#end-time, #start-time').daterangepicker({
+            autoApply: true,
             singleDatePicker: true,
             timePicker: true,
             timePicker24Hour: true,
-            format: 'YYYY-MM-DD hh:mm:ss',
+            format: 'YYYY-MM-DD HH:mm:ss',
             timePickerSeconds: true,
-            autoApply: true,
             timePickerIncrement: 1
+        }, function(start, end, label) {
+          console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
         });
     });
     

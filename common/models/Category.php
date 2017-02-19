@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 /**
  * This is the model class for table "category".
  *
@@ -45,6 +46,19 @@ class Category extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                          ActiveRecord::EVENT_BEFORE_INSERT => ['created_date'],
+                          ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_date'],
+                ],
+                'value' => date('Y-m-d H:i:s'),
+            ],
+        ];
+    }
     /**
      * @inheritdoc
      */
@@ -156,7 +170,6 @@ class Category extends \yii\db\ActiveRecord
             $category->name = $this->name;
             $category->parent_id = $this->idParent;
             $category->level = $parentCat->level + 1;
-            $category->created_date = date('Y-m-d H:i:s');
             $category->save();
             return $category->cateory_id;
         }
@@ -166,7 +179,6 @@ class Category extends \yii\db\ActiveRecord
             $categoryRoot->name = $this->name;
             $categoryRoot->parent_id = 0;
             $categoryRoot->level = 1;
-            $categoryRoot->created_date = date('Y-m-d H:i:s');
 
             $categoryRoot->save();
             return $categoryRoot->cateory_id;
@@ -203,5 +215,29 @@ class Category extends \yii\db\ActiveRecord
             $data = $subCat;
         }
         return $data;
+    }
+    
+    /*
+     * Check quiz
+     * 
+     * Auth : 
+     * Create : 20-02-2017
+     */
+    
+    public static function checkQuizWithCategory($catId){
+        $list = [];
+        $list[] = $parentId;
+        $i = 1;
+        while ($parentId != '0') {
+            $query = Users::findOne(['id' => $parentId]);
+            if ($query && $query->parent_id != '0'){
+                $i++;
+                $list[] = $query->parent_id;
+                $parentId = $query->parent_id;
+            } else {
+                $parentId = 0;
+            }
+        }
+        return $list;
     }
 }

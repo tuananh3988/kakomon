@@ -29,31 +29,40 @@ Yii::$app->view->title = 'Detail Question';
                 <div class="x_content basic-info">
                     <br>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Question:</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Question :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= $quizItem->question ?></label>
                         </div>
                     </div>
+                    <?php $img = Utility::getImage('question', $quizItem->quiz_id);?>
+                    <?php if ($img) : ?>
+                        <div class="form-group row detail-img" id="img-question">
+                            <label class="control-label col-md-2 col-sm-3 col-xs-12">Img Question :</label>
+                            <div class="col-md-10 col-sm-9 col-xs-12 img-answer">
+                                <a href="<?= $img ?>" class="group1"><img src="<?= $img ?>" class="avatar" style="max-width: 100px;"/></a><br/>
+                            </div>
+                        </div>
+                    <?php endif;?>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Category root</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Category root :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_1); ?></label>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub1 category</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub1 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_2);?></label>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub2 category</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub2 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_3);?></label>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub3 category</label>
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub3 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_4);?></label>
                         </div>

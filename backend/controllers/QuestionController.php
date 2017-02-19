@@ -74,9 +74,9 @@ class QuestionController extends Controller {
      */
     public function actionDetail($quizId) {
         $model = new Quiz();
-        $quizItem = $model->find()->where(['quiz_id' => $quizId, 'delete_flag' => 0])->one();
+        $quizItem = $model->find()->where(['quiz_id' => $quizId, 'type' => 1,'delete_flag' => 0])->one();
         if (empty($quizItem)) {
-            Yii::$app->response->redirect(['/error/error']);
+            return Yii::$app->response->redirect(['/error/error']);
         }
         
         return $this->render('detail', ['quizItem' => $quizItem]);
