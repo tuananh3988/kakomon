@@ -19,7 +19,7 @@ class CategoryController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'detail'],
+                        'actions' => ['index', 'detail', 'checkdelete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -56,6 +56,20 @@ class CategoryController extends Controller {
         //request post
         if ($request->isPost) {
             $dataPost = $request->Post();
+            //delete category
+            if ($dataPost['Category']['flagDelete'] == 'delete') {
+                $messageDelete = '';
+                if (Category::checkQuizWithCategory($dataPost['Category']['idParent'])) {
+                    $categoryDetail = Category::findOne(['cateory_id' => $dataPost['Category']['idParent']]);
+                    $categoryDetail->delete();
+                    $messageDelete = 'Your delete successfully category!';
+                } else {
+                    $messageDelete = 'You can not delete this category!';
+                }
+                $session->setFlash('sucess',$messageDelete);
+                return Yii::$app->response->redirect(['/category/index']);
+            }
+            //update or add category
             if ($dataPost['Category']['type'] == 0) {
                 $firstCategory = Category::findOne(['cateory_id' => $dataPost['Category']['cateory_id']]);
             }
@@ -109,7 +123,8 @@ class CategoryController extends Controller {
                 'id' => $detail->cateory_id,
                 'name' => $detail->name,
                 'level' => $detail->level,
-                'breadcrumbs' => $this->renderBreadCrumbs($id)
+                'breadcrumbs' => $this->renderBreadCrumbs($id),
+                'flag_delete' => (Category::checkQuizWithCategory($id)) ? 0 : 1
             ];
         } else {
             $result['success'] = 0;
@@ -153,5 +168,25 @@ class CategoryController extends Controller {
             }
         }
         return $textBreadCrumbs;
+    }
+    
+    /*
+     * Auth : 
+     * 
+     * Method :
+     * Create : 12-02-2017
+     */
+    
+    public function actionCheckdelete() {
+        $result = [];
+        $request = Yii::$app->request;
+        $id = $request->getQueryParam('id');
+        $result['success'] = 1;
+        if (!Category::checkQuizWithCategory($id)) {
+            $result['success'] = 0;
+            $result['message'] = 'You can not delete this category!';
+        }
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        return $result;
     }
 }

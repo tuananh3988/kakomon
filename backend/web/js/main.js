@@ -68,3 +68,30 @@ function removeImgQuestion(){
     $('#img-question').html('');
     $('#quiz-remove_img_question_flg').val('1');
 }
+
+$('#delete-cat').click(function() {
+    var id = $('#id-parent').val();
+    $('#flag-delete').val('delete');
+    jQuery.ajax({
+        url: '/backend/category/checkdelete/' + id,
+        success: function (data) {
+            if (data.success == 1) {
+               var contents = "";
+                    contents += '<p class=confirm_text>You want to delete this category？</p><div class=dialogItem>';
+                    contents += '<input class="confirm_ok" type="button" value="OK" onclick="submitformDeleteCat();"/>';
+                    contents += '<input type="button" value="Cancer" class="confirm_cancel" onclick="hideDialog();"></div>';   
+                showDialog('Confirm Delete', contents, 'prompt');
+            } else {
+                alert(data.message, '', function () {
+                    window.location.reload();
+                });
+            }
+        },
+        complete: function () {}
+    });
+})
+
+
+function submitformDeleteCat(){
+    $('form#form').submit();
+}

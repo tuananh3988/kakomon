@@ -296,4 +296,26 @@ class Quiz extends \yii\db\ActiveRecord
         ];
         return $dataProvider;
     }
+    
+    /*
+     * get list category by Id
+     * 
+     * Auth : 
+     * Create :
+     */
+    
+    public static function getListCategoryById($catId){
+        $query = new \yii\db\Query();
+        $query->select(['quiz.*'])
+                ->from('quiz');
+        $query->where(['delete_flag' => 0]);
+        $query->andWhere([
+            'or',
+            'category_id_1 = ' . $catId,
+            'category_id_2 = ' . $catId,
+            'category_id_3 = ' . $catId,
+            'category_id_4 = ' . $catId
+        ]);
+        return $query->all();
+    }
 }

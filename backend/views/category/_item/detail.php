@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\models\Category;
 ?>
 <div class="col-sm-8" id="detail-category">
     <div id="w0-detail" class="kv-detail-container">
@@ -14,7 +15,7 @@ use yii\widgets\ActiveForm;
                 <button type="button" class="btn btn-default tooltip-f" id="add-cat" title="add-category">
                     <i class="fa fa-tree"></i>
                 </button>
-                <button type="button" class="btn btn-default tooltip-f" id="delete-cat" title="delete-category">
+                <button type="button" class="btn btn-default tooltip-f" id="delete-cat" title="delete-category" <?php if($firstCategory->cateory_id == NULL || !Category::checkQuizWithCategory($firstCategory->cateory_id)) echo 'disabled="disabled"'?>>
                     <i class="fa fa-trash"></i>
                 </button>
             </div>
@@ -22,7 +23,8 @@ use yii\widgets\ActiveForm;
             <div class="clearfix"></div>
         </div>
         <?php if($firstCategory) :?>
-            <?php $form = ActiveForm::begin(['options' => ['class' => 'form-horizontal form-label-left', 'role' => 'form']]); ?>
+            <?php $form = ActiveForm::begin(['options' => ['class' => 'form-horizontal form-label-left', 'role' => 'form', 'id' => 'form']]); ?>
+            <?= $form->field($firstCategory, 'flagDelete', ['options' => ['class' => ''], 'template' => '{input}{error}'])->hiddenInput(['id' => 'flag-delete'])->label(false);?>
             <?= $form->field($firstCategory, 'idParent', ['options' => ['class' => ''], 'template' => '{input}{error}'])->hiddenInput(['id' => 'id-parent'])->label(false);?>
             <?= $form->field($firstCategory, 'level', ['options' => ['class' => ''], 'template' => '{input}{error}'])->hiddenInput(['id' => 'level'])->label(false);?>
             <?= $form->field($firstCategory, 'type', ['options' => ['class' => ''], 'template' => '{input}{error}'])->hiddenInput(['id' => 'type'])->label(false);?>

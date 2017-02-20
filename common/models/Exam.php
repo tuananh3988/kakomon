@@ -55,23 +55,23 @@ class Exam extends \yii\db\ActiveRecord
             ],
         ];
     }
-	
+    
     public function __construct()
     {
         $this->status = 0;
     }
-	
+    
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['name', 'total_quiz', 'start_date', 'end_date'], 'required'],
+            [['name', 'total_quiz', 'end_date'], 'required'],
             [['status', 'type', 'total_quiz'], 'integer'],
             [['start_date', 'end_date', 'created_date', 'updated_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
-            ['end_date', 'validateEndDate'],
+            //['end_date', 'validateEndDate'],
         ];
     }
 
@@ -162,7 +162,8 @@ class Exam extends \yii\db\ActiveRecord
         if (count($exam) > 0){
             foreach ($exam as $key => $value) {
                 $examQuiz = ExamQuiz::find()->where(['exam_id' => $value['exam_id'], 'quiz_id' => $quizId])->one();
-                if (!$examQuiz) {
+                $totalQuiz = ExamQuiz::getCountQuizByIdExam($value['exam_id']);
+                if (!$examQuiz && ($totalQuiz < $value['total_quiz'])) {
                     $listExam[$value['exam_id']] = $value['name'];
                 }
             }

@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use common\models\Quiz;
 /**
  * This is the model class for table "category".
  *
@@ -19,6 +20,7 @@ class Category extends \yii\db\ActiveRecord
 {
     public $idParent;
     public $type;
+    public $flagDelete;
     /**
      * @inheritdoc
      */
@@ -72,7 +74,8 @@ class Category extends \yii\db\ActiveRecord
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
             'type' => 'Type',
-            'idParent' => 'idParent'
+            'idParent' => 'idParent',
+            'flagDelete' => 'flagDelete'
         ];
     }
     
@@ -90,7 +93,7 @@ class Category extends \yii\db\ActiveRecord
      */
     public function extraFields()
     {
-        return ['idParent', 'type'];
+        return ['idParent', 'type', 'flagDelete'];
     }
     
     /*
@@ -225,19 +228,11 @@ class Category extends \yii\db\ActiveRecord
      */
     
     public static function checkQuizWithCategory($catId){
-        $list = [];
-        $list[] = $parentId;
-        $i = 1;
-        while ($parentId != '0') {
-            $query = Users::findOne(['id' => $parentId]);
-            if ($query && $query->parent_id != '0'){
-                $i++;
-                $list[] = $query->parent_id;
-                $parentId = $query->parent_id;
-            } else {
-                $parentId = 0;
-            }
+        $catChild = Category::find()->where(['parent_id' => $catId])->all();
+        $quiz = Quiz::getListCategoryById($catId);
+        if ((count($catChild) > 0) || (count($quiz) > 0)) {
+            return FALSE;
         }
-        return $list;
+        return TRUE;
     }
 }

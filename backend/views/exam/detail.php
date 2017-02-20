@@ -25,6 +25,7 @@ Yii::$app->view->title = 'Detail Exam';
     <?php endif; ?>
 
     <div class="row">
+        <?php $form = ActiveForm::begin(['options' => ['class' => '', 'role' => 'form']]); ?>
         <div class="col-md-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_title">
@@ -63,9 +64,22 @@ Yii::$app->view->title = 'Detail Exam';
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= $examItem->end_date ?></label>
                         </div>
                     </div>
+                    
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
+                                <a href="<?= Url::to(['/exam/index']); ?>" class="btn btn-success"><i class="fa fa-reply"></i>&nbsp;&nbsp;Back</a>
+                                <?php if ($totalQuiz == $examItem->total_quiz) : ?>
+                                <?= Html::submitButton('<i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;Start Exam', ['class' => 'btn btn-success', 'name' => 'Start Exam']) ?>
+                                <?php endif;?>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
+        <?php ActiveForm::end(); ?>
     </div>
     
     <div class="row">
@@ -135,17 +149,6 @@ Yii::$app->view->title = 'Detail Exam';
                         <?php Pjax::end(); ?>
                     <?php endif; ?>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <div class="form-group">
-                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
-                    <a href="<?= Url::to(['/exam/index']); ?>" class="btn btn-success"><i class="fa fa-reply"></i>&nbsp;&nbsp;Back</a>
-                    <a href="<?= Url::to(['/exam/save', 'examId' => $examItem->exam_id]); ?>" class="btn btn-success"><i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;Edit</a>
                 </div>
             </div>
         </div>

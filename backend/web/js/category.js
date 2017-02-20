@@ -44,6 +44,11 @@ $(".select_cat > span > a").click(function (event) {
                 } else {
                     $('#add-sub-cat').removeAttr('disabled');
                 }
+                if (data.data.flag_delete == 1) {
+                    $('#delete-cat').attr('disabled', 'disabled');
+                } else {
+                    $('#delete-cat').removeAttr('disabled');
+                }
             } else {
                 alert(data.message, '', function () {
                     window.location.reload();

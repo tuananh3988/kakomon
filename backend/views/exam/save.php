@@ -36,14 +36,7 @@ $this->title = $title;
                             <?= $form->field($exam, 'total_quiz', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12'])->label(false); ?>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="controls">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Start Date</label>
-                            <div class="col-md-5 col-sm-9 col-xs-12">
-                                <?= $form->field($exam, 'start_date', ['options' => ['class' => ''], 'template' => '<div class="xdisplay_inputx form-group has-feedback">{input}{error}<span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span></div>'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12 has-feedback-left', 'id' => 'start-time'])->label(false); ?>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="form-group">
                         <div class="controls">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">End Date</label>

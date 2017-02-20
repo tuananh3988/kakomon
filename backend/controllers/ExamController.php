@@ -55,15 +55,26 @@ class ExamController extends Controller {
      */
     
     public function actionDetail($examId){
+        $session = Yii::$app->session;
+        $request = Yii::$app->request;
+        
         $model = new Exam();
         $examItem = $model->find()->where(['exam_id' => $examId])->one();
         $modelExamQuiz = new ExamQuiz();
         $dataProvider = $modelExamQuiz->listQuiz($examId);
+        $totalQuiz = ExamQuiz::getCountQuizByIdExam($examId);
         if (empty($examItem)) {
             return Yii::$app->response->redirect(['/error/error']);
         }
+        if ($request->isPost) {
+            $examItem->start_date = date('Y-m-d H:i:s');
+            $examItem->save(false);
+            $message = 'You start exam!';
+            Yii::$app->session->setFlash('sucess_exam',$message);
+        }
         return $this->render('detail', [
             'examItem' => $examItem,
+            'totalQuiz' => $totalQuiz,
             'dataProvider' => $dataProvider
         ]);
     }
