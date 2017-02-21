@@ -67,6 +67,7 @@ class ExamController extends Controller {
             return Yii::$app->response->redirect(['/error/error']);
         }
         if ($request->isPost) {
+            $examItem->status = 1;
             $examItem->start_date = date('Y-m-d H:i:s');
             $examItem->save(false);
             $message = 'You start exam!';

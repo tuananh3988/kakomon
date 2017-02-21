@@ -157,8 +157,10 @@ Yii::$app->view->title = 'List Question';
                                     'label' => '#',
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
-                                return '<div class="action"><a data-pjax="0" href="' . Url::to(['/exam/save',
+                                        if ($data['status'] == 0) {
+                                            return '<div class="action"><a data-pjax="0" href="' . Url::to(['/exam/save',
                                             'examId' => $data["exam_id"]]) . '"><i class="fa fa-edit"></i></a>' . '&nbsp&nbsp&nbsp';
+                                        }
                             }
                                 ],
                             ],

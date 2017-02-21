@@ -69,7 +69,7 @@ Yii::$app->view->title = 'Detail Exam';
                         <div class="form-group">
                             <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
                                 <a href="<?= Url::to(['/exam/index']); ?>" class="btn btn-success"><i class="fa fa-reply"></i>&nbsp;&nbsp;Back</a>
-                                <?php if ($totalQuiz == $examItem->total_quiz) : ?>
+                                <?php if ($totalQuiz == $examItem->total_quiz && ($examItem->status == 0)) : ?>
                                 <?= Html::submitButton('<i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;Start Exam', ['class' => 'btn btn-success', 'name' => 'Start Exam']) ?>
                                 <?php endif;?>
                             </div>
