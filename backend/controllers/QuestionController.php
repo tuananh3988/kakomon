@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use common\models\Category;
 use common\models\Answer;
 use common\models\Quiz;
+use common\models\QuizAnswer;
 use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\web\Session;
@@ -95,41 +96,50 @@ class QuestionController extends Controller {
         $request = Yii::$app->request;
         $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
         $question = new Quiz();
-        $answer = [
-            'answer1' => new Answer(),
-            'answer2' => new Answer(),
-            'answer3' => new Answer(),
-            'answer4' => new Answer(),
-            'answer5' => new Answer(),
-            'answer6' => new Answer(),
-            'answer7' => new Answer(),
-            'answer8' => new Answer()
-        ];
+        $answer = [];
+        $quizAnswer = [];
+        // create model
+        for ($i =1 ; $i <= 8; $i++) {
+            $keyAns = 'answer'.$i;
+            $keyQuizAns = 'quiz_answer' .$i;
+            $quizAnswer[$keyQuizAns] = new QuizAnswer();
+            $answer[$keyAns] = new Answer();
+        }
         $flag = 0;
         if (!empty($quizId)) {
-            $answer = [];
             for ($i =1 ; $i <= 8; $i++) {
                 $key = 'answer' .$i;
+                $keyQuizAns = 'quiz_answer' .$i;
                 $modelAnswer = Answer::findOne(['quiz_id' => $quizId, 'order' => $i]);
                 $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
                 $answer[$key] = $modelAnswer;
+                if ($modelAnswer) {
+                    $modelQuizAns = QuizAnswer::findOne(['quiz_id' => $quizId, 'answer_id' => $modelAnswer->answer_id]);
+                    $modelQuizAns = ($modelQuizAns) ? $modelQuizAns : new QuizAnswer();
+                } else {
+                    $modelQuizAns = new QuizAnswer(); 
+                }
+                $quizAnswer[$keyQuizAns] = $modelQuizAns;
             }
             $question = Quiz::find()->where(['quiz_id' => $quizId, 'type' => 1, 'delete_flag' => 0])->one();
             if (!$question) {
                 return Yii::$app->response->redirect(['error/error']);
             }
-            $answerId = Answer::findOne(['quiz_id' => $quizId, 'answer_id' => $question->answer_id]);
-            $question->answer_id = $answerId->order;
+//            $answerId = Answer::findOne(['quiz_id' => $quizId, 'answer_id' => $question->answer_id]);
+//            $question->answer_id = $answerId->order;
             $flag = 1;
         }
+//        var_dump($quizAnswer);die;
         if ($request->isPost) {
             $dataPost = $request->Post();
-            $question->addQuiz($dataPost, $answer, $flag);
+            //var_dump($dataPost);die;
+            $question->addQuiz($dataPost, $answer, $quizAnswer, $flag);
         }
         return $this->render('save', [
             'rootCat' => $rootCat,
             'question' => $question,
             'answer' => $answer,
+            'quizAnswer' => $quizAnswer,
             'flag' => $flag
         ]);
     }

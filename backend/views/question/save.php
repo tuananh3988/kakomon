@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use common\models\Quiz;
 use common\models\Category;
 use common\components\Utility;
+use dosamigos\tinymce\TinyMce;
 
 $this->title = 'Add Question!';
 $subCat1 = [];
@@ -62,7 +63,19 @@ if ($question->category_id_3) {
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Content Question <span class="required">*</span></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'question')->textarea(['class' => 'form-control','rows' => '4'])->label(false) ?>
+                            <?= $form->field($question, 'question')->widget(TinyMce::className(), [
+                                'options' => ['rows' => 4],
+                                'language' => 'en_CA',
+                                'clientOptions' => [
+                                    'plugins' => [
+                                        "advlist autolink lists link charmap print preview anchor",
+                                        "searchreplace visualblocks code fullscreen",
+                                        "insertdatetime media table contextmenu paste"
+                                    ],
+                                    'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                                ]
+                            ])->label('');?>
+                            
                         </div>
                         
                     </div>
@@ -121,25 +134,14 @@ if ($question->category_id_3) {
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Correct Answer<span class="required">*</span></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?=
-                                $form->field($question, 'answer_id')
-                                    ->radioList(
-                                        [1 => 'Answer 1:', 2 => 'Answer 2:', 3 => 'Answer 3:', 4 => 'Answer 4:', 5 => 'Answer 5:', 6 => 'Answer 6:', 7 => 'Answer 7:', 8 => 'Answer 8:'],
-                                        [
-                                            'item' => function($index, $label, $name, $checked, $value) {
-                                                $return = $label;
-                                                if ($checked) {
-                                                    $return .= '<input type="radio" class="flat" name="' . $name . '" value="' . $value . '" tabindex="3" checked="">';
-                                                } else {
-                                                    $return .= '<input type="radio" class="flat" name="' . $name . '" value="' . $value . '" tabindex="3">';
-                                                }
-                                                
-                                                return $return;
-                                            }
-                                        ]
-                                    )
-                                ->label(false);
-                            ?>
+                            <?php for ($i= 1; $i <= 8; $i++) : ?>
+                                <?php if ($quizAnswer['quiz_answer'.$i]->quiz_answer_id != NULL) :?>
+                                <?php $quizAnswer['quiz_answer'.$i]->quiz_answer_id = 1;?>
+                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_answer_id', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}{error}'])->checkbox(['class' => 'flat', 'checked' => true ,'label'=>'Answer '. $i]); ?>
+                                <?php else : ?>
+                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_answer_id', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}{error}'])->checkbox(['class' => 'flat', 'label'=>'Answer '. $i]); ?>
+                                <?php endif;?>
+                            <?php endfor;?>
                         </div>
                     </div>
                     <div class="ln_solid"></div>

@@ -79,3 +79,9 @@ span.fa{
     float: left;
     margin-right: 15px;
 }
+
+
+.custom-checkbox{
+    display: inline-block;
+    margin-right: 5px;
+}
