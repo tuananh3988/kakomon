@@ -86,7 +86,10 @@ class ExamController extends Controller {
         $exam = new Exam();
         $flag = 0;
         if (!empty($examId)) {
-            $exam = Exam::find()->where(['exam_id' => $examId])->one();
+            $exam = Exam::find()->where(['exam_id' => $examId, 'status' => 0])->one();
+            if (empty($exam)) {
+                return Yii::$app->response->redirect(['/error/error']);
+            }
             $flag = 1;
         }
         if ($request->isPost) {
