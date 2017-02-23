@@ -113,11 +113,14 @@ class QuestionController extends Controller {
                 $modelAnswer = Answer::findOne(['quiz_id' => $quizId, 'order' => $i]);
                 $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
                 $answer[$key] = $modelAnswer;
+                $modelQuizAns = new QuizAnswer();
+                
                 if ($modelAnswer) {
-                    $modelQuizAns = QuizAnswer::findOne(['quiz_id' => $quizId, 'answer_id' => $modelAnswer->answer_id]);
-                    $modelQuizAns = ($modelQuizAns) ? $modelQuizAns : new QuizAnswer();
-                } else {
-                    $modelQuizAns = new QuizAnswer(); 
+                    $modelQuizAnsDetail = QuizAnswer::findOne(['quiz_id' => $quizId, 'answer_id' => $modelAnswer->answer_id]);
+                    if ($modelQuizAnsDetail) {
+                        $modelQuizAns = $modelQuizAnsDetail;
+                        $modelQuizAns->quiz_ans_flg = 1;
+                    }
                 }
                 $quizAnswer[$keyQuizAns] = $modelQuizAns;
             }
@@ -125,14 +128,10 @@ class QuestionController extends Controller {
             if (!$question) {
                 return Yii::$app->response->redirect(['error/error']);
             }
-//            $answerId = Answer::findOne(['quiz_id' => $quizId, 'answer_id' => $question->answer_id]);
-//            $question->answer_id = $answerId->order;
             $flag = 1;
         }
-//        var_dump($quizAnswer);die;
         if ($request->isPost) {
             $dataPost = $request->Post();
-            //var_dump($dataPost);die;
             $question->addQuiz($dataPost, $answer, $quizAnswer, $flag);
         }
         return $this->render('save', [
