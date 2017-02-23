@@ -108,7 +108,7 @@ Yii::$app->view->title = 'Detail Exam';
                                         'label' => 'Question ID',
                                         'headerOptions' => ['class' => 'icon-sort'],
                                         'content' => function ($data) {
-                                            return '<a data-pjax="0" href="' . Url::to(['/question/detail',
+                                            return '<a data-pjax="0" href="' . Url::to(['/collect/detail',
                                                         'quizId' => $data["quiz_id"]]) . '">' . $data['quiz_id'] . '</a>';
                                         }
                                     ],

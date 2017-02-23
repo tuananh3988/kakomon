@@ -141,7 +141,7 @@ class Quiz extends \yii\db\ActiveRecord
                 }
               
             } else {
-                if (($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) &&  empty($answer['answer'.$this->answer_id]->content) && (UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL) && (!$utility->checkExitImages('answer', $idQuiz, $this->answer_id) || $answer['answer'.$this->answer_id]->remove_img_flg == 1)) {
+                if (($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) &&  empty($answer['answer'.$id]->content) && (UploadedFile::getInstance($answer['answer'.$id], '[answer'.$id.']answer_img') == NULL) && (!$utility->checkExitImages('answer', $idQuiz, $id) || $answer['answer'.$id]->remove_img_flg == 1)) {
                     $session->setFlash('validate_answer','Answer not map');
                     return FALSE;
                     break;
@@ -216,15 +216,29 @@ class Quiz extends \yii\db\ActiveRecord
                         if ($answer[$key]->order != NULL && empty($answer[$key]->content)) {
                             $answer[$key]->save();
                         }
+                        //insert quiz answer
+                        if ($utility->checkExitImages('answer', $this->quiz_id, $order) && ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1)){
+                            $quizAnswer[$keyQuizAns]->quiz_id = $this->quiz_id;
+                            $quizAnswer[$keyQuizAns]->answer_id = $answer[$key]->answer_id;
+                            $quizAnswer[$keyQuizAns]->save();
+                        }
+                        //remove images
                         if ($answer[$key]->remove_img_flg == 1) {
                             $utility->removeImages('answer', $this->quiz_id, $order);
                         }
+                        //upload images
                         if (UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') != NULL) {
                             $utility->uploadImages(UploadedFile::getInstance($answer[$key], '['.$key.']answer_img'), 'answer', $this->quiz_id,  $order);
                         }
-                        //delete ans
+                        //delete ans if not input content and input images
                         if (empty($answer[$key]->content) && UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') == NULL && !$utility->checkExitImages('answer', $this->quiz_id, $order)) {
                             $answer[$key]->delete();
+                            QuizAnswer::deleteAll(['quiz_id' => $this->quiz_id, 'answer_id' => $answer[$key]->answer_id]);
+                        }
+                        
+                        //delete quiz_answer if not choise
+                        if ($quizAnswer[$keyQuizAns]->quiz_answer_id && ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 0)) {
+                            $quizAnswer[$keyQuizAns]->delete();
                         }
                     }
                 }
