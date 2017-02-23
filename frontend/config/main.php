@@ -12,17 +12,10 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'request' => [
-            'csrfParam' => '_csrf-frontend',
-        ],
         'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
-        ],
-        'session' => [
-            // this is the name of the session cookie used for login on the frontend
-            'name' => 'advanced-frontend',
+            'identityClass' => 'common\models\Member',
+            'enableSession' => false,
+            'loginUrl' => null,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -45,11 +38,11 @@ return [
         ],
         'request' => [
             'baseUrl' => '/api',
-            'enableCookieValidation' => true,
-            'enableCsrfValidation' => false,
-            'cookieValidationKey' => 'xxxxxxx',
         ],
-        
+        'response' => [
+            'format' => yii\web\Response::FORMAT_JSON,
+        ]
+
     ],
     'params' => $params,
 ];
