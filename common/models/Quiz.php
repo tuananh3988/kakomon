@@ -76,7 +76,7 @@ class Quiz extends \yii\db\ActiveRecord
             [['type', 'category_id_1', 'category_id_2', 'category_id_3', 'category_id_4', 'staff_create', 'delete_flag'], 'integer'],
             [['question'], 'required'],
             [['created_date', 'updated_date'], 'safe'],
-            [['question'], 'string', 'max' => 255],
+            //[['question'], 'string', 'max' => 255],
             [['question_img'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
@@ -128,26 +128,27 @@ class Quiz extends \yii\db\ActiveRecord
      * Create : 15-02-2017
      */
     public function validateAnswer($dataPost, $answer, $flag, $idQuiz = null){
-        return TRUE;
-//        if ($this->answer_id) {
-//            if ($flag == 0) {
-//                if (empty($answer['answer'.$this->answer_id]->content) && UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL) {
-//                    $this->addError('answer_id', 'Answer not map');
-//                    return false;
-//                }
-//                return TRUE;
-//            } elseif ($flag == 1) {
-//                $utility = new Utility();
-//                if (empty($answer['answer'.$this->answer_id]->content) && UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL && (!$utility->checkExitImages('answer', $idQuiz, $this->answer_id) || $answer['answer'.$this->answer_id]->remove_img_flg == 1)) {
-//                    $this->addError('answer_id', 'Answer not map');
-//                    return false;
-//                }
-//                return TRUE;
-//            }
-//            
-//        } else {
-//            return TRUE;
-//        }
+        $session = Yii::$app->session;
+        foreach ($answer as $key => $value) {
+            $id = (int) filter_var($key,FILTER_SANITIZE_NUMBER_INT);
+            $utility = new Utility();
+            $keyQuizAns = 'quiz_answer'.$id;
+            if ($flag == 0) {
+                if (($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) && empty($answer['answer'.$id]->content) && (UploadedFile::getInstance($answer['answer'.$id], '[answer'.$id.']answer_img') == NULL)) {
+                    $session->setFlash('validate_answer','Answer not map');
+                    return FALSE;
+                    break;
+                }
+              
+            } else {
+                if (($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) &&  empty($answer['answer'.$this->answer_id]->content) && (UploadedFile::getInstance($answer['answer'.$this->answer_id], '[answer'.$this->answer_id.']answer_img') == NULL) && (!$utility->checkExitImages('answer', $idQuiz, $this->answer_id) || $answer['answer'.$this->answer_id]->remove_img_flg == 1)) {
+                    $session->setFlash('validate_answer','Answer not map');
+                    return FALSE;
+                    break;
+                }
+            }
+        }
+        return true;
     }
     
     /*
@@ -163,6 +164,7 @@ class Quiz extends \yii\db\ActiveRecord
             $this->load($dataPost);
             for ($i = 1; $i <= 8; $i++) {
                 $answer['answer'.$i]->setAttributes($dataPost['Answer']['answer'.$i]);
+                $quizAnswer['quiz_answer'.$i]->setAttributes($dataPost['QuizAnswer']['quiz_answer'.$i]);
                 $answer['answer'.$i]->answer_img = UploadedFile::getInstance($answer['answer'.$i], '[answer'. $i .']answer_img');
             }
             $idQuiz = '';
@@ -174,10 +176,12 @@ class Quiz extends \yii\db\ActiveRecord
                 //insert table quiz
                 $this->staff_create = Yii::$app->user->identity->id;
                 $this->save();
+                
                 //upload images question
                 if (UploadedFile::getInstance($this, 'question_img') != NULL) {
                     $utility->uploadImages(UploadedFile::getInstance($this, 'question_img'), 'question', $this->quiz_id);
                 }
+                
                 //update image question
                 if ($flag == 1) {
                     if ($this->remove_img_question_flg == 1) {
@@ -187,6 +191,7 @@ class Quiz extends \yii\db\ActiveRecord
                         $utility->uploadImages(UploadedFile::getInstance($this, 'question_img'), 'question', $this->quiz_id);
                     }
                 }
+                
                 //insert table answer
                 foreach ($dataPost['Answer'] as $key => $value) {
                     $order = (int) filter_var($key,FILTER_SANITIZE_NUMBER_INT);
@@ -195,7 +200,7 @@ class Quiz extends \yii\db\ActiveRecord
                         $answer[$key]->quiz_id = $this->quiz_id;
                         $answer[$key]->order = $order;
                         $answer[$key]->save();
-                        if ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_answer_id'] == 1) {
+                        if ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) {
                             $quizAnswer[$keyQuizAns]->quiz_id = $this->quiz_id;
                             $quizAnswer[$keyQuizAns]->answer_id = $answer[$key]->answer_id;
                             $quizAnswer[$keyQuizAns]->save();

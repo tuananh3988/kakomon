@@ -85,3 +85,6 @@ span.fa{
     display: inline-block;
     margin-right: 5px;
 }
+.help-block.show-error{
+    color: #a94442;
+}

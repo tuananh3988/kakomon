@@ -3,7 +3,8 @@
 namespace common\models;
 
 use Yii;
-
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 /**
  * This is the model class for table "quiz_answer".
  *
@@ -15,6 +16,7 @@ use Yii;
  */
 class QuizAnswer extends \yii\db\ActiveRecord
 {
+    public $quiz_ans_flg;
     /**
      * @inheritdoc
      */
@@ -23,6 +25,20 @@ class QuizAnswer extends \yii\db\ActiveRecord
         return 'quiz_answer';
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                          ActiveRecord::EVENT_BEFORE_INSERT => ['created_date'],
+                          ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_date'],
+                ],
+                'value' => date('Y-m-d H:i:s'),
+            ],
+        ];
+    }
+    
     /**
      * @inheritdoc
      */
@@ -46,6 +62,22 @@ class QuizAnswer extends \yii\db\ActiveRecord
             'answer_id' => 'Answer ID',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
+            'quiz_ans_flg' => 'Quiz Ans Flg'
         ];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function safeAttributes() {
+        $safe = parent::safeAttributes();
+        return array_merge($safe, $this->extraFields());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function extraFields() {
+        return ['quiz_ans_flg'];
     }
 }

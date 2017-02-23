@@ -105,7 +105,18 @@ if ($question->category_id_3) {
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer <?= $i;?></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer'.$i], '[answer'.$i.']content')->textarea(['class' => 'form-control','rows' => '2'])->label(false) ?>
+                            <?= $form->field($answer['answer'.$i], '[answer'.$i.']content')->widget(TinyMce::className(), [
+                                'options' => ['rows' => 2],
+                                'language' => 'en_CA',
+                                'clientOptions' => [
+                                    'plugins' => [
+                                        "advlist autolink lists link charmap print preview anchor",
+                                        "searchreplace visualblocks code fullscreen",
+                                        "insertdatetime media table contextmenu paste"
+                                    ],
+                                    'toolbar' => "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+                                ]
+                            ])->label('');?>
                         </div>
                     </div>
                     
@@ -135,14 +146,18 @@ if ($question->category_id_3) {
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Correct Answer<span class="required">*</span></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
                             <?php for ($i= 1; $i <= 8; $i++) : ?>
-                                <?php if ($quizAnswer['quiz_answer'.$i]->quiz_answer_id != NULL) :?>
-                                <?php $quizAnswer['quiz_answer'.$i]->quiz_answer_id = 1;?>
-                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_answer_id', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}{error}'])->checkbox(['class' => 'flat', 'checked' => true ,'label'=>'Answer '. $i]); ?>
+                                <?php if ($quizAnswer['quiz_answer'.$i]->quiz_ans_flg == 1) :?>
+                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_ans_flg', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}'])->checkbox(['class' => 'flat', 'checked' => true ,'label'=>'Answer '. $i]); ?>
                                 <?php else : ?>
-                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_answer_id', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}{error}'])->checkbox(['class' => 'flat', 'label'=>'Answer '. $i]); ?>
+                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_ans_flg', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}'])->checkbox(['class' => 'flat', 'label'=>'Answer '. $i]); ?>
                                 <?php endif;?>
                             <?php endfor;?>
                         </div>
+                        <?php if (Yii::$app->session->hasFlash('validate_answer')): ?>
+                            <div class="help-block show-error">
+                                <?= Yii::$app->session->getFlash('validate_answer') ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="ln_solid"></div>
 

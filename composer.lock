@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+    "hash": "c5f9e598000c15d4db8533756a738fc0",
     "content-hash": "70c2f1313f9844e9ba96853b1eece628",
     "packages": [
         {
@@ -64,7 +65,7 @@
                 "yii 2",
                 "yii2"
             ],
-            "time": "2015-03-28T21:53:43+00:00"
+            "time": "2015-03-28 21:53:43"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -355,7 +356,7 @@
                 " gcm",
                 "yii2"
             ],
-            "time": "2016-03-13T17:18:14+00:00"
+            "time": "2016-03-13 17:18:14"
         },
         {
             "name": "cebe/markdown",
@@ -415,7 +416,7 @@
                 "markdown",
                 "markdown-extra"
             ],
-            "time": "2016-09-14T20:40:20+00:00"
+            "time": "2016-09-14 20:40:20"
         },
         {
             "name": "creocoder/yii2-nested-sets",
@@ -455,7 +456,7 @@
                 "nested sets",
                 "yii2"
             ],
-            "time": "2015-01-27T10:53:51+00:00"
+            "time": "2015-01-27 10:53:51"
         },
         {
             "name": "duccio/apns-php",
@@ -493,7 +494,7 @@
                 "notification",
                 "push"
             ],
-            "time": "2016-02-07T21:17:51+00:00"
+            "time": "2016-02-07 21:17:51"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -537,7 +538,7 @@
             "keywords": [
                 "html"
             ],
-            "time": "2016-07-16T12:58:58+00:00"
+            "time": "2016-07-16 12:58:58"
         },
         {
             "name": "kartik-v/yii2-dialog",
@@ -589,7 +590,7 @@
                 "modal",
                 "yii2"
             ],
-            "time": "2016-09-13T18:15:26+00:00"
+            "time": "2016-09-13 18:15:26"
         },
         {
             "name": "kartik-v/yii2-krajee-base",
@@ -640,7 +641,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-02-22T05:58:53+00:00"
+            "time": "2017-02-22 05:58:53"
         },
         {
             "name": "kartik-v/yii2-tree-manager",
@@ -749,7 +750,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-04-27T18:38:05+00:00"
+            "time": "2016-04-27 18:38:05"
         },
         {
             "name": "php-gcm/php-gcm",
@@ -793,7 +794,7 @@
                 "library",
                 "php"
             ],
-            "time": "2015-05-06T13:25:45+00:00"
+            "time": "2015-05-06 13:25:45"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -847,7 +848,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2017-02-13T07:52:53+00:00"
+            "time": "2017-02-13 07:52:53"
         },
         {
             "name": "tinymce/tinymce",
@@ -893,7 +894,7 @@
                 "tinymce",
                 "wysiwyg"
             ],
-            "time": "2017-02-01T14:27:24+00:00"
+            "time": "2017-02-01 14:27:24"
         },
         {
             "name": "yiisoft/yii2",
@@ -993,7 +994,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2017-02-08T09:04:32+00:00"
+            "time": "2017-02-08 09:04:32"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
@@ -1043,7 +1044,7 @@
                 "bootstrap",
                 "yii2"
             ],
-            "time": "2016-03-17T03:29:28+00:00"
+            "time": "2016-03-17 03:29:28"
         },
         {
             "name": "yiisoft/yii2-composer",
@@ -1093,7 +1094,7 @@
                 "extension installer",
                 "yii2"
             ],
-            "time": "2016-12-20T13:26:02+00:00"
+            "time": "2016-12-20 13:26:02"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
@@ -1143,7 +1144,7 @@
                 "swiftmailer",
                 "yii2"
             ],
-            "time": "2016-09-09T11:48:11+00:00"
+            "time": "2016-09-09 11:48:11"
         }
     ],
     "packages-dev": [
@@ -1220,7 +1221,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2016-04-29T12:21:54+00:00"
+            "time": "2016-04-29 12:21:54"
         },
         {
             "name": "phpspec/php-diff",
@@ -1258,7 +1259,7 @@
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
-            "time": "2016-04-07T12:29:16+00:00"
+            "time": "2016-04-07 12:29:16"
         },
         {
             "name": "yiisoft/yii2-codeception",
@@ -1304,7 +1305,7 @@
                 "yii2"
             ],
             "abandoned": "codeception/codeception",
-            "time": "2016-03-17T03:41:26+00:00"
+            "time": "2016-03-17 03:41:26"
         },
         {
             "name": "yiisoft/yii2-debug",
@@ -1351,7 +1352,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2017-02-21T10:30:50+00:00"
+            "time": "2017-02-21 10:30:50"
         },
         {
             "name": "yiisoft/yii2-faker",
@@ -1398,7 +1399,7 @@
                 "faker",
                 "yii2"
             ],
-            "time": "2015-03-01T06:22:44+00:00"
+            "time": "2015-03-01 06:22:44"
         },
         {
             "name": "yiisoft/yii2-gii",
@@ -1451,7 +1452,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2016-03-18T14:09:46+00:00"
+            "time": "2016-03-18 14:09:46"
         }
     ],
     "aliases": [],
