@@ -88,3 +88,7 @@ span.fa{
 .help-block.show-error{
     color: #a94442;
 }
+
+.table.table-striped.table-bordered tr:hover{
+    cursor: pointer;
+}

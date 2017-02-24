@@ -96,6 +96,14 @@ if ($formSearch->category_id_3) {
                             . '<div id="paging" class="light-theme simple-pagination">{pager}</div></div>',
                             'summary' => '<div class="pageList_data"><strong>ALL {totalCount} Item {begin} ～ {end}</strong>'
                             . '</div><div class="pageList_del"><div class="pageList_del_item"></div></div>',
+                            'rowOptions'   => function ($model, $index, $widget, $grid) {
+                                return [
+                                        'id' => $model['quiz_id'], 
+                                        'onclick' => 'location.href="'
+                                            . Yii::$app->urlManager->createUrl('collect/detail') 
+                                            . '/"+(this.id);'
+                                    ];
+                            },
                             'columns' => [
                                 [
                                     'attribute' => 'quiz_id',
@@ -163,7 +171,7 @@ if ($formSearch->category_id_3) {
                                     'label' => '#',
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
-                                return '<div class="action"><a data-pjax="0" href="javascript:void(0)" onclick="ConfirmDeleteQuestion('.$data["quiz_id"].')"><i class="fa fa-trash-o"></i></a></div>';
+                                return '<div class="action"><a data-pjax="0" href="javascript:void(0)" onclick="ConfirmDeleteQuestion(event, '.$data["quiz_id"].')"><i class="fa fa-trash-o"></i></a></div>';
                             }
                                 ],
                             ],

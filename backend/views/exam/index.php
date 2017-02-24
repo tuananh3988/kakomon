@@ -78,6 +78,14 @@ Yii::$app->view->title = 'List Question';
                             . '<div id="paging" class="light-theme simple-pagination">{pager}</div></div>',
                             'summary' => '<div class="pageList_data"><strong>ALL {totalCount} Item {begin} ～ {end}</strong>'
                             . '</div><div class="pageList_del"><div class="pageList_del_item"></div></div>',
+                            'rowOptions'   => function ($model, $index, $widget, $grid) {
+                                return [
+                                        'id' => $model['exam_id'], 
+                                        'onclick' => 'location.href="'
+                                            . Yii::$app->urlManager->createUrl('exam/detail') 
+                                            . '/"+(this.id);'
+                                    ];
+                            },
                             'columns' => [
                                 [
                                     'attribute' => 'exam_id',

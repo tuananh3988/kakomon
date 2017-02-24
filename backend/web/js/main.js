@@ -47,12 +47,14 @@ function getSubCategoty(id, sub_level){
     
 }
 
-function ConfirmDeleteQuestion(id){
+function ConfirmDeleteQuestion(event, id){
+    event.stopImmediatePropagation();
     var contents = "";
         contents += '<p class=confirm_text>You want to delete this question？</p><div class=dialogItem>';
         contents += '<input class="confirm_ok" type="button" value="OK" onclick="submitformDelete('+id+');"/>';
         contents += '<input type="button" value="Cancer" class="confirm_cancel" onclick="hideDialog();"></div>';   
     showDialog('Confirm Delete', contents, 'prompt');
+    return false;
 }
 
 function submitformDelete(id){

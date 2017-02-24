@@ -32,6 +32,8 @@ class Quiz extends \yii\db\ActiveRecord
     public $remove_img_question_flg;
 
     const TYPE_DEFAULT = 1;
+    const TYPE_CREATE = 2;
+
     /**
      * @inheritdoc
      */
@@ -158,7 +160,7 @@ class Quiz extends \yii\db\ActiveRecord
      * Create : 15-02-2017
      */
     
-    public function addQuiz($dataPost, $answer, $quizAnswer, $flag){
+    public function addQuiz($dataPost, $answer, $quizAnswer, $flag, $type = self::TYPE_DEFAULT){
         $transaction = \yii::$app->getDb()->beginTransaction();
         try {
             $this->load($dataPost);
@@ -174,6 +176,7 @@ class Quiz extends \yii\db\ActiveRecord
             if ($this->validate() && $this->validateAnswer($dataPost, $answer, $flag, $idQuiz)) {
                 $utility = new Utility();
                 //insert table quiz
+                $this->type = $type;
                 $this->staff_create = Yii::$app->user->identity->id;
                 $this->save();
                 
@@ -250,7 +253,11 @@ class Quiz extends \yii\db\ActiveRecord
                     $message = 'You update successfully question!';
                 }
                 Yii::$app->session->setFlash('sucess_question',$message);
-                return Yii::$app->response->redirect(['/question/index']);
+                if ($type == 1) {
+                    return Yii::$app->response->redirect(['/question/index']);
+                } else {
+                    return Yii::$app->response->redirect(['/quick/index']);
+                }
             }
         } catch (Exception $ex) {
             $transaction->rollBack();

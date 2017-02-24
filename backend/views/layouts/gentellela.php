@@ -55,6 +55,17 @@ AppAsset::register($this);
                         </ul>
                     </li>
                     
+                    
+                    <li class="<?= (Yii::$app->controller->id == 'quick') ? 'active' : '';?>">
+                        <a href="javascript:void(0)"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Quick Question  <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="<?= (Yii::$app->controller->id == 'quick') ? 'display: block;' : '';?>">
+                            <li><a href="<?= Url::to(['/quick/index']); ?>"><i class="glyphicon glyphicon-th-list"></i>&nbsp;&nbsp;&nbsp;List Quick Question</a></li>
+                            <li><a href="<?= Url::to(['/quick/save']); ?>"><i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;&nbsp;Add Quick Question</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li><a href="<?= Url::to(['/collect/index']); ?>"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Collect </a>
+                        
                     <li class="<?= (Yii::$app->controller->id == 'exam') ? 'active' : '';?>">
                         <a href="javascript:void(0)"><i class="glyphicon glyphicon-education"></i> &nbsp;&nbsp;&nbsp;&nbsp;Exam  <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu" style="<?= (Yii::$app->controller->id == 'exam') ? 'display: block;' : '';?>">
@@ -63,7 +74,6 @@ AppAsset::register($this);
                         </ul>
                     </li>
                     
-                    <li><a href="<?= Url::to(['/collect/index']); ?>"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Collect </a>
                     <li>
                       <a><i class="fa fa-connectdevelop"></i> Push Notification <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu" >

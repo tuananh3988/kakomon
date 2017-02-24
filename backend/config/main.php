@@ -60,6 +60,8 @@ return [
                 'collect/detail/<quizId:\w+>' => 'collect/detail',
                 'exam/detail/<examId:\w+>' => 'exam/detail',
                 'exam/edit/<examId:\w+>' => 'exam/save',
+                'quick/edit/<quizId:\w+>' => 'quick/save',
+                'quick/detail/<quizId:\w+>' => 'quick/detail',
             ],
         ],
         'request' => [
