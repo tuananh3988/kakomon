@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "member".
@@ -36,13 +38,27 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return 'member';
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                          ActiveRecord::EVENT_BEFORE_INSERT => ['created_date'],
+                          ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_date'],
+                ],
+                'value' => date('Y-m-d H:i:s'),
+            ],
+        ];
+    }
+    
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['status', 'type_blood', 'sex', 'auth_key'], 'integer'],
+            [['status', 'type_blood', 'sex'], 'integer'],
             [['birthday', 'mail', 'password'], 'required'],
             [['birthday', 'created_date', 'updated_date'], 'safe'],
             [['city', 'job', 'favorite_animal', 'favorite_film', 'name', 'furigana', 'mail', 'password', 'nickname'], 'string', 'max' => 255],
@@ -97,5 +113,19 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->auth_key === $authKey;
+    }
+    
+    /*
+     * Find email
+     * 
+     * Auth : 
+     * Create : 25-02-2017
+     */
+    public static function findEmail($email){
+        $emailMember = Member::findOne(['mail' => $email]);
+        if (!$emailMember) {
+            return false;
+        }
+        return true;
     }
 }

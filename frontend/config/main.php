@@ -11,6 +11,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'language' => 'en',
     'components' => [
         'user' => [
             'identityClass' => 'common\models\Member',
@@ -38,6 +39,7 @@ return [
         ],
         'request' => [
             'baseUrl' => '/api',
+            'enableCsrfValidation'=> FALSE
         ],
         'response' => [
             'format' => yii\web\Response::FORMAT_JSON,
