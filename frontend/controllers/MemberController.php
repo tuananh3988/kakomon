@@ -24,6 +24,7 @@ class MemberController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'detail' => ['get'],
+                    'my-info' => ['get'],
                     'create' => ['post'],
                     'login' => ['post'],
                     'update' => ['post'],
@@ -92,6 +93,47 @@ class MemberController extends Controller
         }
         
         return $result;
+    }
+    
+    public function actionMyInfo()
+    {
+        return [
+            'status' => 200,
+                'data' => [
+                    'id' => 1,
+                    'name' => 'anhct',
+                    'comment' => 101,
+                    'liked' => 900,
+                    'like' => 810,
+                    'nashi' => 1500,
+                    'followed' => 200,
+                    'following' => 99,
+                    'category_activity' => [
+                        [
+                            'category_id' => 1,
+                            'category_name' => 'sex',
+                            'total_quiz' => 600,
+                            'time_view' => 2,
+                            'total_complete' => 700,
+                            'comment' => 100,
+                            'like' => 200,
+                            'nashi' => 300,
+                            
+                        ],
+                        [
+                            'category_id' => 2,
+                            'category_name' => 'make love',
+                            'total_quiz' => 600,
+                            'time_view' => 2,
+                            'total_complete' => 700,
+                            'comment' => 100,
+                            'like' => 200,
+                            'nashi' => 300,
+                            
+                        ]
+                    ]
+                ]
+        ];
     }
     
     /*
