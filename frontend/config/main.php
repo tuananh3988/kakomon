@@ -35,6 +35,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'member/info/<id:\d+>' => 'member/info',
             ],
         ],
         'request' => [

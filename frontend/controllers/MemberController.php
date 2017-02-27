@@ -25,6 +25,7 @@ class MemberController extends Controller
                 'actions' => [
                     'detail' => ['get'],
                     'my-info' => ['get'],
+                    'info' => ['get'],
                     'create' => ['post'],
                     'login' => ['post'],
                     'update' => ['post'],
@@ -133,6 +134,28 @@ class MemberController extends Controller
                         ]
                     ]
                 ]
+        ];
+    }
+    
+    public function actionInfo($id)
+    {
+        return [
+            'status' => 200,
+            'data' => [
+                'id' => 2,
+                'name' => 'hiennv',
+                'followed' => 200,
+                'following' => 99,
+                'category_activity' => [
+                    [
+                        'category_id' => 1,
+                        'category_name' => 'sex',
+                        'like' => 100,
+                        'dislike' => 200,
+                        'comment' => 'abc'
+                    ]
+                ]
+            ]
         ];
     }
     
