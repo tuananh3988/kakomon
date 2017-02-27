@@ -7,6 +7,7 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
+use common\models\Comment;
 use yii\web\Response;
 
 /**
@@ -86,7 +87,7 @@ class MemberController extends Controller
             ];
         } else {
             $result = [
-                'status' => 200,
+                'status' => 204,
                 'data' => [
                     'message' => \Yii::t('app', 'data not found')
                 ]
@@ -96,8 +97,39 @@ class MemberController extends Controller
         return $result;
     }
     
+    /*
+     *Member detail
+     * 
+     * Auth :
+     * Create : 27-02-2017
+     */
+    
     public function actionMyInfo()
     {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $result = [];
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        if ($memberDetail) {
+            $result = [
+                'status' => 200,
+                'data' => [
+                    'id' => $memberDetail->member_id,
+                    'name' => $memberDetail->name,
+                    'comment' => Comment::getTotalComment($memberDetail->member_id)
+                ]
+            ];
+        } else {
+            $result = [
+                'status' => 204,
+                'data' => [
+                    'message' => \Yii::t('app', 'data not found')
+                ]
+            ];
+        }
+        
+        return $result;
+        
         return [
             'status' => 200,
                 'data' => [
@@ -211,8 +243,7 @@ class MemberController extends Controller
         }
         if (!empty($reason)) {
             $result = [
-                'status' => 200,
-                'result' => 0,
+                'status' => 400,
                 'data' => $reason
             ];
         } else {
@@ -223,7 +254,6 @@ class MemberController extends Controller
             if ($memberModel->save()) {
                 $result = [
                     'status' => 200,
-                    'result' => 1,
                     'data' => [
                         'access_token' => $memberModel->auth_key
                     ]
@@ -269,8 +299,7 @@ class MemberController extends Controller
         
         if (!empty($reason)) {
             $result = [
-                'status' => 200,
-                'result' => 0,
+                'status' => 400,
                 'data' => $reason
             ];
         } else {
@@ -280,7 +309,6 @@ class MemberController extends Controller
             if ($memberModel->save()) {
                 $result = [
                     'status' => 200,
-                    'result' => 1,
                     'data' => [
                         'access_token' => $memberModel->auth_key
                     ]
@@ -332,14 +360,12 @@ class MemberController extends Controller
         }
         if (!empty($reason)) {
             $result = [
-                'status' => 200,
-                'result' => 0,
+                'status' => 400,
                 'data' => $reason
             ];
         } else {
             $result = [
                 'status' => 200,
-                'result' => 1,
                 'data' => [
                     'access_token' => $memberDetail->auth_key
                 ]
