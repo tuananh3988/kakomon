@@ -8,7 +8,7 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
 use common\models\Comment;
-
+use frontend\models\LoginForm;
 /**
  * Site controller
  */
@@ -309,44 +309,21 @@ class MemberController extends Controller
     
     public function  actionLogin()
     {
+        $modelLogin = new LoginForm();
         $request = Yii::$app->request;
         $dataPost = $request->post();
-        $reason = [];
-        //validate param
-        if (!isset($dataPost['mail']) || ($dataPost['mail'] == '')) {
-            $reason['mail'] = \Yii::t('app', 'required') . ' mail';
-        }
-        
-        $pattern = "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$";
-        
-        if (isset($dataPost['mail']) && (!eregi($pattern,$dataPost['mail']))) {
-            $reason['mail'] = 'Mail '. \Yii::t('app', 'format');
-        }
-        
-        if (!isset($dataPost['password']) || ($dataPost['password'] == '')) {
-            $reason['password'] = \Yii::t('app', 'required') . ' password';
-        }
-        
-        if (isset($dataPost['mail']) && isset($dataPost['password'])) {
-            $memberDetail = Member::findOne(['mail' => $dataPost['mail']]);
-            if (!$memberDetail) {
-                $reason['mail'] = 'Incorrect email address';
-            } else {
-                if (!Yii::$app->security->validatePassword($dataPost['password'],$memberDetail->password)) {
-                    $reason['password'] = 'Incorrect password';
-                }
-            }
-        }
-        if (!empty($reason)) {
+        $modelLogin->setAttributes($dataPost);
+        if (!$modelLogin->validate()) {
             $result = [
                 'status' => 400,
-                'data' => $reason
+                'messages' => $modelLogin->errors
             ];
         } else {
+            $member = Member::findOne(['mail' => $dataPost['mail']]);
             $result = [
                 'status' => 200,
                 'data' => [
-                    'access_token' => $memberDetail->auth_key
+                    'access_token' => $member->auth_key
                 ]
             ];
         }
