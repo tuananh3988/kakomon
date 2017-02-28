@@ -7,7 +7,7 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
-use common\models\Comment;
+use common\models\Activity;
 use frontend\models\LoginForm;
 /**
  * Site controller
@@ -115,7 +115,8 @@ class MemberController extends Controller
                 'data' => [
                     'id' => $memberDetail->member_id,
                     'name' => $memberDetail->name,
-                    'comment' => Comment::getTotalComment($memberDetail->member_id)
+                    'comment' => Activity::getTotalCommentByMember($memberDetail->member_id),
+                    'liked' => Activity::getTotalLikeByMember($memberDetail->member_id)
                 ]
             ];
         } else {

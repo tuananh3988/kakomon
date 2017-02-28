@@ -12,5 +12,6 @@ return[
     'min length' => 'The minimum {field} length is {min_length} characters',
     'field exists' => 'This {field} already exists',
     'data not found' => 'Not found data',
+    'existing' => '{attribute} existing.',
     
 ];

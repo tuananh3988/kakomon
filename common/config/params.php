@@ -13,4 +13,6 @@ return [
         'question' => 'uploads/question/',
         'answer' => 'uploads/answer/'
     ],
+    'limit' => 10,
+    'offset' => 0
 ];

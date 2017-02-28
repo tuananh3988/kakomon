@@ -5,8 +5,9 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+
 /**
- * This is the model class for table "comment".
+ * This is the model class for table "activity".
  *
  * @property integer $comment_id
  * @property integer $member_id
@@ -17,14 +18,27 @@ use yii\behaviors\TimestampBehavior;
  * @property string $created_date
  * @property string $updated_date
  */
-class Comment extends \yii\db\ActiveRecord
+class Activity extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'comment';
+        return 'activity';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['member_id', 'quiz_id', 'content'], 'required'],
+            [['member_id', 'type', 'quiz_id', 'relate_id'], 'integer'],
+            [['created_date', 'updated_date'], 'safe'],
+            [['content'], 'string', 'max' => 255],
+        ];
     }
 
     public function behaviors()
@@ -44,19 +58,6 @@ class Comment extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
-        return [
-            [['member_id', 'quiz_id', 'content'], 'required'],
-            [['member_id', 'type', 'quiz_id', 'relate_id'], 'integer'],
-            [['created_date', 'updated_date'], 'safe'],
-            [['content'], 'string', 'max' => 255],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
@@ -72,14 +73,26 @@ class Comment extends \yii\db\ActiveRecord
     }
     
     /*
+     * Get total like
+     * 
+     * Auth : 
+     * Creat : 28-02-2017
+     */
+    
+    public static function getTotalLikeByMember($memberId)
+    {
+        return Activity::find()->where(['member_id' => $memberId, 'type' => 4])->count();
+    }
+    
+    /*
      * Get total comment
      * 
      * Auth : 
-     * Create : 27-02-2017
+     * Creat : 28-02-2017
      */
     
-    public static function getTotalComment($memberId)
+    public static function getTotalCommentByMember($memberId)
     {
-        return Comment::find()->where(['member_id' => $memberId])->count();
+        return Activity::find()->where(['member_id' => $memberId, 'type' => 1])->count();
     }
 }
