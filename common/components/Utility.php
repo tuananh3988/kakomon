@@ -9,6 +9,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\imagine\Image;
 use yii\web\UploadedFile;
+use common\models\Quiz;
 
 class Utility extends Component
 {
@@ -87,4 +88,23 @@ class Utility extends Component
         }
         return FALSE;
     }
+    
+    /*
+     * render quiz answer
+     * 
+     * Auth : 
+     * Create : 28-02-2017
+     */
+    
+    public static function renderQuizAnswer($data)
+    {
+        $dataQuizAnswer = Quiz::QUIZ_ANSWER;
+        for ($i = 1; $i <= 8; $i++) {
+            if (!empty($data['Quiz']) && $data['Quiz']['quiz_answer'.$i] == 1) {
+                $dataQuizAnswer = substr_replace($dataQuizAnswer, '1', ($i-1), 1);
+            }
+        }
+        return $dataQuizAnswer;
+    }
+    
 }

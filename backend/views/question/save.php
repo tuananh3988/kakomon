@@ -146,11 +146,7 @@ if ($question->category_id_3) {
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Correct Answer<span class="required">*</span></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
                             <?php for ($i= 1; $i <= 8; $i++) : ?>
-                                <?php if ($quizAnswer['quiz_answer'.$i]->quiz_ans_flg == 1) :?>
-                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_ans_flg', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}'])->checkbox(['class' => 'flat', 'checked' => true ,'label'=>'Answer '. $i]); ?>
-                                <?php else : ?>
-                                <?= $form->field($quizAnswer['quiz_answer'.$i], '[quiz_answer'.$i.']quiz_ans_flg', ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}'])->checkbox(['class' => 'flat', 'label'=>'Answer '. $i]); ?>
-                                <?php endif;?>
+                                <?= $form->field($question, 'quiz_answer'.$i, ['options' => ['class' => 'custom-checkbox'], 'template' => '{input}'])->checkbox(['class' => 'flat','label'=>'Answer '. $i]); ?>
                             <?php endfor;?>
                         </div>
                         <?php if (Yii::$app->session->hasFlash('validate_answer')): ?>
