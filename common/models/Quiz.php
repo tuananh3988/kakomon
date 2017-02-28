@@ -30,9 +30,18 @@ class Quiz extends \yii\db\ActiveRecord
 {
     public $question_img;
     public $remove_img_question_flg;
+    public $quiz_answer1;
+    public $quiz_answer2;
+    public $quiz_answer3;
+    public $quiz_answer4;
+    public $quiz_answer5;
+    public $quiz_answer6;
+    public $quiz_answer7;
+    public $quiz_answer8;
 
     const TYPE_DEFAULT = 1;
     const TYPE_CREATE = 2;
+    const QUIZ_ANSWER = '00000000';
 
     /**
      * @inheritdoc
@@ -77,7 +86,9 @@ class Quiz extends \yii\db\ActiveRecord
         return [
             [['type', 'category_id_1', 'category_id_2', 'category_id_3', 'category_id_4', 'staff_create', 'delete_flag'], 'integer'],
             [['question'], 'required'],
+            [['question'], 'string'],
             [['created_date', 'updated_date'], 'safe'],
+            [['quiz_answer'], 'string', 'max' => 255],
             //[['question'], 'string', 'max' => 255],
             [['question_img'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
@@ -97,12 +108,21 @@ class Quiz extends \yii\db\ActiveRecord
             'category_id_3' => 'Category Id 3',
             'category_id_4' => 'Category Id 4',
             'answer_id' => 'Answer',
+            'quiz_answer' => 'Quiz Answer',
             'staff_create' => 'Staff Create',
             'delete_flag' => 'Delete Flag',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
             'question_img' => 'Question Img',
-            'remove_img_question_flg' => 'remove_img_question_flg'
+            'remove_img_question_flg' => 'remove_img_question_flg',
+            'quiz_answer1' => 'Quiz Answer1',
+            'quiz_answer2' => 'Quiz Answer2',
+            'quiz_answer3' => 'Quiz Answer3',
+            'quiz_answer4' => 'Quiz Answer4',
+            'quiz_answer5' => 'Quiz Answer5',
+            'quiz_answer6' => 'Quiz Answer6',
+            'quiz_answer7' => 'Quiz Answer7',
+            'quiz_answer8' => 'Quiz Answer8',
         ];
     }
     
@@ -120,7 +140,8 @@ class Quiz extends \yii\db\ActiveRecord
      */
     public function extraFields()
     {
-        return ['question_img', 'answer', 'remove_img_question_flg'];
+        return ['question_img', 'answer', 'remove_img_question_flg', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4',
+            'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8'];
     }
     
     /*
@@ -129,21 +150,22 @@ class Quiz extends \yii\db\ActiveRecord
      * Auth :
      * Create : 15-02-2017
      */
-    public function validateAnswer($dataPost, $answer, $flag, $idQuiz = null){
+    public function validateAnswer($dataPost, $answer, $flag, $idQuiz = null)
+    {
         $session = Yii::$app->session;
         foreach ($answer as $key => $value) {
             $id = (int) filter_var($key,FILTER_SANITIZE_NUMBER_INT);
             $utility = new Utility();
             $keyQuizAns = 'quiz_answer'.$id;
             if ($flag == 0) {
-                if (($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) && empty($answer['answer'.$id]->content) && (UploadedFile::getInstance($answer['answer'.$id], '[answer'.$id.']answer_img') == NULL)) {
+                if (($dataPost['Quiz'][$keyQuizAns] == 1) && empty($answer['answer'.$id]->content) && (UploadedFile::getInstance($answer['answer'.$id], '[answer'.$id.']answer_img') == NULL)) {
                     $session->setFlash('validate_answer','Answer not map');
                     return FALSE;
                     break;
                 }
               
             } else {
-                if (($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) &&  empty($answer['answer'.$id]->content) && (UploadedFile::getInstance($answer['answer'.$id], '[answer'.$id.']answer_img') == NULL) && (!$utility->checkExitImages('answer', $idQuiz, $id) || $answer['answer'.$id]->remove_img_flg == 1)) {
+                if (($dataPost['Quiz'][$keyQuizAns] == 1) &&  empty($answer['answer'.$id]->content) && (UploadedFile::getInstance($answer['answer'.$id], '[answer'.$id.']answer_img') == NULL) && (!$utility->checkExitImages('answer', $idQuiz, $id) || $answer['answer'.$id]->remove_img_flg == 1)) {
                     $session->setFlash('validate_answer','Answer not map');
                     return FALSE;
                     break;
@@ -160,23 +182,24 @@ class Quiz extends \yii\db\ActiveRecord
      * Create : 15-02-2017
      */
     
-    public function addQuiz($dataPost, $answer, $quizAnswer, $flag, $type = self::TYPE_DEFAULT){
+    public function addQuiz($dataPost, $answer, $flag, $type = self::TYPE_DEFAULT){
         $transaction = \yii::$app->getDb()->beginTransaction();
         try {
             $this->load($dataPost);
             for ($i = 1; $i <= 8; $i++) {
                 $answer['answer'.$i]->setAttributes($dataPost['Answer']['answer'.$i]);
-                $quizAnswer['quiz_answer'.$i]->setAttributes($dataPost['QuizAnswer']['quiz_answer'.$i]);
                 $answer['answer'.$i]->answer_img = UploadedFile::getInstance($answer['answer'.$i], '[answer'. $i .']answer_img');
             }
             $idQuiz = '';
             if ($flag == 1){
                 $idQuiz = $this->quiz_id;
             }
+            
             if ($this->validate() && $this->validateAnswer($dataPost, $answer, $flag, $idQuiz)) {
                 $utility = new Utility();
                 //insert table quiz
                 $this->type = $type;
+                $this->quiz_answer = Utility::renderQuizAnswer($dataPost);
                 $this->staff_create = Yii::$app->user->identity->id;
                 $this->save();
                 
@@ -203,11 +226,6 @@ class Quiz extends \yii\db\ActiveRecord
                         $answer[$key]->quiz_id = $this->quiz_id;
                         $answer[$key]->order = $order;
                         $answer[$key]->save();
-                        if ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1) {
-                            $quizAnswer[$keyQuizAns]->quiz_id = $this->quiz_id;
-                            $quizAnswer[$keyQuizAns]->answer_id = $answer[$key]->answer_id;
-                            $quizAnswer[$keyQuizAns]->save();
-                        }
                     }
                     //upload images ans
                     if (UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') != NULL) {
@@ -218,12 +236,6 @@ class Quiz extends \yii\db\ActiveRecord
                         //update content ans if content null
                         if ($answer[$key]->order != NULL && empty($answer[$key]->content)) {
                             $answer[$key]->save();
-                        }
-                        //insert quiz answer
-                        if ($utility->checkExitImages('answer', $this->quiz_id, $order) && ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 1)){
-                            $quizAnswer[$keyQuizAns]->quiz_id = $this->quiz_id;
-                            $quizAnswer[$keyQuizAns]->answer_id = $answer[$key]->answer_id;
-                            $quizAnswer[$keyQuizAns]->save();
                         }
                         //remove images
                         if ($answer[$key]->remove_img_flg == 1) {
@@ -236,15 +248,10 @@ class Quiz extends \yii\db\ActiveRecord
                         //delete ans if not input content and input images
                         if (empty($answer[$key]->content) && UploadedFile::getInstance($answer[$key], '['.$key.']answer_img') == NULL && !$utility->checkExitImages('answer', $this->quiz_id, $order)) {
                             $answer[$key]->delete();
-                            QuizAnswer::deleteAll(['quiz_id' => $this->quiz_id, 'answer_id' => $answer[$key]->answer_id]);
-                        }
-                        
-                        //delete quiz_answer if not choise
-                        if ($quizAnswer[$keyQuizAns]->quiz_answer_id && ($dataPost['QuizAnswer'][$keyQuizAns]['quiz_ans_flg'] == 0)) {
-                            $quizAnswer[$keyQuizAns]->delete();
                         }
                     }
                 }
+                
                 $transaction->commit();
                 $message ='';
                 if ($flag == 0) {
@@ -263,7 +270,6 @@ class Quiz extends \yii\db\ActiveRecord
             $transaction->rollBack();
             return Yii::$app->response->redirect(['/site/error']);
         }
-        //return TRUE;
     }
     
     /**

@@ -97,48 +97,42 @@ class QuestionController extends Controller {
         $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
         $question = new Quiz();
         $answer = [];
-        $quizAnswer = [];
+        
         // create model
         for ($i =1 ; $i <= 8; $i++) {
             $keyAns = 'answer'.$i;
-            $keyQuizAns = 'quiz_answer' .$i;
-            $quizAnswer[$keyQuizAns] = new QuizAnswer();
             $answer[$keyAns] = new Answer();
         }
         $flag = 0;
         if (!empty($quizId)) {
             for ($i =1 ; $i <= 8; $i++) {
-                $key = 'answer' .$i;
-                $keyQuizAns = 'quiz_answer' .$i;
+                $keyAns = 'answer' .$i;
                 $modelAnswer = Answer::findOne(['quiz_id' => $quizId, 'order' => $i]);
-                $modelAnswer = ($modelAnswer) ? $modelAnswer : new Answer();
-                $answer[$key] = $modelAnswer;
-                $modelQuizAns = new QuizAnswer();
-                
-                if ($modelAnswer) {
-                    $modelQuizAnsDetail = QuizAnswer::findOne(['quiz_id' => $quizId, 'answer_id' => $modelAnswer->answer_id]);
-                    if ($modelQuizAnsDetail) {
-                        $modelQuizAns = $modelQuizAnsDetail;
-                        $modelQuizAns->quiz_ans_flg = 1;
-                    }
-                }
-                $quizAnswer[$keyQuizAns] = $modelQuizAns;
+                $answer[$keyAns] = ($modelAnswer) ? $modelAnswer : new Answer();
             }
             $question = Quiz::find()->where(['quiz_id' => $quizId, 'type' => 1, 'delete_flag' => 0])->one();
+            
             if (!$question) {
                 return Yii::$app->response->redirect(['error/error']);
+            }
+            
+            //set value for quiz_answer
+            $listAnswer = str_split($question->quiz_answer);
+            for ($i = 0; $i < count($listAnswer); $i++) {
+                $key = 'quiz_answer'.($i+1);
+                $question->$key = $listAnswer[$i];
             }
             $flag = 1;
         }
         if ($request->isPost) {
             $dataPost = $request->Post();
-            $question->addQuiz($dataPost, $answer, $quizAnswer, $flag);
+            $question->addQuiz($dataPost, $answer, $flag);
         }
+        //var_dump($question);die;
         return $this->render('save', [
             'rootCat' => $rootCat,
             'question' => $question,
             'answer' => $answer,
-            'quizAnswer' => $quizAnswer,
             'flag' => $flag
         ]);
     }
