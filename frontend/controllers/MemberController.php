@@ -228,53 +228,16 @@ class MemberController extends Controller
     {
         $request = Yii::$app->request;
         $dataPost = $request->post();
-        $reason = [];
+        $memberModel = new Member();
+        $memberModel->setAttributes($dataPost);
+        $memberModel->scenario  = Member::SCENARIO_SAVE;
         //validate param
-        if (!isset($dataPost['birthday']) || ($dataPost['birthday'] == '')) {
-            $reason['birthday'] = \Yii::t('app', 'required') . ' birthday';
-        }
-        if (isset($dataPost['birthday']) && (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$dataPost['birthday']) == 0)) {
-            
-            $reason['birthday'] = 'Birthday '. \Yii::t('app', 'format');
-        }
-        
-        if (!isset($dataPost['sex']) || ($dataPost['sex'] == '')) {
-            $reason['sex'] = \Yii::t('app', 'required') . ' sex';
-        }
-        
-        if (isset($dataPost['sex']) && (!is_numeric($dataPost['sex']))) {
-            $reason['sex'] = 'Sex '. \Yii::t('app', 'format');
-        }
-        
-        if (!isset($dataPost['mail']) || ($dataPost['mail'] == '')) {
-            $reason['mail'] = \Yii::t('app', 'required') . ' mail';
-        }
-        
-        if (isset($dataPost['mail']) && Member::findEmail($dataPost['mail'])) {
-            $reason['mail'] = \Yii::t('app', 'field exists', ['field' => 'mail']);
-        }
-        
-        $pattern = "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$";
-        
-        if (isset($dataPost['mail']) && (!eregi($pattern,$dataPost['mail']))) {
-            $reason['mail'] = 'Mail '. \Yii::t('app', 'format');
-        }
-        
-        if (!isset($dataPost['password']) || ($dataPost['password'] == '')) {
-            $reason['password'] = \Yii::t('app', 'required') . ' password';
-        }
-        
-        if (isset($dataPost['password']) && (strlen($dataPost['password']) < 8)) {
-            $reason['password'] = \Yii::t('app', 'min length', ['field' => 'password', 'min_length' => 8]);
-        }
-        if (!empty($reason)) {
+        if (!$memberModel->validate()) {
             $result = [
                 'status' => 400,
-                'data' => $reason
+                'messages' => $memberModel->errors
             ];
         } else {
-            $memberModel = new Member();
-            $memberModel->setAttributes($dataPost);
             $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
             $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
             if ($memberModel->save()) {
@@ -305,33 +268,23 @@ class MemberController extends Controller
         $request = Yii::$app->request;
         $dataPost = $request->post();
         $param = $request->queryParams;
-        $reason = [];
-        //validate param
-        if (!isset($dataPost['birthday']) || ($dataPost['birthday'] == '')) {
-            $reason['birthday'] = \Yii::t('app', 'required') . ' birthday';
+        $memberModel = Member::findOne(['auth_key' => $param['access-token']]);
+        $oldPassWord = $memberModel->password;
+        $memberModel->setAttributes($dataPost);
+        //set old password
+        if (!$memberModel->password) {
+            $memberModel->password = $oldPassWord;
+        } else {
+            $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
+            $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
         }
-        if (isset($dataPost['birthday']) && (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$dataPost['birthday']) == 0)) {
-            
-            $reason['birthday'] = 'Birthday '. \Yii::t('app', 'format');
-        }
-        
-        if (!isset($dataPost['sex']) || ($dataPost['sex'] == '')) {
-            $reason['sex'] = \Yii::t('app', 'required') . ' sex';
-        }
-        
-        if (isset($dataPost['sex']) && (!is_numeric($dataPost['sex']))) {
-            $reason['sex'] = 'Sex '. \Yii::t('app', 'format');
-        }
-        
-        if (!empty($reason)) {
+        //check param
+        if (!$memberModel->validate()) {
             $result = [
                 'status' => 400,
-                'data' => $reason
+                'messages' => $memberModel->errors
             ];
         } else {
-            $memberModel = Member::findOne(['auth_key' => $param['access-token']]);
-            $memberModel->setAttributes($dataPost);
-            $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
             if ($memberModel->save()) {
                 $result = [
                     'status' => 200,

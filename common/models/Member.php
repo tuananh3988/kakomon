@@ -38,6 +38,9 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return 'member';
     }
 
+    const SCENARIO_SAVE = 'save';
+    const SCENARIO_LOGIN = 'login';
+    
     public function behaviors()
     {
         return [
@@ -59,7 +62,11 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             [['status', 'type_blood', 'sex'], 'integer'],
-            [['birthday', 'mail', 'password'], 'required'],
+            [['birthday', 'mail', 'sex'], 'required'],
+            [['birthday'], 'date', 'format' => 'php:Y-m-d'],
+            ['mail', 'email'],
+            [['password'], 'required', 'on' => self::SCENARIO_SAVE],
+            [['password'], 'string', 'min' => 8],
             [['birthday', 'created_date', 'updated_date'], 'safe'],
             [['city', 'job', 'favorite_animal', 'favorite_film', 'name', 'furigana', 'mail', 'password', 'nickname'], 'string', 'max' => 255],
         ];
