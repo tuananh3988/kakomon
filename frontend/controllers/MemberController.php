@@ -8,7 +8,6 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
 use common\models\Comment;
-use yii\web\Response;
 
 /**
  * Site controller
@@ -137,7 +136,7 @@ class MemberController extends Controller
                     'name' => 'anhct',
                     'comment' => 101,
                     'liked' => 900,
-                    'like' => 810,
+                    'be_liked' => 810,
                     'nashi' => 1500,
                     'followed' => 200,
                     'following' => 99,
@@ -178,14 +177,41 @@ class MemberController extends Controller
                 'name' => 'hiennv',
                 'followed' => 200,
                 'following' => 99,
-                'category_activity' => [
+                'activity' => [
                     [
                         'category_id' => 1,
                         'category_name' => 'sex',
+                        'sub_category_id' => '12',
+                        'sub_category_name' => 'sex',
+                        'type' => 1,
                         'like' => 100,
                         'dislike' => 200,
+                        'member_name' => 'anhct',
+                        'comment' => 'abc'
+                    ],
+                    [
+                        'category_id' => 2,
+                        'category_name' => 'sex',
+                        'sub_category_id' => '12',
+                        'sub_category_name' => 'sex',
+                        'type' => 2,
+                        'like' => 100,
+                        'dislike' => 200,
+                        'member_name' => 'anhct',
+                        'comment' => 'abc'
+                    ],
+                    [
+                        'category_id' => 3,
+                        'category_name' => 'sex',
+                        'sub_category_id' => '12',
+                        'sub_category_name' => 'sex',
+                        'type' => 3,
+                        'like' => 100,
+                        'dislike' => 200,
+                        'member_name' => 'anhct',
                         'comment' => 'abc'
                     ]
+                    
                 ]
             ]
         ];
