@@ -28,7 +28,8 @@ class ActivityController extends Controller
                 'actions' => [
                     'like' => ['post'],
                     'dislike' => ['post'],
-                    'add' => ['post'],
+                    'addcomment' => ['post'],
+                    'deletecomment' => ['post']
                 ],
             ],
             'authenticator' => [
@@ -162,7 +163,7 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionAdd()
+    public function actionAddcomment()
     {
         $request = Yii::$app->request;
         $param = $request->queryParams;
@@ -194,6 +195,51 @@ class ActivityController extends Controller
                 ];
         } else {
             throw new \yii\base\Exception( "System error" );
+        }
+    }
+    
+    
+    /*
+     * Delete comment
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionDeletecomment()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        $dataPost = $request->post();
+        
+        $modelComment = new Comment();
+        $modelComment->setAttributes($dataPost);
+        $modelComment->scenario  = Comment::SCENARIO_DELETE_COMMENT;
+        if (!$modelComment->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelComment->errors
+                ];
+        }
+        //update status
+        $commentDetail = Comment::findOne(['activity_id' => $modelComment->activity_id, 'member_id' => $memberDetail->member_id, 'type' => Activity::TYPE_COMMENT]);
+        if ($commentDetail) {
+            $commentDetail->status = Activity::STATUS_DELETE;
+            if ($commentDetail->save()) {
+                return [
+                    'status' => 200
+                ];
+            } else {
+                throw new \yii\base\Exception( "System error" );
+            }
+        } else {
+            return [
+                    'status' => 204,
+                    'data' => [
+                        'message' => \Yii::t('app', 'data not found')
+                    ]
+                ];
         }
     }
 }

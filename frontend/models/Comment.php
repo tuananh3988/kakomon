@@ -35,9 +35,9 @@ class Comment extends \yii\db\ActiveRecord
             [['quiz_id', 'content'], 'required', 'on' => self::SCENARIO_ADD_COMMENT],
             [['quiz_id'], 'integer', 'on' => self::SCENARIO_ADD_COMMENT],
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_ADD_COMMENT],
-            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_DELETE_COMMENT],
+            [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_COMMENT],
             ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_COMMENT],
-            [['content', 'quiz_id', 'created_date', 'updated_date'], 'safe'],
+            [['content', 'quiz_id', 'activity_id', 'created_date', 'updated_date'], 'safe'],
         ];
     }
     
@@ -94,7 +94,7 @@ class Comment extends \yii\db\ActiveRecord
     public function validateActivityId($attribute)
     {
         if (!$this->hasErrors()) {
-            $activity = Activity::findOne(['activity_id' => $this->$attribute]);
+            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'type' => Activity::TYPE_COMMENT]);
             if (!$activity) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
