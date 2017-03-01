@@ -236,28 +236,25 @@ class MemberController extends Controller
         $memberModel->scenario  = Member::SCENARIO_SAVE;
         //validate param
         if (!$memberModel->validate()) {
-            $result = [
-                'status' => 400,
-                'messages' => $memberModel->errors
-            ];
-        } else {
-            $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
-            $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
-            if ($memberModel->save()) {
-                $result = [
+            return [
+                    'status' => 400,
+                    'messages' => $memberModel->errors
+                ];
+        }
+        $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
+        $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
+        if ($memberModel->save()) {
+            return [
                     'status' => 200,
                     'data' => [
                         'access_token' => $memberModel->auth_key
                     ]
                 ];
-            } else {
-                throw new \yii\base\Exception( "System error" );
-            }
+        } else {
+            throw new \yii\base\Exception( "System error" );
         }
-        
-        return $result;
     }
-
+    
     
     /*
      * Update member
@@ -277,30 +274,29 @@ class MemberController extends Controller
         //set old password
         if (!$memberModel->password) {
             $memberModel->password = $oldPassWord;
-        } else {
-            $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
-            $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
         }
         //check param
         if (!$memberModel->validate()) {
-            $result = [
-                'status' => 400,
-                'messages' => $memberModel->errors
-            ];
-        } else {
-            if ($memberModel->save()) {
-                $result = [
+            return [
+                    'status' => 400,
+                    'messages' => $memberModel->errors
+                ];
+        }
+        //set validate
+        if ($dataPost['password']) {
+            $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
+            $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
+        }
+        if ($memberModel->save()) {
+            return [
                     'status' => 200,
                     'data' => [
                         'access_token' => $memberModel->auth_key
                     ]
                 ];
-            } else {
-                throw new \yii\base\Exception( "System error" );
-            }
+        } else {
+            throw new \yii\base\Exception( "System error" );
         }
-        
-        return $result;
     }
     
     /*

@@ -21,8 +21,13 @@ use yii\behaviors\TimestampBehavior;
 class Activity extends \yii\db\ActiveRecord
 {
     
+    const TYPE_COMMENT = 1;
     const TYPE_LIKE = 4;
     const TYPE_DISLIKE = 5;
+    
+    const STATUS_ACTIVE = 1;
+    const STATUS_DELETE = 2;
+
     /**
      * @inheritdoc
      */

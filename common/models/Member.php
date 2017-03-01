@@ -65,6 +65,7 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['birthday', 'mail', 'sex'], 'required'],
             [['birthday'], 'date', 'format' => 'php:Y-m-d'],
             ['mail', 'email'],
+            [['mail'], 'validateUniqueMail', 'on' => self::SCENARIO_SAVE],
             [['password'], 'required', 'on' => self::SCENARIO_SAVE],
             [['password'], 'string', 'min' => 8],
             [['birthday', 'created_date', 'updated_date'], 'safe'],
@@ -96,6 +97,22 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
         ];
+    }
+    
+    /*
+     * validate unique mail
+     * 
+     * Auth : 
+     * Create : 03-01-2017
+     */
+    public function validateUniqueMail($attribute)
+    {
+        if (!$this->hasErrors()) {
+            $memberDetail = Member::findOne(['mail' => $this->$attribute]);
+            if ($memberDetail) {
+                $this->addError($attribute, 'Email already exists');
+            }
+        }
     }
     
     public static function findIdentity($id)

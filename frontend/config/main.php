@@ -36,6 +36,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'member/info/<id:\d+>' => 'member/info',
+                'activity/comment/add' => 'activity/add',
             ],
         ],
         'request' => [

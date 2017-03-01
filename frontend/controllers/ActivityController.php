@@ -9,6 +9,8 @@ use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
 use common\models\Activity;
 use frontend\models\Like;
+use frontend\models\Comment;
+
 /**
  * Site controller
  */
@@ -26,6 +28,7 @@ class ActivityController extends Controller
                 'actions' => [
                     'like' => ['post'],
                     'dislike' => ['post'],
+                    'add' => ['post'],
                 ],
             ],
             'authenticator' => [
@@ -151,4 +154,46 @@ class ActivityController extends Controller
         }
     }
     
+    
+    /*
+     * Add comment
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionAdd()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        $dataPost = $request->post();
+        
+        $modelComment = new Comment();
+        $modelComment->setAttributes($dataPost);
+        $modelComment->scenario  = Comment::SCENARIO_ADD_COMMENT;
+        if (!$modelComment->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelComment->errors
+                ];
+        }
+        //save data
+        $modelActivitySave = new Activity();
+        $modelActivitySave->member_id = $memberDetail->member_id;
+        $modelActivitySave->status = Activity::STATUS_ACTIVE;
+        $modelActivitySave->type = Activity::TYPE_COMMENT;
+        $modelActivitySave->quiz_id = $modelComment->quiz_id;
+        $modelActivitySave->content = $modelComment->content;
+        if ($modelActivitySave->save()) {
+            return  [
+                    'status' => 200,
+                    'data' => [
+                        'activity_id' => $modelActivitySave->activity_id
+                    ]
+                ];
+        } else {
+            throw new \yii\base\Exception( "System error" );
+        }
+    }
 }
