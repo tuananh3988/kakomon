@@ -1,28 +1,18 @@
 <?php
 
-namespace common\models;
+namespace frontend\models;
 
 use Yii;
+use yii\base\Model;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
-
+use common\models\Activity;
 /**
- * This is the model class for table "activity".
- *
- * @property integer $comment_id
- * @property integer $member_id
- * @property integer $type
- * @property integer $quiz_id
- * @property integer $relate_id
- * @property string $content
- * @property string $created_date
- * @property string $updated_date
+ * ContactForm is the model behind the contact form.
  */
-class Activity extends \yii\db\ActiveRecord
+class Like extends \yii\db\ActiveRecord
 {
     
-    const TYPE_LIKE = 4;
-    const TYPE_DISLIKE = 5;
     /**
      * @inheritdoc
      */
@@ -30,17 +20,17 @@ class Activity extends \yii\db\ActiveRecord
     {
         return 'activity';
     }
-
+    
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['member_id', 'quiz_id'], 'required'],
-            [['member_id', 'type', 'quiz_id', 'relate_id'], 'integer'],
+            [['activity_id', 'status'], 'required'],
+            [['activity_id', 'status'], 'integer'],
+            ['activity_id', 'validateActivityId'],
             [['created_date', 'updated_date'], 'safe'],
-            [['content'], 'string', 'max' => 255],
         ];
     }
 
@@ -64,9 +54,10 @@ class Activity extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'comment_id' => 'Comment ID',
+            'activity_id' => 'Activity ID',
             'member_id' => 'Member ID',
             'type' => 'Type',
+            'status' => 'Status',
             'quiz_id' => 'Quiz ID',
             'relate_id' => 'Relate ID',
             'content' => 'Content',
@@ -75,27 +66,14 @@ class Activity extends \yii\db\ActiveRecord
         ];
     }
     
-    /*
-     * Get total like
-     * 
-     * Auth : 
-     * Creat : 28-02-2017
-     */
-    
-    public static function getTotalLikeByMember($memberId)
+    public function validateActivityId($attribute)
     {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => 4])->count();
+        if (!$this->hasErrors()) {
+            $activity = Activity::findOne(['activity_id' => $this->$attribute]);
+            if (!$activity) {
+                $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
+            }
+        }
     }
     
-    /*
-     * Get total comment
-     * 
-     * Auth : 
-     * Creat : 28-02-2017
-     */
-    
-    public static function getTotalCommentByMember($memberId)
-    {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => 1])->count();
-    }
 }

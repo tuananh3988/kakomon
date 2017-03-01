@@ -13,5 +13,6 @@ return[
     'field exists' => 'This {field} already exists',
     'data not found' => 'Not found data',
     'existing' => '{attribute} existing.',
+    'data not exist' => '{attribute} data does not exist'
     
 ];

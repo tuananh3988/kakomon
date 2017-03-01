@@ -81,7 +81,9 @@ class MemberController extends Controller
                     'sex' => $memberDetail->sex,
                     'name' => $memberDetail->name,
                     'furigana' => $memberDetail->furigana,
+                    'mail' => $memberDetail->mail,
                     'nickname' => $memberDetail->nickname,
+                    'link_avatar' => ''
                 ]
             ];
         } else {
