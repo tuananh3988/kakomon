@@ -10,6 +10,7 @@ use common\models\Member;
 use common\models\Activity;
 use frontend\models\Like;
 use frontend\models\Comment;
+use frontend\models\Help;
 
 /**
  * Site controller
@@ -28,8 +29,12 @@ class ActivityController extends Controller
                 'actions' => [
                     'like' => ['post'],
                     'dislike' => ['post'],
-                    'addcomment' => ['post'],
-                    'deletecomment' => ['post']
+                    'addComment' => ['post'],
+                    'deletecomment' => ['post'],
+                    'listcomment' => ['get'],
+                    'addhelp' => ['post'],
+                    'deletehelp' => ['post'],
+                    'addreply' => ['post']
                 ],
             ],
             'authenticator' => [
@@ -163,11 +168,9 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionAddcomment()
+    public function actionAddComment()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
         
         $modelComment = new Comment();
@@ -180,22 +183,20 @@ class ActivityController extends Controller
                 ];
         }
         //save data
-        $modelActivitySave = new Activity();
-        $modelActivitySave->member_id = $memberDetail->member_id;
-        $modelActivitySave->status = Activity::STATUS_ACTIVE;
-        $modelActivitySave->type = Activity::TYPE_COMMENT;
-        $modelActivitySave->quiz_id = $modelComment->quiz_id;
-        $modelActivitySave->content = $modelComment->content;
-        if ($modelActivitySave->save()) {
-            return  [
-                    'status' => 200,
-                    'data' => [
-                        'activity_id' => $modelActivitySave->activity_id
-                    ]
-                ];
-        } else {
+        $modelComment->member_id = Yii::$app->user->identity->member_id;
+        $modelComment->status = Activity::STATUS_ACTIVE;
+        $modelComment->type = Activity::TYPE_COMMENT;
+        //return error system
+        if (!$modelComment->save()) {
             throw new \yii\base\Exception( "System error" );
         }
+        
+        return  [
+            'status' => 200,
+            'data' => [
+                'activity_id' => $modelComment->activity_id
+            ]
+        ];
     }
     
     
@@ -396,5 +397,160 @@ class ActivityController extends Controller
             ],
             
         ];
+    /*
+     * List comment
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionListcomment()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset'];
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        
+        $modelActivity = new Activity();
+        $listComment = $modelActivity->getListComment($memberDetail->member_id, $limit, $offset);
+        if (count($listComment) == 0) {
+            return [
+                    'status' => 204,
+                    'data' => [
+                        'message' => \Yii::t('app', 'data not found')
+                    ]
+                ];
+        }
+        // show list commnet
+        foreach ($listComment as $key => $value) {
+            
+        }
+        
+        
+    }
+    
+    /*
+     * Add help
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionAddhelp()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        $dataPost = $request->post();
+        
+        $modelHelp = new Help();
+        $modelHelp->setAttributes($dataPost);
+        $modelHelp->scenario  = Help::SCENARIO_ADD_HELP;
+        if (!$modelHelp->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelHelp->errors
+                ];
+        }
+        //save data
+        $modelHelp->member_id = $memberDetail->member_id;
+        $modelHelp->status = Activity::STATUS_ACTIVE;
+        $modelHelp->type = Activity::TYPE_HELP;
+        if ($modelHelp->save()) {
+            return  [
+                    'status' => 200,
+                    'data' => [
+                        'activity_id' => $modelHelp->activity_id
+                    ]
+                ];
+        } else {
+            throw new \yii\base\Exception( "System error" );
+        }
+    }
+    
+    
+    /*
+     * Delete help
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionDeletehelp()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        $dataPost = $request->post();
+        
+        $modelHelp = new Help();
+        $modelHelp->setAttributes($dataPost);
+        $modelHelp->scenario  = Help::SCENARIO_DELETE_HELP;
+        if (!$modelHelp->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelHelp->errors
+                ];
+        }
+        //update status
+        $helpDetail = Help::findOne(['activity_id' => $modelHelp->activity_id, 'member_id' => $memberDetail->member_id, 'type' => Activity::TYPE_HELP]);
+        if ($helpDetail) {
+            $helpDetail->status = Activity::STATUS_DELETE;
+            if ($helpDetail->save()) {
+                return [
+                    'status' => 200
+                ];
+            } else {
+                throw new \yii\base\Exception( "System error" );
+            }
+        } else {
+            return [
+                    'status' => 204,
+                    'data' => [
+                        'message' => \Yii::t('app', 'data not found')
+                    ]
+                ];
+        }
+    }
+    
+    
+    /*
+     * Add reply
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionAddreply()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+        $dataPost = $request->post();
+        
+        $modelHelp = new Help();
+        $modelHelp->setAttributes($dataPost);
+        $modelHelp->scenario  = Help::SCENARIO_ADD_HELP;
+        if (!$modelHelp->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelHelp->errors
+                ];
+        }
+        //save data
+        $modelHelp->member_id = $memberDetail->member_id;
+        $modelHelp->status = Activity::STATUS_ACTIVE;
+        $modelHelp->type = Activity::TYPE_HELP;
+        if ($modelHelp->save()) {
+            return  [
+                    'status' => 200,
+                    'data' => [
+                        'activity_id' => $modelHelp->activity_id
+                    ]
+                ];
+        } else {
+            throw new \yii\base\Exception( "System error" );
+        }
     }
 }

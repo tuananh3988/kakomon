@@ -63,39 +63,25 @@ class MemberController extends Controller
     
     public function actionDetail()
     {
-        $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $result = [];
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
-        if ($memberDetail) {
-            $result = [
-                'status' => 200,
-                'data' => [
-                    'member_id' => $memberDetail->member_id,
-                    'city' => $memberDetail->city,
-                    'job' => $memberDetail->job,
-                    'type_blood' => $memberDetail->type_blood,
-                    'favorite_animal' => $memberDetail->favorite_animal,
-                    'favorite_film' => $memberDetail->favorite_film,
-                    'birthday' => $memberDetail->birthday,
-                    'sex' => $memberDetail->sex,
-                    'name' => $memberDetail->name,
-                    'furigana' => $memberDetail->furigana,
-                    'mail' => $memberDetail->mail,
-                    'nickname' => $memberDetail->nickname,
-                    'link_avatar' => ''
-                ]
-            ];
-        } else {
-            $result = [
-                'status' => 204,
-                'data' => [
-                    'message' => \Yii::t('app', 'data not found')
-                ]
-            ];
-        }
-        
-        return $result;
+        $memberDetail = Yii::$app->user->identity;
+        return [
+            'status' => 200,
+            'data' => [
+                'member_id' => $memberDetail->member_id,
+                'city' => $memberDetail->city,
+                'job' => $memberDetail->job,
+                'type_blood' => $memberDetail->type_blood,
+                'favorite_animal' => $memberDetail->favorite_animal,
+                'favorite_film' => $memberDetail->favorite_film,
+                'birthday' => $memberDetail->birthday,
+                'sex' => $memberDetail->sex,
+                'name' => $memberDetail->name,
+                'furigana' => $memberDetail->furigana,
+                'mail' => $memberDetail->mail,
+                'nickname' => $memberDetail->nickname,
+                'link_avatar' => ''
+            ]
+        ];
     }
     
     /*
@@ -243,16 +229,18 @@ class MemberController extends Controller
         }
         $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
         $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
-        if ($memberModel->save()) {
-            return [
-                    'status' => 200,
-                    'data' => [
-                        'access_token' => $memberModel->auth_key
-                    ]
-                ];
-        } else {
+        //return error
+        if (!$memberModel->save()) {
             throw new \yii\base\Exception( "System error" );
+            
         }
+        //return success
+        return [
+            'status' => 200,
+            'data' => [
+                'access_token' => $memberModel->auth_key
+            ]
+        ];
     }
     
     
@@ -267,14 +255,9 @@ class MemberController extends Controller
     {
         $request = Yii::$app->request;
         $dataPost = $request->post();
-        $param = $request->queryParams;
-        $memberModel = Member::findOne(['auth_key' => $param['access-token']]);
-        $oldPassWord = $memberModel->password;
+        $memberModel = new Member();
         $memberModel->setAttributes($dataPost);
-        //set old password
-        if (!$memberModel->password) {
-            $memberModel->password = $oldPassWord;
-        }
+        $memberModel->mail = Yii::$app->user->identity->mail;
         //check param
         if (!$memberModel->validate()) {
             return [
@@ -283,20 +266,25 @@ class MemberController extends Controller
                 ];
         }
         //set validate
-        if ($dataPost['password']) {
-            $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
-            $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
+        $memberModelDetail = Member::findOne(['member_id' => Yii::$app->user->identity->member_id]);
+        $memberModelDetail->setAttributes($dataPost);
+        $memberModelDetail->password = Yii::$app->user->identity->password;
+        if (!empty($dataPost['password'])) {
+            $memberModelDetail->password = Yii::$app->security->generatePasswordHash($memberModel->password);
+            $memberModelDetail->auth_key = Yii::$app->security->generateRandomString(50);
         }
-        if ($memberModel->save()) {
-            return [
-                    'status' => 200,
-                    'data' => [
-                        'access_token' => $memberModel->auth_key
-                    ]
-                ];
-        } else {
+        //return system error
+        if (!$memberModelDetail->save()) {
             throw new \yii\base\Exception( "System error" );
+            
         }
+        //return success
+        return [
+            'status' => 200,
+            'data' => [
+                'access_token' => $memberModelDetail->auth_key
+            ]
+        ];
     }
     
     /*
@@ -312,22 +300,20 @@ class MemberController extends Controller
         $request = Yii::$app->request;
         $dataPost = $request->post();
         $modelLogin->setAttributes($dataPost);
+        //return error
         if (!$modelLogin->validate()) {
-            $result = [
+            return [
                 'status' => 400,
                 'messages' => $modelLogin->errors
             ];
-        } else {
-            $member = Member::findOne(['mail' => $dataPost['mail']]);
-            $result = [
-                'status' => 200,
-                'data' => [
-                    'access_token' => $member->auth_key
-                ]
-            ];
         }
-        
-        return $result;
+        //return success
+        $member = Member::findOne(['mail' => $dataPost['mail']]);
+        return [
+            'status' => 200,
+            'data' => [
+                'access_token' => $member->auth_key
+            ]
+        ];
     }
-    
 }

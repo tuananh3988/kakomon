@@ -22,6 +22,8 @@ class Activity extends \yii\db\ActiveRecord
 {
     
     const TYPE_COMMENT = 1;
+    const TYPE_HELP = 2;
+    const TYPE_REPLY = 3;
     const TYPE_LIKE = 4;
     const TYPE_DISLIKE = 5;
     
@@ -102,5 +104,25 @@ class Activity extends \yii\db\ActiveRecord
     public static function getTotalCommentByMember($memberId)
     {
         return Activity::find()->where(['member_id' => $memberId, 'type' => 1])->count();
+    }
+    
+    /*
+     * Get List commnet
+     * 
+     * Auth : 
+     * Create : 02-03-2017
+     */
+    
+    public function getListComment($memberId, $limit, $offset)
+    {
+        $query = new \yii\db\Query();
+        $query->select(['activity.*'])
+                ->from('activity');
+        $query->where(['=', 'activity.member_id', $memberId]);
+        $query->andWhere(['=', 'activity.type', self::TYPE_COMMENT]);
+        $query->andWhere(['=', 'activity.status', self::STATUS_ACTIVE]);
+        $query->offset($offset);
+        $query->limit($limit);
+        return $query->all();
     }
 }

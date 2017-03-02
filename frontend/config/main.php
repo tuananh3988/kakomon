@@ -36,8 +36,12 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'member/info/<id:\d+>' => 'member/info',
-                'activity/comment/add' => 'activity/addcomment',
-                'activity/comment/delete' => 'activity/deletecomment',
+                'activity/comment/add' => 'activity/add-comment',
+                'activity/comment/delete' => 'activity/delete-comment',
+                'activity/comment/list' => 'activity/listcomment',
+                'activity/help/add' => 'activity/addhelp',
+                'activity/help/delete' => 'activity/deletehelp',
+                'activity/reply/add' => 'activity/addreply',
             ],
         ],
         'request' => [
