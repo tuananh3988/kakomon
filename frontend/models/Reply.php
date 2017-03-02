@@ -74,7 +74,7 @@ class Reply extends \yii\db\ActiveRecord
     }
     
     /*
-     * Validate quiz id
+     * Validate
      * 
      * Auth :
      * Create : 01-03-2017
@@ -84,7 +84,7 @@ class Reply extends \yii\db\ActiveRecord
     public function validateActivityIdReply($attribute)
     {
         if (!$this->hasErrors()) {
-            $activityDetail = Activity::findOne(['activity_id' => $this->$attribute, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP]);
+            $activityDetail = Activity::findOne(['activity_id' => $this->$attribute, 'type' => Activity::TYPE_HELP]);
             if (!$activityDetail) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
@@ -94,7 +94,7 @@ class Reply extends \yii\db\ActiveRecord
     public function validateActivityId($attribute)
     {
         if (!$this->hasErrors()) {
-            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'type' => Activity::TYPE_HELP]);
+            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'member_id' => Yii::$app->user->identity->member_id,'type' => Activity::TYPE_REPLY]);
             if (!$activity) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }

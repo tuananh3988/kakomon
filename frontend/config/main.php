@@ -38,10 +38,11 @@ return [
                 'member/info/<id:\d+>' => 'member/info',
                 'activity/comment/add' => 'activity/add-comment',
                 'activity/comment/delete' => 'activity/delete-comment',
-                'activity/comment/list' => 'activity/listcomment',
+                'activity/comment/list' => 'activity/list-comment',
                 'activity/help/add' => 'activity/add-help',
                 'activity/help/delete' => 'activity/delete-help',
                 'activity/reply/add' => 'activity/add-reply',
+                'activity/reply/delete' => 'activity/delete-reply',
             ],
         ],
         'request' => [

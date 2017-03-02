@@ -62,8 +62,8 @@ class FollowController extends Controller
     {
         $request = Yii::$app->request;
         $param = $request->queryParams;
-        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit'];
-        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset'];
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['follow'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['follow'];
         
         $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $modelFollow = new Follow();

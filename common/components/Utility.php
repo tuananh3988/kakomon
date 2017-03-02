@@ -107,4 +107,20 @@ class Utility extends Component
         return $dataQuizAnswer;
     }
     
+    /*
+     * render offset
+     * 
+     * Auth :
+     * Created : 03-03-2017
+     */
+    
+    public static function renderOffset($total, $limit, $offset)
+    {
+        $offsetReturn = 0;
+        if (($limit + $offset +1) <= $total) {
+            $offsetReturn = $limit + $offset;
+        }
+        
+        return $offsetReturn;
+    }
 }

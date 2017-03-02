@@ -76,4 +76,68 @@ class Like extends \yii\db\ActiveRecord
         }
     }
     
+    /*
+     * check like
+     * 
+     * Auth : 
+     * Created : 02-03-2017
+     */
+    public static function checkLikeByActivityId($activityId, $memberId)
+    {
+        $idLike  = Activity::findOne(['relate_id' => $activityId, 'member_id' => $memberId, 'type' => Activity::TYPE_LIKE, 'status' => Activity::STATUS_ACTIVE]);
+        if (!$idLike) {
+            return false;
+        }
+        return true;
+    }
+    
+    /*
+     * check dislike
+     * 
+     * Auth : 
+     * Created : 02-03-2017
+     */
+    public static function checkDisLikeByActivityId($activityId, $memberId)
+    {
+        $idDisLike  = Activity::findOne(['relate_id' => $activityId, 'member_id' => $memberId, 'type' => Activity::TYPE_DISLIKE, 'status' => Activity::STATUS_ACTIVE]);
+        if (!$idDisLike) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    /*
+     * get total Like by activity
+     * 
+     * Auth : 
+     * Created : 02-03-2017
+     */
+    public static function getTotalLikeByActivityId($activityId)
+    {
+        $query = new \yii\db\Query();
+        $query->select(['activity.activity_id'])
+                ->from('activity');
+        $query->where(['=', 'activity.relate_id', $activityId]);
+        $query->andWhere(['=', 'activity.type', Activity::TYPE_LIKE]);
+        $query->andWhere(['=', 'activity.status', Activity::STATUS_ACTIVE]);
+        return $query->count();
+    }
+    
+    /*
+     * get total DisLike by activity
+     * 
+     * Auth : 
+     * Created : 02-03-2017
+     */
+    public static function getTotalDisLikeByActivityId($activityId)
+    {
+        $query = new \yii\db\Query();
+        $query->select(['activity.activity_id'])
+                ->from('activity');
+        $query->where(['=', 'activity.relate_id', $activityId]);
+        $query->andWhere(['=', 'activity.type', Activity::TYPE_DISLIKE]);
+        $query->andWhere(['=', 'activity.status', Activity::STATUS_ACTIVE]);
+        return $query->count();
+    }
 }
