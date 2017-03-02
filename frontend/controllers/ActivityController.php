@@ -276,4 +276,125 @@ class ActivityController extends Controller
             
         ];
     }
+    
+    public function actionListReply()
+    {
+        return [
+            'status' => 200,
+            'count' => 100,
+            'offset' => 10,
+            'data' => [
+                [
+                    'member_id' => 123,
+                    'member_name' => 'anhct',
+                    'isLike' => true,
+                    'total_like' => 12,
+                    'total_dislike' => 10
+                ],
+                [
+                    'member_id' => 23,
+                    'member_name' => 'hiennc',
+                    'isLike' => true,
+                    'total_like' => 12,
+                    'total_dislike' => 10
+                ],
+                [
+                    'member_id' => 3,
+                    'member_name' => 'thanhmc',
+                    'isLike' => false,
+                    'total_like' => 1,
+                    'total_dislike' => 2
+                ]
+            ],
+            
+        ];
+    }
+    
+    public function actionListHelp()
+    {
+        return [
+            'status' => 200,
+            'count' => 100,
+            'offset' => 10,
+            'data' => [
+                [
+                    'member_id' => 123,
+                    'member_name' => 'anhct',
+                    'isLike' => true,
+                    'total_like' => 12,
+                    'total_dislike' => 10,
+                    'reply' => [
+                        [
+                            'member_id' => 123,
+                            'member_name' => 'anhct',
+                            'isLike' => true,
+                            'total_like' => 12,
+                            'total_dislike' => 10,
+                        ],
+                        [
+                            'member_id' => 123,
+                            'member_name' => 'anhct',
+                            'isLike' => true,
+                            'total_like' => 12,
+                            'total_dislike' => 10,
+                        ]
+                    ],
+                    'total_reply' => 30,
+                    'offset_reply' => 10
+                    
+                ],
+                [
+                    'member_id' => 23,
+                    'member_name' => 'hiennc',
+                    'isLike' => true,
+                    'total_like' => 12,
+                    'total_dislike' => 10,
+                    'reply' => [
+                        [
+                            'member_id' => 123,
+                            'member_name' => 'anhct',
+                            'isLike' => true,
+                            'total_like' => 12,
+                            'total_dislike' => 10,
+                        ],
+                        [
+                            'member_id' => 123,
+                            'member_name' => 'anhct',
+                            'isLike' => true,
+                            'total_like' => 12,
+                            'total_dislike' => 10,
+                        ]
+                    ],
+                    'total_reply' => 30,
+                    'offset_reply' => 10
+                ],
+                [
+                    'member_id' => 3,
+                    'member_name' => 'thanhmc',
+                    'isLike' => false,
+                    'total_like' => 1,
+                    'total_dislike' => 2,
+                    'reply' => [
+                        [
+                            'member_id' => 123,
+                            'member_name' => 'anhct',
+                            'isLike' => true,
+                            'total_like' => 12,
+                            'total_dislike' => 10,
+                        ],
+                        [
+                            'member_id' => 123,
+                            'member_name' => 'anhct',
+                            'isLike' => true,
+                            'total_like' => 12,
+                            'total_dislike' => 10,
+                        ]
+                    ],
+                    'total_reply' => 30,
+                    'offset_reply' => 10
+                ]
+            ],
+            
+        ];
+    }
 }
