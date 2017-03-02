@@ -32,11 +32,11 @@ class Reply extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_ADD_HELP],
-            [['activity_id'], 'integer', 'on' => self::SCENARIO_ADD_HELP],
-            ['activity_id', 'validateActivityIdAdd', 'on' => self::SCENARIO_ADD_HELP],
-            [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_HELP],
-            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_HELP],
+            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_ADD_REPLY],
+            [['activity_id'], 'integer', 'on' => self::SCENARIO_ADD_REPLY],
+            ['activity_id', 'validateActivityIdReply', 'on' => self::SCENARIO_ADD_REPLY],
+            [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_REPLY],
+            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_REPLY],
             [['content', 'activity_id', 'created_date', 'updated_date'], 'safe'],
         ];
     }
@@ -81,11 +81,11 @@ class Reply extends \yii\db\ActiveRecord
      * 
      */
     
-    public function validateActivityIdAdd($attribute)
+    public function validateActivityIdReply($attribute)
     {
         if (!$this->hasErrors()) {
-            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'type' => Quiz::TYPE_DEFAULT]);
-            if (!$quizDetail) {
+            $activityDetail = Activity::findOne(['activity_id' => $this->$attribute, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP]);
+            if (!$activityDetail) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
         }

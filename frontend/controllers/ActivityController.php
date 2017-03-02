@@ -11,6 +11,7 @@ use common\models\Activity;
 use frontend\models\Like;
 use frontend\models\Comment;
 use frontend\models\Help;
+use frontend\models\Reply;
 
 /**
  * Site controller
@@ -32,9 +33,9 @@ class ActivityController extends Controller
                     'addComment' => ['post'],
                     'deletecomment' => ['post'],
                     'listcomment' => ['get'],
-                    'addhelp' => ['post'],
-                    'deletehelp' => ['post'],
-                    'addreply' => ['post']
+                    'addHelp' => ['post'],
+                    'deleteHelp' => ['post'],
+                    'addReply' => ['post']
                 ],
             ],
             'authenticator' => [
@@ -207,11 +208,9 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionDeletecomment()
+    public function actionDeleteComment()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
         
         $modelComment = new Comment();
@@ -224,37 +223,43 @@ class ActivityController extends Controller
                 ];
         }
         //update status
-        $commentDetail = Comment::findOne(['activity_id' => $modelComment->activity_id, 'member_id' => $memberDetail->member_id, 'type' => Activity::TYPE_COMMENT]);
-        if ($commentDetail) {
-            $commentDetail->status = Activity::STATUS_DELETE;
-            if ($commentDetail->save()) {
-                return [
-                    'status' => 200
-                ];
-            } else {
-                throw new \yii\base\Exception( "System error" );
-            }
-        } else {
+        $commentDetail = Comment::findOne(['activity_id' => $modelComment->activity_id, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_COMMENT]);
+        //return not found data
+        if (!$commentDetail) {
             return [
-                    'status' => 204,
-                    'data' => [
-                        'message' => \Yii::t('app', 'data not found')
-                    ]
-                ];
+                'status' => 204,
+                'data' => [
+                    'message' => \Yii::t('app', 'data not found')
+                ]
+            ];
         }
+        
+        $commentDetail->status = Activity::STATUS_DELETE;
+        //return error system
+        if (!$commentDetail->save()) {
+            throw new \yii\base\Exception( "System error" );
+            
+        }
+        //return success
+        return [
+            'status' => 200
+        ];
     }
     
     
     public function actionListComment()
     {
+        //quiz_id
         return [
             'status' => 200,
-            'count' => 100,
+            'count' => 100,//total comment by memberId
             'offset' => 10,
             'data' => [
+                //list comment
                 [
                     'member_id' => 123,
                     'member_name' => 'anhct',
+                    'isDisLike' => true,
                     'isLike' => true,
                     'total_like' => 12,
                     'total_dislike' => 10
@@ -262,6 +267,7 @@ class ActivityController extends Controller
                 [
                     'member_id' => 23,
                     'member_name' => 'hiennc',
+                    'isDisLike' => true,
                     'isLike' => true,
                     'total_like' => 12,
                     'total_dislike' => 10
@@ -269,6 +275,7 @@ class ActivityController extends Controller
                 [
                     'member_id' => 3,
                     'member_name' => 'thanhmc',
+                    'isDisLike' => true,
                     'isLike' => false,
                     'total_like' => 1,
                     'total_dislike' => 2
@@ -280,14 +287,16 @@ class ActivityController extends Controller
     
     public function actionListReply()
     {
+        //ativity_id
         return [
             'status' => 200,
-            'count' => 100,
+            'count' => 100,//count replly
             'offset' => 10,
             'data' => [
                 [
                     'member_id' => 123,
                     'member_name' => 'anhct',
+                    'isDisLike' => true,
                     'isLike' => true,
                     'total_like' => 12,
                     'total_dislike' => 10
@@ -295,6 +304,7 @@ class ActivityController extends Controller
                 [
                     'member_id' => 23,
                     'member_name' => 'hiennc',
+                    'isDisLike' => true,
                     'isLike' => true,
                     'total_like' => 12,
                     'total_dislike' => 10
@@ -302,6 +312,7 @@ class ActivityController extends Controller
                 [
                     'member_id' => 3,
                     'member_name' => 'thanhmc',
+                    'isDisLike' => true,
                     'isLike' => false,
                     'total_like' => 1,
                     'total_dislike' => 2
@@ -313,6 +324,7 @@ class ActivityController extends Controller
     
     public function actionListHelp()
     {
+        //quiz_id
         return [
             'status' => 200,
             'count' => 100,
@@ -321,6 +333,7 @@ class ActivityController extends Controller
                 [
                     'member_id' => 123,
                     'member_name' => 'anhct',
+                    'isDisLike' => true,
                     'isLike' => true,
                     'total_like' => 12,
                     'total_dislike' => 10,
@@ -329,6 +342,7 @@ class ActivityController extends Controller
                             'member_id' => 123,
                             'member_name' => 'anhct',
                             'isLike' => true,
+                            'isDisLike' => true,
                             'total_like' => 12,
                             'total_dislike' => 10,
                         ],
@@ -397,6 +411,7 @@ class ActivityController extends Controller
             ],
             
         ];
+    }
     /*
      * List comment
      * 
@@ -404,31 +419,31 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionListcomment()
-    {
-        $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit'];
-        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset'];
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
-        
-        $modelActivity = new Activity();
-        $listComment = $modelActivity->getListComment($memberDetail->member_id, $limit, $offset);
-        if (count($listComment) == 0) {
-            return [
-                    'status' => 204,
-                    'data' => [
-                        'message' => \Yii::t('app', 'data not found')
-                    ]
-                ];
-        }
-        // show list commnet
-        foreach ($listComment as $key => $value) {
-            
-        }
-        
-        
-    }
+//    public function actionListcomment()
+//    {
+//        $request = Yii::$app->request;
+//        $param = $request->queryParams;
+//        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit'];
+//        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset'];
+//        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
+//        
+//        $modelActivity = new Activity();
+//        $listComment = $modelActivity->getListComment($memberDetail->member_id, $limit, $offset);
+//        if (count($listComment) == 0) {
+//            return [
+//                    'status' => 204,
+//                    'data' => [
+//                        'message' => \Yii::t('app', 'data not found')
+//                    ]
+//                ];
+//        }
+//        // show list commnet
+//        foreach ($listComment as $key => $value) {
+//            
+//        }
+//        
+//        
+//    }
     
     /*
      * Add help
@@ -437,36 +452,35 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionAddhelp()
+    public function actionAddHelp()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
-        
         $modelHelp = new Help();
         $modelHelp->setAttributes($dataPost);
         $modelHelp->scenario  = Help::SCENARIO_ADD_HELP;
         if (!$modelHelp->validate()) {
             return [
-                    'status' => 400,
-                    'messages' => $modelHelp->errors
-                ];
+                'status' => 400,
+                'messages' => $modelHelp->errors
+            ];
         }
         //save data
-        $modelHelp->member_id = $memberDetail->member_id;
+        $modelHelp->member_id = Yii::$app->user->identity->member_id;
         $modelHelp->status = Activity::STATUS_ACTIVE;
         $modelHelp->type = Activity::TYPE_HELP;
-        if ($modelHelp->save()) {
-            return  [
-                    'status' => 200,
-                    'data' => [
-                        'activity_id' => $modelHelp->activity_id
-                    ]
-                ];
-        } else {
+        //return system error
+        if (!$modelHelp->save()) {
             throw new \yii\base\Exception( "System error" );
+            
         }
+        //return success
+        return  [
+            'status' => 200,
+            'data' => [
+                'activity_id' => $modelHelp->activity_id
+            ]
+        ];
     }
     
     
@@ -477,13 +491,10 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionDeletehelp()
+    public function actionDeleteHelp()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
-        
         $modelHelp = new Help();
         $modelHelp->setAttributes($dataPost);
         $modelHelp->scenario  = Help::SCENARIO_DELETE_HELP;
@@ -494,24 +505,26 @@ class ActivityController extends Controller
                 ];
         }
         //update status
-        $helpDetail = Help::findOne(['activity_id' => $modelHelp->activity_id, 'member_id' => $memberDetail->member_id, 'type' => Activity::TYPE_HELP]);
-        if ($helpDetail) {
-            $helpDetail->status = Activity::STATUS_DELETE;
-            if ($helpDetail->save()) {
-                return [
-                    'status' => 200
-                ];
-            } else {
-                throw new \yii\base\Exception( "System error" );
-            }
-        } else {
+        $helpDetail = Help::findOne(['activity_id' => $modelHelp->activity_id, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP]);
+        //return if not found data
+        if (!$helpDetail) {
             return [
-                    'status' => 204,
-                    'data' => [
-                        'message' => \Yii::t('app', 'data not found')
-                    ]
-                ];
+                'status' => 204,
+                'data' => [
+                    'message' => \Yii::t('app', 'data not found')
+                ]
+            ];
         }
+        
+        $helpDetail->status = Activity::STATUS_DELETE;
+        //return system error
+        if (!$helpDetail->save()) {
+            throw new \yii\base\Exception( "System error" );
+        }
+        //return success
+        return [
+            'status' => 200
+        ];
     }
     
     
@@ -522,35 +535,38 @@ class ActivityController extends Controller
      * Create : 01-03-2017
      */
     
-    public function actionAddreply()
+    public function actionAddReply()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
-        
-        $modelHelp = new Help();
-        $modelHelp->setAttributes($dataPost);
-        $modelHelp->scenario  = Help::SCENARIO_ADD_HELP;
-        if (!$modelHelp->validate()) {
+        $modelReply = new Reply();
+        $modelReply->setAttributes($dataPost);
+        $modelReply->scenario  = Reply::SCENARIO_ADD_REPLY;
+        if (!$modelReply->validate()) {
             return [
                     'status' => 400,
-                    'messages' => $modelHelp->errors
+                    'messages' => $modelReply->errors
                 ];
         }
+        $activityDetail = Activity::findOne(['activity_id' => $modelReply->activity_id, 'member_id' => Yii::$app->user->identity->member_id]);
         //save data
-        $modelHelp->member_id = $memberDetail->member_id;
-        $modelHelp->status = Activity::STATUS_ACTIVE;
-        $modelHelp->type = Activity::TYPE_HELP;
-        if ($modelHelp->save()) {
-            return  [
-                    'status' => 200,
-                    'data' => [
-                        'activity_id' => $modelHelp->activity_id
-                    ]
-                ];
-        } else {
+        $dataSave = new Reply();
+        $dataSave->member_id = Yii::$app->user->identity->member_id;
+        $dataSave->status = Activity::STATUS_ACTIVE;
+        $dataSave->type = Activity::TYPE_REPLY;
+        $dataSave->relate_id = $activityDetail->activity_id;
+        $dataSave->quiz_id = $activityDetail->quiz_id;
+        $dataSave->content = $modelReply->content;
+        //return system error
+        if (!$dataSave->save()) {
             throw new \yii\base\Exception( "System error" );
         }
+        //return success
+        return  [
+            'status' => 200,
+            'data' => [
+                'activity_id' => $dataSave->activity_id
+            ]
+        ];
     }
 }

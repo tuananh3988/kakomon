@@ -39,9 +39,9 @@ return [
                 'activity/comment/add' => 'activity/add-comment',
                 'activity/comment/delete' => 'activity/delete-comment',
                 'activity/comment/list' => 'activity/listcomment',
-                'activity/help/add' => 'activity/addhelp',
-                'activity/help/delete' => 'activity/deletehelp',
-                'activity/reply/add' => 'activity/addreply',
+                'activity/help/add' => 'activity/add-help',
+                'activity/help/delete' => 'activity/delete-help',
+                'activity/reply/add' => 'activity/add-reply',
             ],
         ],
         'request' => [
