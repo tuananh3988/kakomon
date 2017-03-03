@@ -137,10 +137,11 @@ class Comment extends \yii\db\ActiveRecord
                 ->from('activity');
         $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
         $query->andWhere(['activity.quiz_id' => $quizId]);
+        $query->andWhere(['activity.type' => Activity::TYPE_COMMENT]);
         $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
         $query->offset($offset);
         $query->limit($limit);
-        $query->orderBy(['activity_id' => SORT_ASC]);
+        $query->orderBy(['activity_id' => SORT_DESC]);
         return $query->all();
     }
     
@@ -160,6 +161,7 @@ class Comment extends \yii\db\ActiveRecord
                 $listData[] = [
                     'member_id' => $value['meberId'],
                     'member_name' => $value['name'],
+                    'content' => $value['content'],
                     'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['meberId']),
                     'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['meberId']),
                     'total_like' => Like::getTotalLikeByActivityId($value['activity_id']),

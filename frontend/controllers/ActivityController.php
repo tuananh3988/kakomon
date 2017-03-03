@@ -72,10 +72,7 @@ class ActivityController extends Controller
     public function actionLike()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
-        
         $modelLike = new Like();
         $modelLike->setAttributes($dataPost);
         if (!$modelLike->validate()) {
@@ -85,30 +82,45 @@ class ActivityController extends Controller
                 ];
         }
         $activityDetail = Activity::findOne(['activity_id' => $modelLike->activity_id]);
-        $activityDetailOld = Activity::findOne(['member_id' => $memberDetail->member_id, 'type' => Activity::TYPE_LIKE, 'status' => 1, 'relate_id' => $modelLike->activity_id]);
-        if (!$activityDetailOld) {
+        $activityDetailDisLike = Activity::findOne(['member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_DISLIKE,'status' => Activity::STATUS_ACTIVE, 'relate_id' => $modelLike->activity_id]);
+        $activityDetailOld = Activity::find()->where(['member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_LIKE, 'relate_id' => $modelLike->activity_id])->orderBy(['activity_id' => SORT_DESC])->one();
+        
+        //insert new record and update status record like
+        if (!$activityDetailOld || ($activityDetailOld && $activityDetailOld->status == Activity::STATUS_DELETE && $activityDetailOld->updated_date != null && $modelLike->status != Activity::STATUS_DELETE)) {
             $modelActivitySave = new Activity();
-            $modelActivitySave->member_id = $memberDetail->member_id;
+            $modelActivitySave->member_id = Yii::$app->user->identity->member_id;
             $modelActivitySave->status = $modelLike->status;
             $modelActivitySave->type = Activity::TYPE_LIKE;
             $modelActivitySave->quiz_id = $activityDetail->quiz_id;
             $modelActivitySave->relate_id = $modelLike->activity_id;
-            if ($modelActivitySave->save()) {
-                return  [
-                        'status' => 200
-                    ];
-            } else {
+            if (!$modelActivitySave->save()) {
                 throw new \yii\base\Exception( "System error" );
             }
+            //update status for record like
+            if ($activityDetailDisLike) {
+                $activityDetailDisLike->status = Activity::STATUS_DELETE;
+                $activityDetailDisLike->save();
+            }
+            return  [
+                    'status' => 200,
+                    'data' => [
+                        'activity_id' => $modelActivitySave->activity_id
+                    ]
+                ];
         } else {
-            $activityDetailOld->status = $modelLike->status;
-            if ($activityDetailOld->save()) {
+            //update status if status post diff status old
+            if ($activityDetailOld->status != $modelLike->status) {
+                $activityDetailOld->status = $modelLike->status;
+                if (!$activityDetailOld->save()) {
+                    throw new \yii\base\Exception( "System error" );
+                }
                 return  [
-                        'status' => 200
-                    ];
-            } else {
-                throw new \yii\base\Exception( "System error" );
+                    'status' => 200
+                ];
             }
+            return  [
+                'status' => 200
+            ];
         }
     }
     
@@ -123,10 +135,7 @@ class ActivityController extends Controller
     public function actionDislike()
     {
         $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
         $dataPost = $request->post();
-        
         $modelLike = new Like();
         $modelLike->setAttributes($dataPost);
         if (!$modelLike->validate()) {
@@ -136,29 +145,45 @@ class ActivityController extends Controller
                 ];
         }
         $activityDetail = Activity::findOne(['activity_id' => $modelLike->activity_id]);
-        $activityDetailOld = Activity::findOne(['member_id' => $memberDetail->member_id, 'type' => Activity::TYPE_DISLIKE, 'status' => 1, 'relate_id' => $modelLike->activity_id]);
-        if (!$activityDetailOld) {
+        $activityDetailLike = Activity::findOne(['member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_LIKE,'status' => Activity::STATUS_ACTIVE, 'relate_id' => $modelLike->activity_id]);
+        $activityDetailOld = Activity::find()->where(['member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_DISLIKE, 'relate_id' => $modelLike->activity_id])->orderBy(['activity_id' => SORT_DESC])->one();
+        
+        //insert new record and update status record like
+        if (!$activityDetailOld || ($activityDetailOld && $activityDetailOld->status == Activity::STATUS_DELETE && $activityDetailOld->updated_date != null && $modelLike->status != Activity::STATUS_DELETE)) {
             $modelActivitySave = new Activity();
-            $modelActivitySave->member_id = $memberDetail->member_id;
+            $modelActivitySave->member_id = Yii::$app->user->identity->member_id;
             $modelActivitySave->status = $modelLike->status;
             $modelActivitySave->type = Activity::TYPE_DISLIKE;
             $modelActivitySave->quiz_id = $activityDetail->quiz_id;
             $modelActivitySave->relate_id = $modelLike->activity_id;
-            if ($modelActivitySave->save()) {
+            if (!$modelActivitySave->save()) {
                 throw new \yii\base\Exception( "System error" );
+            }
+            //update status for record like
+            if ($activityDetailLike) {
+                $activityDetailLike->status = Activity::STATUS_DELETE;
+                $activityDetailLike->save();
             }
             return  [
-                    'status' => 200
+                    'status' => 200,
+                    'data' => [
+                        'activity_id' => $modelActivitySave->activity_id
+                    ]
                 ];
         } else {
-            $activityDetailOld->status = $modelLike->status;
-            if ($activityDetailOld->save()) {
+            //update status if status post diff status old
+            if ($activityDetailOld->status != $modelLike->status) {
+                $activityDetailOld->status = $modelLike->status;
+                if (!$activityDetailOld->save()) {
+                    throw new \yii\base\Exception( "System error" );
+                }
                 return  [
-                        'status' => 200
-                    ];
-            } else {
-                throw new \yii\base\Exception( "System error" );
+                    'status' => 200
+                ];
             }
+            return  [
+                'status' => 200
+            ];
         }
     }
     
@@ -267,7 +292,7 @@ class ActivityController extends Controller
         $offsetReturn = Utility::renderOffset($total, $limit, $offset);
         return [
             'status' => 200,
-            'count' => $total,
+            'count' => (int)$total,
             'offset' => $offsetReturn,
             'data' => Comment::renderListComment($param['quiz_id'], $limit, $offset)
             
