@@ -118,11 +118,11 @@ class FormImportCSV extends \yii\db\ActiveRecord
             for ($i = 1 ; $i <= 8; $i++) {
                 $answerDetail = Answer::findOne(['quiz_id' => $quizModel->quiz_id, 'order' => $i]);
                 //delete answer if not content answer
-                if (empty(trim($data[$i+7])) && $answerDetail) {
+                if (empty($data[$i+7]) && $answerDetail) {
                     $answerDetail->delete();
                 }
                 //update or insert answer
-                if (!empty(trim($data[$i+7]))) {
+                if (!empty($data[$i+7])) {
                     $modelAnswer = ($answerDetail) ? $answerDetail : new Answer();
                     $modelAnswer->quiz_id = $quizModel->quiz_id;
                     $modelAnswer->content = trim($data[$i+7]);
