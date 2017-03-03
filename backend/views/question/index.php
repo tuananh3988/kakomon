@@ -24,6 +24,12 @@ if ($formSearch->category_id_3) {
 }
 
 ?>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a href="<?= Url::to(['/question/save']); ?>" type="button" class="btn btn-success btn-sm">Add Question</a>
+        <a href="<?= Url::to(['/question/import']); ?>" type="button" class="btn btn-success btn-sm">Import CSV</a>
+    </div>
+</div>
 <div class="page-title">
     <div class="title_left">
         <h3>List Question</h3>
@@ -178,7 +184,7 @@ if ($formSearch->category_id_3) {
                                     'content' => function ($data) {
                                 return '<div class="action"><a data-pjax="0" href="' . Url::to(['/question/save',
                                             'quizId' => $data["quiz_id"]]) . '"><i class="fa fa-edit"></i></a>' . '&nbsp&nbsp&nbsp'
-                                        . '<a data-pjax="0" href="javascript:void(0)" onclick="ConfirmDeleteQuestion('.$data["quiz_id"].')"><i class="fa fa-trash-o"></i></a></div>';
+                                        . '<a data-pjax="0" href="javascript:void(0)" onclick="ConfirmDeleteQuestion(event, '.$data["quiz_id"].')"><i class="fa fa-trash-o"></i></a></div>';
                             }
                                 ],
                             ],

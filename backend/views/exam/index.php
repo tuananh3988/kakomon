@@ -11,6 +11,11 @@ use common\models\Exam;
 Yii::$app->view->title = 'List Question';
 
 ?>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a href="<?= Url::to(['/exam/save']); ?>" type="button" class="btn btn-success btn-sm">Add Exam</a>        
+    </div>
+</div>
 <div class="page-title">
     <div class="title_left">
         <h3>List Question</h3>

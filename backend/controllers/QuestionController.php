@@ -14,6 +14,7 @@ use common\models\QuizAnswer;
 use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\web\Session;
+use backend\models\FormImportCSV;
 
 class QuestionController extends Controller {
 
@@ -23,7 +24,7 @@ class QuestionController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'save', 'getsubcategory', 'detail'],
+                        'actions' => ['index', 'save', 'getsubcategory', 'detail', 'import'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -159,5 +160,47 @@ class QuestionController extends Controller {
         $result['data'] = $data;
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return $result;
+    }
+    
+    /*
+     * Auth : 
+     * 
+     * Method :
+     * Create : 03-03-2017
+     */
+    
+    public function actionImport()
+    {
+        $session = Yii::$app->session;
+        $model = new FormImportCSV();
+        $line = 0;
+        if ($model->load(Yii::$app->request->post())) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            $model->validate();
+            if ($model->validate()) {
+                if ($model->file) {
+                    $handle = fopen($model->file->tempName, "r");
+                    $header = null;
+                    while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
+                        if (!$header) {
+                            $header = $fileop;
+                            if (count($fileop) != 30) {
+                                break;
+                            }
+                        }
+//                        if ($line == 0) {
+//                            break;
+//                        }
+                        die('212121');
+                        $model->saveData($fileop);
+                        $line++;
+                    }
+                }
+            }
+        }
+        
+        return $this->render('import', [
+            'model' => $model
+        ]);
     }
 }

@@ -11,6 +11,11 @@ use yii\web\Session;
 Yii::$app->view->title = 'List Question';
 
 ?>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <a href="<?= Url::to(['/quick/save']); ?>" type="button" class="btn btn-success btn-sm">Add Quick Question</a>
+    </div>
+</div>
 <div class="page-title">
     <div class="title_left">
         <h3>List Quick Question</h3>
@@ -117,7 +122,7 @@ Yii::$app->view->title = 'List Question';
                                     'content' => function ($data) {
                                         return '<div class="action"><a data-pjax="0" href="' . Url::to(['/quick/save',
                                             'quizId' => $data["quiz_id"]]) . '"><i class="fa fa-edit"></i></a>' . '&nbsp&nbsp&nbsp'
-                                        . '<a data-pjax="0" href="javascript:void(0)" onclick="ConfirmDeleteQuestion('.$data["quiz_id"].')"><i class="fa fa-trash-o"></i></a></div>';
+                                        . '<a data-pjax="0" href="javascript:void(0)" onclick="ConfirmDeleteQuestion(event, '.$data["quiz_id"].')"><i class="fa fa-trash-o"></i></a></div>';
                             }
                                 ],
                             ],
