@@ -43,6 +43,9 @@ class Quiz extends \yii\db\ActiveRecord
     const TYPE_CREATE = 2;
     const QUIZ_ANSWER = '00000000';
 
+    const TYPE_NORMAL = 1;
+    const TYPE_QUICK_QUIZ = 2;
+    const TYPE_COLLECT = 3;
     /**
      * @inheritdoc
      */

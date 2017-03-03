@@ -123,4 +123,23 @@ class Utility extends Component
         
         return $offsetReturn;
     }
+    
+    /*
+     * render quiz answer for import csv
+     * 
+     * Auth : 
+     * Create : 03-03-2017
+     */
+    
+    public static function renderQuizAnswerImport($data)
+    {
+        $listAns  = explode(".", $data);
+        $dataQuizAnswer = Quiz::QUIZ_ANSWER;
+        if (count($listAns) > 0){
+            for ($i = 0; $i <count($listAns); $i++) {
+                $dataQuizAnswer = substr_replace($dataQuizAnswer, '1', ($listAns[$i] - 1), 1);
+            }
+        }
+        return $dataQuizAnswer;
+    }
 }

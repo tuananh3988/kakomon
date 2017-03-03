@@ -176,24 +176,13 @@ class QuestionController extends Controller {
         $line = 0;
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
-            $model->validate();
             if ($model->validate()) {
                 if ($model->file) {
                     $handle = fopen($model->file->tempName, "r");
-                    $header = null;
                     while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
-                        if (!$header) {
-                            $header = $fileop;
-                            if (count($fileop) != 30) {
-                                break;
-                            }
+                        if ($fileop[0] != 'Year') {
+                            $model->saveData($fileop);
                         }
-//                        if ($line == 0) {
-//                            break;
-//                        }
-                        die('212121');
-                        $model->saveData($fileop);
-                        $line++;
                     }
                 }
             }
