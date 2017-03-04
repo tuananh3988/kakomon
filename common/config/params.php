@@ -16,11 +16,13 @@ return [
     'limit' => [
         'follow' => 10,
         'comment' => 4,
-        'reply' => 4
+        'reply' => 4,
+        'help' => 4
     ],
     'offset' => [
         'follow' => 0,
         'comment' => 0,
-        'reply' => 0
+        'reply' => 0,
+        'help' => 0
     ]
 ];

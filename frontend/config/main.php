@@ -41,8 +41,10 @@ return [
                 'activity/comment/list' => 'activity/list-comment',
                 'activity/help/add' => 'activity/add-help',
                 'activity/help/delete' => 'activity/delete-help',
+                'activity/help/list' => 'activity/list-help',
                 'activity/reply/add' => 'activity/add-reply',
                 'activity/reply/delete' => 'activity/delete-reply',
+                'activity/reply/list' => 'activity/list-reply',
             ],
         ],
         'request' => [

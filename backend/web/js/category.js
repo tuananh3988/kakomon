@@ -24,6 +24,9 @@ $(".select_cat > span > a").click(function (event) {
     event.preventDefault();
     var liItem = $(this).parent().parent();
     var id = liItem.attr('id');
+    $('body').animate({
+            scrollTop: $("#detail-category").offset().top
+    }, 500);
     jQuery.ajax({
         url: '/backend/category/detail/' + id,
         beforeSend: function () {

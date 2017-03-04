@@ -119,6 +119,7 @@ class Comment extends \yii\db\ActiveRecord
         $query->select('activity.activity_id')
                 ->from('activity');
         $query->andWhere(['activity.quiz_id' => $quizId]);
+        $query->andWhere(['activity.type' => Activity::TYPE_COMMENT]);
         $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
         return $query->count();
     }

@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use common\models\Activity;
 use common\models\Quiz;
+use common\components\Utility;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -16,6 +17,7 @@ class Reply extends \yii\db\ActiveRecord
     
     const SCENARIO_ADD_REPLY = 'add';
     const SCENARIO_DELETE_REPLY = 'delete';
+    const SCENARIO_LIST_REPLY = 'list';
     
     
     /**
@@ -37,6 +39,10 @@ class Reply extends \yii\db\ActiveRecord
             ['activity_id', 'validateActivityIdReply', 'on' => self::SCENARIO_ADD_REPLY],
             [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_REPLY],
             ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_REPLY],
+            
+            [['activity_id'], 'required', 'on' => self::SCENARIO_LIST_REPLY],
+            ['activity_id', 'validateActivityIdForList', 'on' => self::SCENARIO_LIST_REPLY],
+            
             [['content', 'activity_id', 'created_date', 'updated_date'], 'safe'],
         ];
     }
@@ -91,6 +97,14 @@ class Reply extends \yii\db\ActiveRecord
         }
     }
     
+    /*
+     * Validate
+     * 
+     * Auth :
+     * Create : 01-03-2017
+     * 
+     */
+    
     public function validateActivityId($attribute)
     {
         if (!$this->hasErrors()) {
@@ -99,5 +113,91 @@ class Reply extends \yii\db\ActiveRecord
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
         }
+    }
+    
+    /*
+     * Validate
+     * 
+     * Auth :
+     * Create : 01-03-2017
+     * 
+     */
+    
+    public function validateActivityIdForList($attribute)
+    {
+        if (!$this->hasErrors()) {
+            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'type' => Activity::TYPE_HELP, 'status' => Activity::STATUS_ACTIVE]);
+            if (!$activity) {
+                $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
+            }
+        }
+    }
+    
+    /*
+     * Get total reply by activity
+     * 
+     * Auth : 
+     * Create : 04-03-2017
+     */
+    public static function getTotalReplyByActivityId($activityId)
+    {
+        $query = new \yii\db\Query();
+        $query->select('activity.activity_id')
+                ->from('activity');
+        $query->andWhere(['activity.relate_id' => $activityId]);
+        $query->andWhere(['activity.type' => Activity::TYPE_REPLY]);
+        $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
+        return $query->count();
+    }
+    
+    
+    /*
+     * Get List Reply
+     * 
+     * Auth : 
+     * Creat : 02-03-2017
+     */
+    
+    public static function getListReplyByActivityId($activityId, $limit, $offset)
+    {
+        $query = new \yii\db\Query();
+        $query->select(['activity.*', 'member.member_id AS meberId', 'member.name'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
+        $query->andWhere(['activity.relate_id' => $activityId]);
+        $query->andWhere(['activity.type' => Activity::TYPE_REPLY]);
+        $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
+        $query->offset($offset);
+        $query->limit($limit);
+        $query->orderBy(['activity_id' => SORT_DESC]);
+        return $query->all();
+    }
+    
+    
+    /*
+     * Render List Reply
+     * 
+     * Auth : 
+     * Create : 02-03-2017
+     */
+    
+    public static function renderListReply($activityId, $limit, $offset)
+    {
+        $listData = [];
+        $list = self::getListReplyByActivityId($activityId, $limit, $offset);
+        if (count($list) > 0){
+            foreach ($list as $key => $value) {
+                $listData[] = [
+                    'member_id' => $value['meberId'],
+                    'member_name' => $value['name'],
+                    'content' => $value['content'],
+                    'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['meberId']),
+                    'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['meberId']),
+                    'total_like' => Like::getTotalLikeByActivityId($value['activity_id']),
+                    'total_dislike' => Like::getTotalDisLikeByActivityId($value['activity_id'])
+                ];
+            }
+        }
+        return $listData;
     }
 }

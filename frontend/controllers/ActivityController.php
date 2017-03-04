@@ -36,8 +36,10 @@ class ActivityController extends Controller
                     'listComment' => ['get'],
                     'addHelp' => ['post'],
                     'deleteHelp' => ['post'],
+                    'listHelp' => ['get'],
                     'addReply' => ['post'],
-                    'deleteReply' => ['post']
+                    'deleteReply' => ['post'],
+                    'listReply' => ['get'],
                 ],
             ],
             'authenticator' => [
@@ -269,6 +271,12 @@ class ActivityController extends Controller
         ];
     }
     
+    /*
+     * List comment
+     * 
+     * Auth : 
+     * Create : 04-03-2017
+     */
     
     public function actionListComment()
     {
@@ -299,130 +307,74 @@ class ActivityController extends Controller
         ];
     }
     
+    /*
+     * List reply
+     * 
+     * Auth : 
+     * Create : 04-03-2017
+     */
+    
     public function actionListReply()
     {
-        //ativity_id
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['reply'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['reply'];
+        
+        $modelReply = new Reply();
+        $modelReply->setAttributes($param);
+        $modelReply->scenario  = Reply::SCENARIO_LIST_REPLY;
+        if (!$modelReply->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelReply->errors
+                ];
+        }
+        
+        //return data
+        $total = Reply::getTotalReplyByActivityId($param['activity_id']);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
         return [
             'status' => 200,
-            'count' => 100,//count replly
-            'offset' => 10,
-            'data' => [
-                [
-                    'member_id' => 123,
-                    'member_name' => 'anhct',
-                    'isDisLike' => true,
-                    'isLike' => true,
-                    'total_like' => 12,
-                    'total_dislike' => 10
-                ],
-                [
-                    'member_id' => 23,
-                    'member_name' => 'hiennc',
-                    'isDisLike' => true,
-                    'isLike' => true,
-                    'total_like' => 12,
-                    'total_dislike' => 10
-                ],
-                [
-                    'member_id' => 3,
-                    'member_name' => 'thanhmc',
-                    'isDisLike' => true,
-                    'isLike' => false,
-                    'total_like' => 1,
-                    'total_dislike' => 2
-                ]
-            ],
+            'count' => (int)$total,
+            'offset' => $offsetReturn,
+            'data' => Reply::renderListReply($param['activity_id'], $limit, $offset)
             
         ];
     }
     
+    /*
+     * List help
+     * 
+     * Auth : 
+     * Create : 04-03-2017
+     */
+    
     public function actionListHelp()
     {
-        //quiz_id
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['help'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['help'];
+        
+        $modelHelp = new Help();
+        $modelHelp->setAttributes($param);
+        $modelHelp->scenario  = Help::SCENARIO_LIST_HELP;
+        if (!$modelHelp->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelHelp->errors
+                ];
+        }
+        
+        //return data
+        $total = Help::getTotalHelpByQuizId($param['quiz_id']);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
         return [
             'status' => 200,
-            'count' => 100,
-            'offset' => 10,
-            'data' => [
-                [
-                    'member_id' => 123,
-                    'member_name' => 'anhct',
-                    'isDisLike' => true,
-                    'isLike' => true,
-                    'total_like' => 12,
-                    'total_dislike' => 10,
-                    'reply' => [
-                        [
-                            'member_id' => 123,
-                            'member_name' => 'anhct',
-                            'isLike' => true,
-                            'isDisLike' => true,
-                            'total_like' => 12,
-                            'total_dislike' => 10,
-                        ],
-                        [
-                            'member_id' => 123,
-                            'member_name' => 'anhct',
-                            'isLike' => true,
-                            'total_like' => 12,
-                            'total_dislike' => 10,
-                        ]
-                    ],
-                    'total_reply' => 30,
-                    'offset_reply' => 10
-                    
-                ],
-                [
-                    'member_id' => 23,
-                    'member_name' => 'hiennc',
-                    'isLike' => true,
-                    'total_like' => 12,
-                    'total_dislike' => 10,
-                    'reply' => [
-                        [
-                            'member_id' => 123,
-                            'member_name' => 'anhct',
-                            'isLike' => true,
-                            'total_like' => 12,
-                            'total_dislike' => 10,
-                        ],
-                        [
-                            'member_id' => 123,
-                            'member_name' => 'anhct',
-                            'isLike' => true,
-                            'total_like' => 12,
-                            'total_dislike' => 10,
-                        ]
-                    ],
-                    'total_reply' => 30,
-                    'offset_reply' => 10
-                ],
-                [
-                    'member_id' => 3,
-                    'member_name' => 'thanhmc',
-                    'isLike' => false,
-                    'total_like' => 1,
-                    'total_dislike' => 2,
-                    'reply' => [
-                        [
-                            'member_id' => 123,
-                            'member_name' => 'anhct',
-                            'isLike' => true,
-                            'total_like' => 12,
-                            'total_dislike' => 10,
-                        ],
-                        [
-                            'member_id' => 123,
-                            'member_name' => 'anhct',
-                            'isLike' => true,
-                            'total_like' => 12,
-                            'total_dislike' => 10,
-                        ]
-                    ],
-                    'total_reply' => 30,
-                    'offset_reply' => 10
-                ]
-            ],
+            'count' => (int)$total,
+            'offset' => $offsetReturn,
+            'data' => Help::renderListHelp($param['quiz_id'], $limit, $offset)
             
         ];
     }
@@ -549,7 +501,6 @@ class ActivityController extends Controller
             ]
         ];
     }
-    
     
     /*
      * Delete Reply
