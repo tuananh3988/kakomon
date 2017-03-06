@@ -175,16 +175,16 @@ class Help extends \yii\db\ActiveRecord
                 $offsetReturn = Utility::renderOffset($total, $limit, $offset);
                 
                 $listData[] = [
-                    'member_id' => $value['meberId'],
+                    'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
                     'content' => $value['content'],
                     'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['meberId']),
                     'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['meberId']),
-                    'total_like' => Like::getTotalLikeByActivityId($value['activity_id']),
-                    'total_dislike' => Like::getTotalDisLikeByActivityId($value['activity_id']),
+                    'total_like' => (int)Like::getTotalLikeByActivityId($value['activity_id']),
+                    'total_dislike' => (int)Like::getTotalDisLikeByActivityId($value['activity_id']),
                     'reply' => Reply::renderListReply($value['activity_id'], $limit, $offset),
-                    'total_reply' => $total,
-                    'offset_reply' => $offsetReturn
+                    'total_reply' => (int)$total,
+                    'offset_reply' => (int)$offsetReturn
                 ];
             }
         }

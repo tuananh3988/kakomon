@@ -188,13 +188,13 @@ class Reply extends \yii\db\ActiveRecord
         if (count($list) > 0){
             foreach ($list as $key => $value) {
                 $listData[] = [
-                    'member_id' => $value['meberId'],
+                    'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
                     'content' => $value['content'],
                     'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['meberId']),
                     'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['meberId']),
-                    'total_like' => Like::getTotalLikeByActivityId($value['activity_id']),
-                    'total_dislike' => Like::getTotalDisLikeByActivityId($value['activity_id'])
+                    'total_like' => (int)Like::getTotalLikeByActivityId($value['activity_id']),
+                    'total_dislike' => (int)Like::getTotalDisLikeByActivityId($value['activity_id'])
                 ];
             }
         }
