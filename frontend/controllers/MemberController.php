@@ -8,7 +8,10 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
 use common\models\Activity;
+use common\components\Utility;
 use frontend\models\LoginForm;
+use frontend\models\FormUpload;
+use yii\web\UploadedFile;
 /**
  * Site controller
  */
@@ -29,6 +32,7 @@ class MemberController extends Controller
                     'create' => ['post'],
                     'login' => ['post'],
                     'update' => ['post'],
+                    'avata' => ['put'],
                 ],
             ],
             'authenticator' => [
@@ -315,5 +319,39 @@ class MemberController extends Controller
                 'access_token' => $member->auth_key
             ]
         ];
+    }
+    
+    /*
+     * Member avata
+     * 
+     * Auth :
+     * Create : 25-02-2017
+     */
+    
+    public function  actionAvata()
+    {
+//        $modelUpload = new FormUpload();
+//        $request = Yii::$app->request;
+//        $dataPost = $request->post();
+        $dir = \yii::getAlias('@webroot') . "/upload/";
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        $putdata = fopen("php://input", "r");
+           // make sure that you have /web/upload directory (writeable) 
+           // for this to work
+        $path = \yii::getAlias('@webroot')."/upload/abc.jpg";
+
+        $fp = fopen($path, "w");
+
+        while ($data = fread($putdata, 1024))
+           fwrite($fp, $data);
+
+        /* Close the streams */
+        fclose($fp);
+        fclose($putdata);
+        die('21212');
+        
+        
     }
 }
