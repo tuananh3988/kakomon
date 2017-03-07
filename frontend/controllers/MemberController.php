@@ -333,14 +333,11 @@ class MemberController extends Controller
 //        $modelUpload = new FormUpload();
 //        $request = Yii::$app->request;
 //        $dataPost = $request->post();
-        $dir = \yii::getAlias('@webroot') . "/upload/";
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
+        
         $putdata = fopen("php://input", "r");
            // make sure that you have /web/upload directory (writeable) 
            // for this to work
-        $path = \yii::getAlias('@webroot')."/upload/abc.jpg";
+        $path = Yii::$app->params['imgPath'] . 'uploads'."/abc.png";
 
         $fp = fopen($path, "w");
 
