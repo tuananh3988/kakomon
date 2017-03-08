@@ -9,6 +9,8 @@ use yii\filters\auth\QueryParamAuth;
 use common\components\Utility;
 use common\models\Member;
 use common\models\Activity;
+use common\models\Category;
+use common\models\Quiz;
 use frontend\models\Like;
 use frontend\models\Comment;
 use frontend\models\Help;
@@ -40,6 +42,7 @@ class ActivityController extends Controller
                     'addReply' => ['post'],
                     'deleteReply' => ['post'],
                     'listReply' => ['get'],
+                    'timeline' => ['get']
                 ],
             ],
             'authenticator' => [
@@ -540,6 +543,61 @@ class ActivityController extends Controller
         //return success
         return [
             'status' => 200
+        ];
+    }
+    
+    /*
+     * List timeline
+     * 
+     * Auth : 
+     * Create : 04-03-2017
+     */
+    
+    public function actionTimeline()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['timeline'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['timeline'];
+        $categoryFirst = Category::find()->where(['parent_id' => 0])->orderBy(['cateory_id' => SORT_ASC])->one();
+        if (!isset($param['category_id']) && !$categoryFirst) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        $categoryId = isset($param['category_id']) ? $param['category_id'] : $categoryFirst->cateory_id;
+        $modelCategory = new Category();
+        $listHelp = $modelCategory->getListTimelineHelp($categoryId);
+        //return no data
+        if (count($listHelp) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        //list data
+        $data = [];
+        foreach ($listHelp as $key => $value) {
+            $data[] = [
+                'content_activity' => $value['content_activity'],
+                'question' => $value['question'],
+                'sub_menu' => Quiz::renderListSubCat($value['category_id_2'], $value['category_id_3'], $value['category_id_4']),
+                'cateory_id' => (int)$value['cateory_id'],
+                'member_id' => $value['member_id'],
+                'name' => $value['name'],
+                'avatar' => ''
+            ];
+        }
+        //return data
+        $total = $modelCategory->getListTimelineHelp($categoryId, true);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+        return [
+            'status' => 200,
+            'count' => (int)$total,
+            'offset' => $offsetReturn,
+            'data' => $data
+            
         ];
     }
 }

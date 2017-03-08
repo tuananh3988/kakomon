@@ -11,16 +11,19 @@ return [
     'imgPath' => 'E:/XAMPP/htdocs/kakomon/',
     'imgUpload' => [
         'question' => 'uploads/question/',
-        'answer' => 'uploads/answer/'
+        'answer' => 'uploads/answer/',
+        'member' => 'uploads/member/',
     ],
     'limit' => [
         'follow' => 10,
+        'timeline' => 10,
         'comment' => 4,
         'reply' => 4,
         'help' => 4
     ],
     'offset' => [
         'follow' => 0,
+        'timeline' => 10,
         'comment' => 0,
         'reply' => 0,
         'help' => 0

@@ -235,4 +235,29 @@ class Category extends \yii\db\ActiveRecord
         }
         return TRUE;
     }
+    
+    /*
+     * Get list timeline help
+     * 
+     * Auth : 
+     * Create : 08-03-2017
+     */
+    
+    public function getListTimelineHelp($catId, $flag = false){
+        $query = new \yii\db\Query();
+        $query->select(['category.cateory_id', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity'])
+                ->from('category');
+        $query->join('INNER JOIN', 'quiz', 'quiz.category_id_1 = category.cateory_id');
+        $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
+        $query->andWhere(['category.cateory_id' => $catId]);
+        $query->andWhere(['quiz.delete_flag' => 0]);
+        $query->andWhere(['activity.type' => Activity::TYPE_HELP]);
+        $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
+        if ($flag) {
+            return $query->count();
+        }
+        return $query->all();
+    }
+    
 }

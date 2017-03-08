@@ -32,7 +32,7 @@ class MemberController extends Controller
                     'create' => ['post'],
                     'login' => ['post'],
                     'update' => ['post'],
-                    'avata' => ['put'],
+                    'avata' => ['post'],
                 ],
             ],
             'authenticator' => [
@@ -330,10 +330,11 @@ class MemberController extends Controller
     
     public function  actionAvata()
     {
-//        $modelUpload = new FormUpload();
-//        $request = Yii::$app->request;
-//        $dataPost = $request->post();
-        
+        $modelUpload = new FormUpload();
+        $request = Yii::$app->request;
+        $dataPost = $request->post();
+        //$modelUpload->load($dataPost);
+        var_dump($_FILES);die;
         $putdata = fopen("php://input", "r");
            // make sure that you have /web/upload directory (writeable) 
            // for this to work

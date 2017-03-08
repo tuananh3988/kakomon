@@ -42,6 +42,7 @@ return [
                 'activity/help/add' => 'activity/add-help',
                 'activity/help/delete' => 'activity/delete-help',
                 'activity/help/list' => 'activity/list-help',
+                'activity/help/timeline' => 'activity/timeline',
                 'activity/reply/add' => 'activity/add-reply',
                 'activity/reply/delete' => 'activity/delete-reply',
                 'activity/reply/list' => 'activity/list-reply',

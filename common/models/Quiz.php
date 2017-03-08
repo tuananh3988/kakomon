@@ -354,4 +354,28 @@ class Quiz extends \yii\db\ActiveRecord
         ]);
         return $query->all();
     }
+    
+    /*
+     * Render list subcategory
+     * 
+     * Auth : 
+     * Create : 08-03-2017
+     */
+    
+    public static function renderListSubCat($subCat2 , $subCat3, $subCat4){
+        $list = [];
+        if (!empty($subCat2)) {
+            $sub2 = Category::findOne(['cateory_id' => $subCat2]);
+            $list[] = $sub2->name;
+        }
+        if (!empty($subCat3)) {
+            $sub3 = Category::findOne(['cateory_id' => $subCat3]);
+            $list[] = $sub3->name;
+        }
+        if (!empty($subCat4)) {
+            $sub4 = Category::findOne(['cateory_id' => $subCat4]);
+            $list[] = $sub4->name;
+        }
+        return $list;
+    }
 }
