@@ -32,7 +32,7 @@ class MemberController extends Controller
                     'create' => ['post'],
                     'login' => ['post'],
                     'update' => ['post'],
-                    'avata' => ['post'],
+                    'avatar' => ['post'],
                 ],
             ],
             'authenticator' => [
@@ -328,28 +328,24 @@ class MemberController extends Controller
      * Create : 25-02-2017
      */
     
-    public function  actionAvata()
+    public function  actionAvatar()
     {
         $modelUpload = new FormUpload();
-        $request = Yii::$app->request;
-        $dataPost = $request->post();
-        //$modelUpload->load($dataPost);
-        var_dump($_FILES);die;
-        $putdata = fopen("php://input", "r");
-           // make sure that you have /web/upload directory (writeable) 
-           // for this to work
-        $path = Yii::$app->params['imgPath'] . 'uploads'."/abc.png";
-
-        $fp = fopen($path, "w");
-
-        while ($data = fread($putdata, 1024))
-           fwrite($fp, $data);
-
-        /* Close the streams */
-        fclose($fp);
-        fclose($putdata);
-        die('21212');
-        
-        
+        $modelUpload->file = $_FILES;
+        //return error
+        if (!$modelUpload->validate()) {
+            return [
+                'status' => 400,
+                'messages' => $modelUpload->errors
+            ];
+        }
+        $utility = new Utility();
+        $utility->uploadImagesForApi($modelUpload->file, 'member', Yii::$app->user->identity->member_id);
+        return [
+            'status' => 200,
+            'data' => [
+                
+            ]
+        ];
     }
 }

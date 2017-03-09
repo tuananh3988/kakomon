@@ -16,10 +16,8 @@ class FormUpload extends Model
     {
         return [
             [['file'], 'required'],
-            [['file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
-            [['file'], 'file', 'extensions' => 'png, jpg, jpeg', 'maxSize'=> 8*1024*1024,
-                'tooBig' => \Yii::t('app', 'file size upload'), 'checkExtensionByMimeType' => false ,
-                'wrongExtension' => \Yii::t('app', 'Extension png, jpg, jpeg')],
+            [['file'], 'validateExtensions'],
+            [['file'], 'validateMaxSize'],
             [['file'], 'safe'],
         ];
     }
@@ -46,5 +44,33 @@ class FormUpload extends Model
     public function extraFields()
     {
         return ['file'];
+    }
+    
+    /*
+     * validate validateExtensions
+     * 
+     * Auth : 
+     * Create : 09-03-2017 
+     */
+    
+    public function validateExtensions($attribute){
+        $infoFile = $this->$attribute;
+        if (!in_array(pathinfo($infoFile['file']['name'], PATHINFO_EXTENSION), ['png', 'jpg', 'jpeg'])) {
+            $this->addError($attribute, \Yii::t('app', 'extensions',['attribute' => $this->attributeLabels()[$attribute]]));
+        }
+    }
+    
+    /*
+     * validate validateRequired
+     * 
+     * Auth : 
+     * Create : 09-03-2017 
+     */
+    
+    public function validateMaxSize($attribute){
+        $infoFile = $this->$attribute;
+        if ($infoFile['file']['size'] > 8*1024*1024) {
+            $this->addError($attribute, \Yii::t('app', 'maxSize',['attribute' => $this->attributeLabels()[$attribute]]));
+        }
     }
 }

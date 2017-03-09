@@ -142,4 +142,26 @@ class Utility extends Component
         }
         return $dataQuizAnswer;
     }
+    
+    /*
+     * upload image for api
+     * 
+     * Auth :
+     * Create : 09-03-2017
+     */
+    
+    public function uploadImagesForApi($infoImages, $type, $idParent, $id = null){
+        $dirParent = Yii::$app->params['imgPath'] . 'uploads';
+        if (!is_dir($dirParent)) {
+            mkdir($dirParent, 0777);
+        }
+        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type];
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777);
+        }
+        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        
+        move_uploaded_file($infoImages["file"]["tmp_name"], $path);
+    }
+    
 }
