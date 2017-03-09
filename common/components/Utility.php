@@ -31,10 +31,10 @@ class Utility extends Component
         $infoImages->saveAs($path);
     }
     
-    public static function getImage($type, $idParent, $id = null)
+    public static function getImage($type, $idParent, $id = null, $flagReturn = false)
     {
         $image = '';
-        $folder = ['question', 'answer'];
+        $folder = ['question', 'answer', 'member'];
         if (!in_array($type, $folder)) {
             return $image;
         }
@@ -46,6 +46,9 @@ class Utility extends Component
             $type = pathinfo($path, PATHINFO_EXTENSION);
             $data = file_get_contents($path);
             $image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            if ($flagReturn) {
+                return $path;
+            }
         }
         
         return $image;
@@ -56,7 +59,7 @@ class Utility extends Component
      */
     
     public function removeImages($type, $idParent, $id = null){
-        $folder = ['question', 'answer'];
+        $folder = ['question', 'answer', 'member'];
         if (!in_array($type, $folder)) {
             return $image;
         }
@@ -75,7 +78,7 @@ class Utility extends Component
      */
     
     public function checkExitImages($type, $idParent, $id = null){
-        $folder = ['question', 'answer'];
+        $folder = ['question', 'answer', 'member'];
         if (!in_array($type, $folder)) {
             return $image;
         }
@@ -163,5 +166,4 @@ class Utility extends Component
         
         move_uploaded_file($infoImages["file"]["tmp_name"], $path);
     }
-    
 }

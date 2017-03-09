@@ -344,7 +344,7 @@ class MemberController extends Controller
         return [
             'status' => 200,
             'data' => [
-                
+                'avatar' => Utility::getImage('member', Yii::$app->user->identity->member_id, null, true)
             ]
         ];
     }
