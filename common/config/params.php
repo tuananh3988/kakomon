@@ -14,6 +14,10 @@ return [
         'answer' => 'uploads/answer/',
         'member' => 'uploads/member/',
     ],
+    'csvUpload' => [
+        'process' => 'csvUpload/process/',
+        'done' => 'csvUpload/done/'
+    ],
     'limit' => [
         'follow' => 10,
         'timeline' => 10,

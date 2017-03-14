@@ -46,6 +46,11 @@ class Quiz extends \yii\db\ActiveRecord
     const TYPE_NORMAL = 1;
     const TYPE_QUICK_QUIZ = 2;
     const TYPE_COLLECT = 3;
+    
+    public static $QUIZ_CLASS = [
+        '一般問題' => 1,
+        '必修問題' => 2
+    ];
     /**
      * @inheritdoc
      */
@@ -87,7 +92,7 @@ class Quiz extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'category_id_1', 'category_id_2', 'category_id_3', 'category_id_4', 'staff_create', 'delete_flag'], 'integer'],
+            [['type', 'category_main_id', 'category_a_id', 'category_b_id', 'staff_create', 'delete_flag'], 'integer'],
             [['question'], 'required'],
             [['question'], 'string'],
             [['created_date', 'updated_date'], 'safe'],
@@ -106,10 +111,9 @@ class Quiz extends \yii\db\ActiveRecord
             'quiz_id' => 'Quiz ID',
             'type' => 'Type',
             'question' => 'Question',
-            'category_id_1' => 'Category Id 1',
-            'category_id_2' => 'Category Id 2',
-            'category_id_3' => 'Category Id 3',
-            'category_id_4' => 'Category Id 4',
+            'category_main_id' => 'Category Id 1',
+            'category_a_id' => 'Category Id 2',
+            'category_b_id' => 'Category Id 3',
             'answer_id' => 'Answer',
             'quiz_answer' => 'Quiz Answer',
             'staff_create' => 'Staff Create',
@@ -285,10 +289,9 @@ class Quiz extends \yii\db\ActiveRecord
                 ->from('quiz');
         $query->andFilterWhere(['=', 'type' , $type]);
         $query->andFilterWhere(['=', 'delete_flag' , 0]);
-        $query->andFilterWhere(['=', 'category_id_1' , $this->category_id_1]);
-        $query->andFilterWhere(['=', 'category_id_2' , $this->category_id_2]);
-        $query->andFilterWhere(['=', 'category_id_3' , $this->category_id_3]);
-        $query->andFilterWhere(['=', 'category_id_4' , $this->category_id_4]);
+        $query->andFilterWhere(['=', 'category_main_id' , $this->category_main_id]);
+        $query->andFilterWhere(['=', 'category_a_id' , $this->category_a_id]);
+        $query->andFilterWhere(['=', 'category_b_id' , $this->category_b_id]);
         $query->andFilterWhere(['like', 'question' , $this->question]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

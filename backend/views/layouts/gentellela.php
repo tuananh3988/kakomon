@@ -74,6 +74,8 @@ AppAsset::register($this);
                         </ul>
                     </li>
                     
+                    <li><a href="<?= Url::to(['/csv/index']); ?>"><i class="fa fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;&nbsp;CSV </a>
+                        
                     <li>
                       <a><i class="fa fa-connectdevelop"></i> Push Notification <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu" >

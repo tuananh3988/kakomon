@@ -80,7 +80,7 @@ class Utility extends Component
     public function checkExitImages($type, $idParent, $id = null){
         $folder = ['question', 'answer', 'member'];
         if (!in_array($type, $folder)) {
-            return $image;
+            return FALSE;
         }
         $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         if ($id) {
@@ -165,5 +165,59 @@ class Utility extends Component
         $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         
         move_uploaded_file($infoImages["file"]["tmp_name"], $path);
+    }
+    
+    /*
+     * upload csv
+     * 
+     * Auth :
+     * Create : 09-03-2017
+     */
+    
+    public static function uploadCsv($infoCsv, $type, $name){
+        $dirParent = Yii::$app->params['imgPath'] . 'csvUpload';
+        if (!is_dir($dirParent)) {
+            mkdir($dirParent, 0777);
+        }
+        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload'][$type];
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777);
+        }
+        $path = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload'][$type] . $name;
+        
+        $infoCsv->saveAs($path);
+    }
+    
+    /*
+     * check exit file csv
+     */
+    
+    public static function checkExitCsv($type, $fileName){
+        $path = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload'][$type] . $fileName;
+        
+        if (file_exists($path)) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
+    /*
+     * unzip folde
+     * 
+     * Auth : 
+     * Create : 14-03-2017
+     */
+    
+    public static function unzipFile($fileName, $name)
+    {
+        $file = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] . $fileName;
+        $zip = new \ZipArchive();
+        $zipped = $zip->open($file);
+        $path = pathinfo(realpath($file), PATHINFO_DIRNAME) . '/' . $name;
+        if ($zipped) {
+        //if yes then extract it to the said folder
+          $extract = $zip->extractTo($path);
+          $zip->close();
+        }
     }
 }

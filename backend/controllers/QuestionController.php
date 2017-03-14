@@ -15,6 +15,8 @@ use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\web\Session;
 use backend\models\FormImportCSV;
+use common\components\Utility;
+use common\models\LogCsv;
 
 class QuestionController extends Controller {
 
@@ -171,20 +173,28 @@ class QuestionController extends Controller {
     
     public function actionImport()
     {
+        $time = strtotime(date('Y-m-d H:i:s'));
         $session = Yii::$app->session;
         $model = new FormImportCSV();
         $line = 0;
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
+            $model->file_images = UploadedFile::getInstance($model, 'file_images');
             if ($model->validate()) {
-                if ($model->file) {
-                    $handle = fopen($model->file->tempName, "r");
-                    while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
-                        if ($fileop[0] != 'Year') {
-                            $model->saveData($fileop);
-                        }
-                    }
+                $model->file->name = $time.'.csv';
+                Utility::uploadCsv($model->file, 'process', $model->file->name);
+                if ($model->file_images) {
+                    $model->file_images->name = $time.'.tar';
+                    Utility::uploadCsv($model->file_images, 'process', $model->file_images->name);
                 }
+                //inset table log
+                $modelLogCsv = new LogCsv();
+                $modelLogCsv->file_name = (string)$time;
+                $modelLogCsv->save();
+                //set message after upload file csv and images
+                $session = Yii::$app->session;
+                $message ='Csv file is being inserted, please wait for a few minutes. You can switch to the upload status monitor.';
+                $session->setFlash('sucess_csv',$message);
             }
         }
         
