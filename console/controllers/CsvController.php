@@ -32,6 +32,7 @@ class CsvController extends \yii\console\Controller
                     $dataLog->status = LogCsv::STATUS_DONE;
                     $dataLog->content_log = json_encode($error);
                     $dataLog->save();
+                    continue;
                 }
                 
                 //update status
@@ -40,7 +41,8 @@ class CsvController extends \yii\console\Controller
                 
                 //unzip folder
                 $fileNameFolder = $value->file_name.'.tar';
-                if (Utility::checkExitCsv('process', $fileNameFolder)) {
+                $flagFolder = Utility::checkExitCsv('process', $fileNameFolder);
+                if ($flagFolder) {
                     Utility::unzipFile($fileNameFolder, $value->file_name);
                 }
                 //read and insert file csv
@@ -48,12 +50,16 @@ class CsvController extends \yii\console\Controller
                 while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
                     if ($fileop[0] != 'Year') {
                         $lineErrors++;
-                        if (!$model->saveData($fileop, $value->file_name)) {
+                        if (!$model->saveData($fileop, $value->file_name, $flagFolder)) {
                             $messageErrors[] = $lineErrors;
                         }
                     }
                 }
-
+                fclose($handle);
+                //move file csv and folder images to folder done
+                
+                Utility::moveToFolderDone($value->file_name);
+                
                 $error =[
                     'errorCode' => 0,
                     'message' => 'Insert success!',

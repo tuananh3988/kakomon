@@ -247,7 +247,7 @@ class Category extends \yii\db\ActiveRecord
         $query = new \yii\db\Query();
         $query->select(['category.cateory_id', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity'])
                 ->from('category');
-        $query->join('INNER JOIN', 'quiz', 'quiz.category_id_1 = category.cateory_id');
+        $query->join('INNER JOIN', 'quiz', 'quiz.category_main_id = category.cateory_id');
         $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
         $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
         $query->andWhere(['category.cateory_id' => $catId]);

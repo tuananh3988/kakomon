@@ -12,14 +12,14 @@ $this->title = 'Add Question!';
 $subCat1 = [];
 $subCat2 = [];
 $subCat3 = [];
-if ($question->category_id_1) {
-    $subCat1 = Category::getsubcategory($question->category_id_1);
+if ($question->category_main_id) {
+    $subCat1 = Category::getsubcategory($question->category_main_id);
 }
-if ($question->category_id_2) {
-    $subCat2 = Category::getsubcategory($question->category_id_2);
+if ($question->category_a_id) {
+    $subCat2 = Category::getsubcategory($question->category_a_id);
 }
-if ($question->category_id_3) {
-    $subCat3 = Category::getsubcategory($question->category_id_3);
+if ($question->category_b_id) {
+    $subCat3 = Category::getsubcategory($question->category_b_id);
 }
 ?>
 <link rel="stylesheet" href="<?= Yii::$app->request->baseUrl; ?>/css/colorbox.css" />
@@ -39,27 +39,22 @@ if ($question->category_id_3) {
                     <div class="form-group"> 
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Category</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_1', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($rootCat, ['prompt' => 'Select category', 'class' => 'form-control select-root-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_main_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($rootCat, ['prompt' => 'Select category', 'class' => 'form-control select-root-cat'])->label('') ?>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat1</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_2', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_a_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat'])->label('') ?>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat2</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_3', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_b_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat'])->label('') ?>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat3</label>
-                        <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_id_4', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat3, ['prompt' => 'Select sub3 category', 'class' => 'form-control'])->label('') ?>
-                        </div>
-                    </div>
+                    
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Content Question <span class="required">*</span></label>
                         <div class="col-md-9 col-sm-9 col-xs-12">

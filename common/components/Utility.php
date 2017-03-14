@@ -4,12 +4,8 @@ namespace common\components;
 
 use Yii;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\imagine\Image;
-use yii\web\UploadedFile;
 use common\models\Quiz;
+use yii\helpers\FileHelper;
 
 class Utility extends Component
 {
@@ -218,6 +214,60 @@ class Utility extends Component
         //if yes then extract it to the said folder
           $extract = $zip->extractTo($path);
           $zip->close();
+        }
+    }
+    
+    /*
+     * Find file in folder
+     * 
+     * Auth : 
+     * Create : 14-03-2017
+     */
+    
+    public static function getImagesInFolder($fileName, $path){
+        return FileHelper::findFiles($path, ['only' => [$fileName. '*']]);
+    }
+    
+    /*
+     * 
+     */
+    
+    public static function moveImages($fileName, $type, $pathFolder, $idParent, $id = null){
+        $dirParent = Yii::$app->params['imgPath'] . 'uploads';
+        if (!is_dir($dirParent)) {
+            mkdir($dirParent, 0777);
+        }
+        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type];
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777);
+        }
+        $pathTo = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type . '_' . $idParent . '.jpg';
+        if ($id) {
+            $pathTo = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+        }
+        $pathFrom = $fileName;
+        rename($pathFrom, $pathTo);
+    }
+    
+    public static function moveToFolderDone($fileName){
+        $dirParent = Yii::$app->params['imgPath'] . 'csvUpload';
+        if (!is_dir($dirParent)) {
+            mkdir($dirParent, 0777);
+        }
+        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['done'];
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777);
+        }
+        //move file csv
+        $pathToCsv = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['done'] . $fileName . '.csv';
+        $pathFromCsv = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] .$fileName . '.csv';
+        rename($pathFromCsv, $pathToCsv);
+        //move file tar
+        $fileNameFolder = $fileName.'.tar';
+        if ( self::checkExitCsv('process', $fileNameFolder)) {
+            $pathToTar = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['done'] . $fileName . '.tar';
+            $pathFromTar = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] .$fileName . '.tar';
+            rename($pathFromTar, $pathToTar);
         }
     }
 }

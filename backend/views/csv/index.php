@@ -94,8 +94,8 @@ Yii::$app->view->title = 'List Log Upload CSV';
                                     'label' => 'Updated date',
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
-                                        if (!empty($data['updated']) && $data['updated'] != '0000-00-00 00:00:00') {
-                                            return $data['updated'];
+                                        if (!empty($data['updated_date']) && $data['updated_date'] != '0000-00-00 00:00:00') {
+                                            return $data['updated_date'];
                                         } else {
                                             return '';
                                         }

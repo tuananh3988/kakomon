@@ -41,7 +41,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
      * Date 23/03/2016
      */
     
-    public function saveData($data, $fileName)
+    public function saveData($data, $fileName, $flagFolder)
     {
         //insert main category
         $mainCatName = trim($data[4]);
@@ -102,9 +102,17 @@ class FormImportCSV extends \yii\db\ActiveRecord
                 $quizModel->quiz_year = $data[0];
                 $quizModel->quiz_class = array_key_exists($data[3], Quiz::$QUIZ_CLASS) ? Quiz::$QUIZ_CLASS[$data[3]] : NULL;
                 $quizModel->save();
-
-                //upload images question
                 
+                $pathFolder = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] . $fileName  . '/images';
+                
+                //upload images question
+                $fileNameQuestion = 'question-' . $data[0] . '-' . $data[1];
+                if ($flagFolder) {
+                    $listFile = Utility::getImagesInFolder($fileNameQuestion, $pathFolder);
+                    if (count($listFile) > 0) {
+                        Utility::moveImages($listFile[0], 'question', $pathFolder, $quizModel->quiz_id);
+                    }
+                }
                 
                 //insert or update answer
                 for ($i = 1 ; $i <= 8; $i++) {
@@ -121,6 +129,15 @@ class FormImportCSV extends \yii\db\ActiveRecord
                         $modelAnswer->order = $i;
                         $modelAnswer->save();
                     }
+                    //upload images ans
+                    $fileNameQuestion = 'ans-' . $data[0] . '-' . $data[1] . '-' . $i;
+                    if ($flagFolder) {
+                        $listFileAns = Utility::getImagesInFolder($fileNameQuestion, $pathFolder);
+                        if (count($listFileAns) > 0) {
+                            Utility::moveImages($listFileAns[0], 'answer', $pathFolder, $quizModel->quiz_id, $i);
+                        }
+                    }
+                    
                 }
                 $transaction->commit();
                 return true;

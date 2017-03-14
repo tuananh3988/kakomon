@@ -13,14 +13,14 @@ Yii::$app->view->title = 'List Question Collect';
 $subCat1 = [];
 $subCat2 = [];
 $subCat3 = [];
-if ($formSearch->category_id_1) {
-    $subCat1 = Category::getsubcategory($formSearch->category_id_1);
+if ($formSearch->category_main_id) {
+    $subCat1 = Category::getsubcategory($formSearch->category_main_id);
 }
-if ($formSearch->category_id_2) {
-    $subCat2 = Category::getsubcategory($formSearch->category_id_2);
+if ($formSearch->category_a_id) {
+    $subCat2 = Category::getsubcategory($formSearch->category_a_id);
 }
-if ($formSearch->category_id_3) {
-    $subCat3 = Category::getsubcategory($formSearch->category_id_3);
+if ($formSearch->category_b_id) {
+    $subCat3 = Category::getsubcategory($formSearch->category_b_id);
 }
 
 ?>
@@ -42,25 +42,21 @@ if ($formSearch->category_id_3) {
             <div class="x_content">
                 <?php
                 $form = ActiveForm::begin([
-                            'action' => ['question/index'],
+                            'action' => ['collect/index'],
                             'method' => 'get'
                 ]);
                 ?>
                 <form class="form-horizontal form-label-left">
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                    <?= Html::activeDropDownList($formSearch, 'category_id_1', $rootCat, ['prompt' => 'Select category', 'class' => 'form-control col-md-7 col-xs-12 select-root-cat']); ?>
+                    <?= Html::activeDropDownList($formSearch, 'category_main_id', $rootCat, ['prompt' => 'Select category', 'class' => 'form-control col-md-7 col-xs-12 select-root-cat']); ?>
                     </div>
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                    <?= Html::activeDropDownList($formSearch, 'category_id_2', $subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub1-cat']); ?>
+                    <?= Html::activeDropDownList($formSearch, 'category_a_id', $subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub1-cat']); ?>
                     </div>
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                    <?= Html::activeDropDownList($formSearch, 'category_id_3', $subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat']); ?>
-                    </div>
-
-                    <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                    <?= Html::activeDropDownList($formSearch, 'category_id_4', $subCat3, ['prompt' => 'Select sub3 category', 'class' => 'form-control col-md-7 col-xs-12']); ?>
+                    <?= Html::activeDropDownList($formSearch, 'category_b_id', $subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat']); ?>
                     </div>
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
@@ -69,7 +65,7 @@ if ($formSearch->category_id_3) {
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
                         <?= Html::submitButton('Search', ['class' => 'btn btn-warning']) ?>
-                        <a class="btn btn-default" href="<?php echo Url::to(['/question/index']); ?>">Clear</a>
+                        <a class="btn btn-default" href="<?php echo Url::to(['/collect/index']); ?>">Clear</a>
                     </div>
                 </form>
             <?php ActiveForm::end(); ?>
@@ -123,35 +119,27 @@ if ($formSearch->category_id_3) {
                                     }
                                 ],
                                 [
-                                    'attribute' => 'category_id_1',
+                                    'attribute' => 'category_main_id',
                                     'label' => 'Category',
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
-                                        return Category::getDetailNameCategory($data['category_id_1']);
+                                        return Category::getDetailNameCategory($data['category_main_id']);
                                     }
                                 ],
                                 [
-                                    'attribute' => 'category_id_2',
+                                    'attribute' => 'category_a_id',
                                     'label' => 'Sub1 Category',
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
-                                        return Category::getDetailNameCategory($data['category_id_2']);
+                                        return Category::getDetailNameCategory($data['category_a_id']);
                                     }
                                 ],
                                 [
-                                    'attribute' => 'category_id_3',
+                                    'attribute' => 'category_b_id',
                                     'label' => 'Sub2 Category',
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
-                                        return Category::getDetailNameCategory($data['category_id_3']);
-                                    }
-                                ],
-                                [
-                                    'attribute' => 'category_id_4',
-                                    'label' => 'Sub3 Category',
-                                    'headerOptions' => ['class' => 'icon-sort'],
-                                    'content' => function ($data) {
-                                        return Category::getDetailNameCategory($data['category_id_4']);
+                                        return Category::getDetailNameCategory($data['category_b_id']);
                                     }
                                 ],
                                 [

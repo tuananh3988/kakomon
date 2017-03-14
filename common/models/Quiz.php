@@ -301,10 +301,9 @@ class Quiz extends \yii\db\ActiveRecord
             'sort' => [
                 'defaultOrder' => [
                     'quiz_id' => SORT_DESC,
-                    'category_id_1' => SORT_DESC,
-                    'category_id_2' => SORT_DESC,
-                    'category_id_3' => SORT_DESC,
-                    'category_id_4' => SORT_DESC,
+                    'category_main_id' => SORT_DESC,
+                    'category_a_id' => SORT_DESC,
+                    'category_b_id' => SORT_DESC,
                     'created_date' => SORT_DESC
                 ]
             ],
@@ -313,21 +312,17 @@ class Quiz extends \yii\db\ActiveRecord
             'desc' => ['quiz.quiz_id' => SORT_DESC],
             'asc' => ['quiz.quiz_id' => SORT_ASC],
         ];
-        $dataProvider->sort->attributes['category_id_1'] = [
-            'desc' => ['quiz.category_id_1' => SORT_DESC],
-            'asc' => ['quiz.category_id_1' => SORT_ASC],
+        $dataProvider->sort->attributes['category_main_id'] = [
+            'desc' => ['quiz.category_main_id' => SORT_DESC],
+            'asc' => ['quiz.category_main_id' => SORT_ASC],
         ];
-        $dataProvider->sort->attributes['category_id_2'] = [
-            'desc' => ['quiz.category_id_2' => SORT_DESC],
-            'asc' => ['quiz.category_id_2' => SORT_ASC],
+        $dataProvider->sort->attributes['category_a_id'] = [
+            'desc' => ['quiz.category_a_id' => SORT_DESC],
+            'asc' => ['quiz.category_a_id' => SORT_ASC],
         ];
-        $dataProvider->sort->attributes['category_id_3'] = [
-            'desc' => ['quiz.category_id_3' => SORT_DESC],
-            'asc' => ['quiz.category_id_3' => SORT_ASC],
-        ];
-        $dataProvider->sort->attributes['category_id_4'] = [
-            'desc' => ['quiz.category_id_4' => SORT_DESC],
-            'asc' => ['quiz.category_id_4' => SORT_ASC],
+        $dataProvider->sort->attributes['category_b_id'] = [
+            'desc' => ['quiz.category_b_id' => SORT_DESC],
+            'asc' => ['quiz.category_b_id' => SORT_ASC],
         ];
         $dataProvider->sort->attributes['created_date'] = [
             'desc' => ['quiz.created_date' => SORT_DESC],
@@ -350,10 +345,9 @@ class Quiz extends \yii\db\ActiveRecord
         $query->where(['delete_flag' => 0]);
         $query->andWhere([
             'or',
-            'category_id_1 = ' . $catId,
-            'category_id_2 = ' . $catId,
-            'category_id_3 = ' . $catId,
-            'category_id_4 = ' . $catId
+            'category_main_id = ' . $catId,
+            'category_a_id = ' . $catId,
+            'category_b_id = ' . $catId
         ]);
         return $query->all();
     }

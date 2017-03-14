@@ -52,25 +52,19 @@ Yii::$app->view->title = 'Detail Question Collect';
                     <div class="form-group row">
                         <label class="control-label col-md-2 col-sm-3 col-xs-12">Category root :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
-                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_1); ?></label>
+                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_main_id); ?></label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub1 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
-                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_2);?></label>
+                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_a_id);?></label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub2 category :</label>
                         <div class="col-md-10 col-sm-9 col-xs-12">
-                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_3);?></label>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Sub3 category :</label>
-                        <div class="col-md-10 col-sm-9 col-xs-12">
-                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_id_4);?></label>
+                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= Category::getDetailNameCategory($quizItem->category_b_id);?></label>
                         </div>
                     </div>
                 </div>
