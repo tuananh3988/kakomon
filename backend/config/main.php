@@ -62,6 +62,7 @@ return [
                 'exam/edit/<examId:\w+>' => 'exam/save',
                 'quick/edit/<quizId:\w+>' => 'quick/save',
                 'quick/detail/<quizId:\w+>' => 'quick/detail',
+                'csv/detail/<logId:\w+>' => 'csv/detail',
             ],
         ],
         'request' => [

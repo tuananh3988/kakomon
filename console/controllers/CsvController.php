@@ -24,9 +24,9 @@ class CsvController extends \yii\console\Controller
                 // check file exit
                 if (!Utility::checkExitCsv('process', $fileName)) {
                     $error =[
-                        'errorCode' => 0,
+                        'errorCode' => 1,
                         'message' => 'File not found please check again!',
-                        'data' => ''
+                        'data' => []
                     ];
                     
                     $dataLog->status = LogCsv::STATUS_DONE;

@@ -18,7 +18,7 @@ class CsvController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'detail'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -41,11 +41,27 @@ class CsvController extends Controller {
      */
     
     public function actionIndex() {
-        $request = Yii::$app->request;
         $formSearch = new LogCsv();
         $dataProvider = $formSearch->getData();
         return $this->render('index', [
             'dataProvider' => $dataProvider
         ]);
+    }
+    
+    /**
+     * detail csv
+     *
+     * @date : 15-02-2017
+     *
+     */
+    
+    public function actionDetail($logId) {
+        $model = new LogCsv();
+        $logCsvItem = $model->find()->where(['log_id' => $logId, 'status' => LogCsv::STATUS_DONE])->one();
+        if (empty($logCsvItem)) {
+            return Yii::$app->response->redirect(['/error/error']);
+        }
+        
+        return $this->render('detail', ['logCsvItem' => $logCsvItem]);
     }
 }

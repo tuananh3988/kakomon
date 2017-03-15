@@ -52,11 +52,11 @@ if ($formSearch->category_b_id) {
                     </div>
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                    <?= Html::activeDropDownList($formSearch, 'category_a_id', $subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub1-cat']); ?>
+                    <?= Html::activeDropDownList($formSearch, 'category_a_id', $subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub1-cat', 'id' => 'quiz-category_id_2']); ?>
                     </div>
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
-                    <?= Html::activeDropDownList($formSearch, 'category_b_id', $subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat']); ?>
+                    <?= Html::activeDropDownList($formSearch, 'category_b_id', $subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat', 'id' => 'quiz-category_id_3']); ?>
                     </div>
 
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">

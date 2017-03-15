@@ -37,14 +37,6 @@ Yii::$app->view->title = 'List Log Upload CSV';
                             . '<div id="paging" class="light-theme simple-pagination">{pager}</div></div>',
                             'summary' => '<div class="pageList_data"><strong>ALL {totalCount} Item {begin} ～ {end}</strong>'
                             . '</div><div class="pageList_del"><div class="pageList_del_item"></div></div>',
-                            'rowOptions'   => function ($model, $index, $widget, $grid) {
-                                return [
-                                        'id' => $model['log_id'], 
-                                        'onclick' => 'location.href="'
-                                            . Yii::$app->urlManager->createUrl('csv/detail') 
-                                            . '/"+(this.id);'
-                                    ];
-                            },
                             'columns' => [
                                 [
                                     'attribute' => 'log_id',
@@ -72,7 +64,7 @@ Yii::$app->view->title = 'List Log Upload CSV';
                                         } elseif ($data['status'] == LogCsv::STATUS_PROCESS) {
                                             return '<a href="javascript:void(0)" class="btn btn-app custom-btn btn-danger"><i class="fa fa-play"></i>Process</a>';
                                         } else {
-                                            return '<a href="'.Url::to(["/csv/index"]).'" class="btn btn-app custom-btn btn-success"><i class="fa fa-check"></i>Done</a>';
+                                            return '<a href="'.Url::to(["/csv/detail/". $data['log_id']]).'" class="btn btn-app custom-btn btn-success"><i class="fa fa-check"></i>Done</a>';
                                         }
                                     }
                                 ],

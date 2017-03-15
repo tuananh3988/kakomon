@@ -45,13 +45,13 @@ if ($question->category_b_id) {
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat1</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_a_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_a_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat1, ['prompt' => 'Select sub1 category', 'class' => 'form-control select-sub1-cat', 'id' => 'quiz-category_id_2'])->label('') ?>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Sub-Cat2</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'category_b_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat'])->label('') ?>
+                            <?= $form->field($question, 'category_b_id', ['options' => ['class' => ''], 'template' => '{input}{error}'])->dropDownList($subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control select-sub2-cat', 'id' => 'quiz-category_id_3'])->label('') ?>
                         </div>
                     </div>
                     
