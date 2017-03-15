@@ -19,6 +19,7 @@ return [
         'done' => 'csvUpload/done/'
     ],
     'limit' => [
+        'quiz' => 10,
         'follow' => 10,
         'timeline' => 10,
         'comment' => 4,
@@ -26,6 +27,7 @@ return [
         'help' => 4
     ],
     'offset' => [
+        'quiz' => 0,
         'follow' => 0,
         'timeline' => 10,
         'comment' => 0,
