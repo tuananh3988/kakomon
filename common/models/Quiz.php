@@ -52,8 +52,8 @@ class Quiz extends \yii\db\ActiveRecord
         '必修問題' => 2
     ];
     
-    const QUIZ_DELETED = 0;
-    const QUIZ_ACTIVE = 1;
+    const QUIZ_ACTIVE = 0;
+    const QUIZ_DELETED = 1;
     /**
      * @inheritdoc
      */
