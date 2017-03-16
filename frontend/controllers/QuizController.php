@@ -232,9 +232,18 @@ class QuizController extends Controller
             $data[] = [
                 'member_quiz_search_history_id' => $value['member_quiz_search_history_id'],
                 'quiz_class' => $value['quiz_class'],
-                'category_main_id' => $value['category_main_id'],
-                'category_a_id' => $value['category_a_id'],
-                'category_b_id' => $value['category_b_id'],
+                'category_main_id' => [
+                    'id' => $value['category_main_id'],
+                    'name' => Category::getDetailNameCategory($value['category_main_id'])
+                ],
+                'category_a_id' => [
+                    'id' => $value['category_a_id'],
+                    'name' => Category::getDetailNameCategory($value['category_a_id'])
+                ],
+                'category_b_id' => [
+                    'id' => $value['category_b_id'],
+                    'name' => Category::getDetailNameCategory($value['category_b_id'])
+                ],
                 'quiz_year' => $value['quiz_year'],
                 'type_quiz' => $value['type'],
             ];
