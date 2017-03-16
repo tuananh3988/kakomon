@@ -11,6 +11,7 @@ use common\models\Category;
 use common\models\Quiz;
 use common\models\MemberQuizHistory;
 use common\components\Utility;
+use common\models\MemberQuizSearchHistory;
 
 /**
  * Site controller
@@ -26,7 +27,7 @@ class QuizController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'list' => ['search', 'total']
+                    'list' => ['search', 'total', 'year', 'history-search']
                 ],
             ],
             'authenticator' => [
@@ -70,6 +71,9 @@ class QuizController extends Controller
             ];
         }
         $modelQuiz->category_main_id =  !empty($param['category_main_id']) ? $param['category_main_id'] : $firtCat['cateory_id'];
+        
+        //insert table member_quiz_search_history
+        $modelQuiz->insertHistorySearch();
         
         $listQuiz = $modelQuiz->getListQuiz($limit, $offset);
         //return if not found data
@@ -171,6 +175,79 @@ class QuizController extends Controller
                 'totalWrong' => (int)$totalWrong,
                 'totalDoNot' => (int)$totalDoNot
             ]
+        ];
+    }
+    
+    /*
+     * function lít total
+     * 
+     * Auth : 
+     * Create : 16-03-2016
+     */
+    
+    public function actionYear()
+    {
+        $modelQuiz = new Question();
+        $listYear = $modelQuiz->getListYear();
+        if (count($listYear) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        // return all data
+        return [
+            'status' => 200,
+            'data' => $listYear
+        ];
+    }
+    
+    /*
+     * List history search
+     * 
+     * Auth : 
+     * Create : 16-03-2016
+     */
+    
+    public function actionHistorySearch()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['quiz'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['quiz'];
+        
+        $modelHistorySearch = new MemberQuizSearchHistory();
+        $listHistorySearch = $modelHistorySearch->getListHistorySearch($limit, $offset);
+        //return if not found data
+        if (count($listHistorySearch) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        
+        //return data
+        $data = [];
+        foreach ($listHistorySearch as $key => $value) {
+            $data[] = [
+                'member_quiz_search_history_id' => $value['member_quiz_search_history_id'],
+                'quiz_class' => $value['quiz_class'],
+                'category_main_id' => $value['category_main_id'],
+                'category_a_id' => $value['category_a_id'],
+                'category_b_id' => $value['category_b_id'],
+                'quiz_year' => $value['quiz_year'],
+                'type_quiz' => $value['type'],
+            ];
+        }
+        
+        //return success
+        $total = $modelHistorySearch->getListHistorySearch($limit, $offset, true);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+        return [
+            'status' => 200,
+            'count' => (int)$total,
+            'offset' => $offsetReturn,
+            'data' => $data
         ];
     }
 }

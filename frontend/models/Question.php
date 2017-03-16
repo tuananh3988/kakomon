@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use common\models\MemberQuizHistory;
 use common\models\Quiz;
+use common\models\MemberQuizSearchHistory;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -66,6 +67,7 @@ class Question extends \yii\db\ActiveRecord
         $query->select(['quiz.*'])
                 ->from('quiz');
         $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query->andFilterWhere(['=', 'quiz.quiz_class', $this->quiz_class]);
         $query->andFilterWhere(['=', 'quiz.category_main_id', $this->category_main_id]);
         $query->andFilterWhere(['=', 'quiz.category_a_id', $this->category_a_id]);
         $query->andFilterWhere(['=', 'quiz.category_b_id', $this->category_b_id]);
@@ -100,5 +102,43 @@ class Question extends \yii\db\ActiveRecord
         $query->offset($offset);
         $query->limit($limit);
         return $query->all();
+    }
+    
+    /*
+     * Get list year
+     * 
+     * Auth : 
+     * Create : 16-03-2017
+     */
+    
+    public function getListYear()
+    {
+        $query = new \yii\db\Query();
+        $query->select(['quiz_year'])
+                ->from('quiz');
+        $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query->distinct();
+        $query->orderBy(['quiz_year' => SORT_ASC]);
+        return $query->column();
+    }
+    
+    /*
+     * Insert history search
+     * 
+     * Auth : 
+     * Create : 16-03-2017
+     */
+    
+    public function insertHistorySearch(){
+        $type = ($this->type_quiz) ? $this->type_quiz : self::TYPE_ALL;
+        $quizSearchHistory = new MemberQuizSearchHistory();
+        $quizSearchHistory->member_id = Yii::$app->user->identity->member_id;
+        $quizSearchHistory->quiz_class = $this->quiz_class;
+        $quizSearchHistory->category_main_id = $this->category_main_id;
+        $quizSearchHistory->category_a_id = $this->category_a_id;
+        $quizSearchHistory->category_b_id = $this->category_b_id;
+        $quizSearchHistory->quiz_year = $this->quiz_year;
+        $quizSearchHistory->type = $type;
+        $quizSearchHistory->save();
     }
 }
