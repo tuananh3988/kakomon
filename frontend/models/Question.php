@@ -17,7 +17,7 @@ class Question extends \yii\db\ActiveRecord
 
 
     const TYPE_ALL = 1;
-    const TYPE_DID = 2;
+    const TYPE_RIGHT = 2;
     const TYPE_WRONG = 3;
     const TYPE_DO_NOT = 4;
     /**
@@ -60,7 +60,7 @@ class Question extends \yii\db\ActiveRecord
      * Create : 15-03-2017
      */
     
-    public function getListQuiz($limit, $offset){
+    public function getListQuiz($limit = null, $offset = null , $flag = false){
         $type = ($this->type_quiz) ? $this->type_quiz : self::TYPE_ALL;
         $query = new \yii\db\Query();
         $query->select(['quiz.*'])
@@ -77,19 +77,25 @@ class Question extends \yii\db\ActiveRecord
                 $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
                 $query->andFilterWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
                 $query->andFilterWhere(['=', 'member_quiz_history.correct_flag', MemberQuizHistory::FLAG_CORRECT_CORRECT]);
+                $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
                 break;
             case 3:
                 $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
                 $query->andFilterWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
                 $query->andFilterWhere(['=', 'member_quiz_history.correct_flag', MemberQuizHistory::FLAG_CORRECT_INCORRECT]);
+                $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
                 break;
             case 4:
-                $query->join('RIGHT JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
+                $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
                 $query->andFilterWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
                 $query->andFilterWhere(['=', 'member_quiz_history.correct_flag', MemberQuizHistory::FLAG_CORRECT_NOT_DOING]);
+                $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
                 break;
             default :
                 
+        }
+        if ($flag) {
+            return $query->count();
         }
         $query->offset($offset);
         $query->limit($limit);

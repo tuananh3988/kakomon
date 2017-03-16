@@ -22,6 +22,12 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
     const FLAG_CORRECT_CORRECT = 1;
     const FLAG_CORRECT_INCORRECT = 2;
     const FLAG_CORRECT_NOT_DOING = 3;
+    
+    const FLAG_ANS_LAST = 0;
+    const FLAG_ANS_BEFORE = 1;
+    
+    const LIMIT_ANS = 2;
+
     /**
      * @inheritdoc
      */
@@ -58,5 +64,23 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
             'time' => 'Time',
             'created_date' => 'Created Date',
         ];
+    }
+    
+    /*
+     * get 2 record ans last
+     * 
+     * Auth : 
+     * Createt: 16-03-2017
+     */
+    
+    public static function getTwoRecordAnsWithMember($quizId){
+        $query = new \yii\db\Query();
+        $query->select(['member_quiz_history.*'])
+                ->from('member_quiz_history');
+        $query->where(['=', 'member_quiz_history.quiz_id', $quizId]);
+        $query->andWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
+        $query->orderBy(['member_quiz_history_id' =>SORT_DESC]);
+        $query->limit(self::LIMIT_ANS);
+        return $query->all();
     }
 }

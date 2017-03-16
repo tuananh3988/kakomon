@@ -582,7 +582,7 @@ class ActivityController extends Controller
             $data[] = [
                 'content_activity' => $value['content_activity'],
                 'question' => $value['question'],
-                'sub_menu' => Quiz::renderListSubCat($value['category_id_2'], $value['category_id_3'], $value['category_id_4']),
+                'sub_menu' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
                 'cateory_id' => (int)$value['cateory_id'],
                 'member_id' => $value['member_id'],
                 'name' => $value['name'],

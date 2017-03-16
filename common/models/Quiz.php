@@ -362,19 +362,21 @@ class Quiz extends \yii\db\ActiveRecord
      * Create : 08-03-2017
      */
     
-    public static function renderListSubCat($subCat2 , $subCat3, $subCat4){
+    public static function renderListSubCat($subCat2 , $subCat3){
         $list = [];
         if (!empty($subCat2)) {
             $sub2 = Category::findOne(['cateory_id' => $subCat2]);
-            $list[] = $sub2->name;
+            $list[] = [
+                'cateory_id' => $sub2->cateory_id,
+                'name' => $sub2->name
+            ];
         }
         if (!empty($subCat3)) {
             $sub3 = Category::findOne(['cateory_id' => $subCat3]);
-            $list[] = $sub3->name;
-        }
-        if (!empty($subCat4)) {
-            $sub4 = Category::findOne(['cateory_id' => $subCat4]);
-            $list[] = $sub4->name;
+            $list[] = [
+                'cateory_id' => $sub3->cateory_id,
+                'name' => $sub3->name
+            ];
         }
         return $list;
     }
