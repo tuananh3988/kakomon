@@ -9,6 +9,7 @@ use yii\filters\auth\QueryParamAuth;
 use frontend\models\Question;
 use common\models\Category;
 use common\models\Quiz;
+use common\models\Answer;
 use common\models\MemberQuizHistory;
 use common\components\Utility;
 use common\models\MemberQuizSearchHistory;
@@ -56,6 +57,7 @@ class QuizController extends Controller
         
         $modelQuiz = new Question();
         $modelQuiz->setAttributes($param);
+        $modelQuiz->scenario  = Question::SCENARIO_LIST_QUIZ;
         if (!$modelQuiz->validate()) {
             return [
                     'status' => 400,
@@ -142,6 +144,7 @@ class QuizController extends Controller
         $request = Yii::$app->request;
         $param = $request->queryParams;
         $modelQuiz = new Question();
+        $modelQuiz->scenario  = Question::SCENARIO_LIST_QUIZ;
         $modelQuiz->setAttributes($param);
         if (!$modelQuiz->validate()) {
             return [
@@ -257,6 +260,55 @@ class QuizController extends Controller
             'count' => (int)$total,
             'offset' => $offsetReturn,
             'data' => $data
+        ];
+    }
+    
+    /*
+     * Quiz detail
+     * 
+     * Auth : 
+     * Create : 17-03-2016
+     */
+    
+    public function actionDetail()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        
+        $modelQuiz = new Question();
+        $modelQuiz->scenario  = Question::SCENARIO_DETAIL_QUIZ;
+        $modelQuiz->setAttributes($param);
+        if (!$modelQuiz->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelQuiz->errors
+                ];
+        }
+        
+        $quizDetail = Quiz::find()->where(['quiz_id' => $modelQuiz->quiz_id, 'type' => Quiz::TYPE_NORMAL, 'delete_flag' => Quiz::QUIZ_ACTIVE])->one();
+        if (!$quizDetail) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        $listAns = [];
+        for ($i = 1; $i <= Answer::MAX_ANS; $i++) {
+            $ansDetail = Answer::findOne(['quiz_id' => $quizDetail->quiz_id, 'order' => $i]);
+            $listAns[] = [
+                'ans_id' => $i,
+                'content' => ($ansDetail) ? $ansDetail->content : '',
+                'img_ans' => Utility::getImage('answer', $quizDetail->quiz_id, $i, true)
+            ];
+        }
+        return [
+            'status' => 200,
+            'data' => [
+                'quiz_id' => $quizDetail->quiz_id,
+                'question' => $quizDetail->question,
+                'img_question' => Utility::getImage('question', $quizDetail->quiz_id, null, true),
+                'listAns' => $listAns
+            ]
         ];
     }
 }

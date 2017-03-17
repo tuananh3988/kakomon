@@ -8,7 +8,7 @@ return [
     'domainImg' => 'http://purelamo.com/wp-content/uploads/',
     'domain' => 'http://purelamo.com/',
     'pageSize' => 10,
-    'imgPath' => 'E:/XAMPP/htdocs/kakomon/',
+    'imgPath' => '@backend/web/',
     'imgUpload' => [
         'question' => 'uploads/question/',
         'answer' => 'uploads/answer/',

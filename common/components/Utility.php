@@ -3,6 +3,7 @@
 namespace common\components;
 
 use Yii;
+use yii\helpers\Url;
 use yii\base\Component;
 use common\models\Quiz;
 use yii\helpers\FileHelper;
@@ -11,17 +12,17 @@ class Utility extends Component
 {
     
     public function uploadImages($infoImages, $type, $idParent, $id = null){
-        $dirParent = Yii::$app->params['imgPath'] . 'uploads';
+        $dirParent = Url::to(Yii::$app->params['imgPath']) . 'uploads';
         if (!is_dir($dirParent)) {
             mkdir($dirParent, 0777);
         }
-        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type];
+        $dir = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type];
         if (!is_dir($dir)) {
             mkdir($dir, 0777);
         }
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         if ($id) {
-            $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+            $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
         }
         
         $infoImages->saveAs($path);
@@ -34,9 +35,9 @@ class Utility extends Component
         if (!in_array($type, $folder)) {
             return $image;
         }
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         if ($id) {
-            $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+            $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
         }
         if (file_exists($path)) {
             $type = pathinfo($path, PATHINFO_EXTENSION);
@@ -59,9 +60,9 @@ class Utility extends Component
         if (!in_array($type, $folder)) {
             return $image;
         }
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         if ($id) {
-            $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+            $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
         }
         if (file_exists($path)) {
             unlink($path);
@@ -78,9 +79,9 @@ class Utility extends Component
         if (!in_array($type, $folder)) {
             return FALSE;
         }
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         if ($id) {
-            $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+            $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
         }
         if (file_exists($path)) {
             return TRUE;
@@ -150,15 +151,15 @@ class Utility extends Component
      */
     
     public function uploadImagesForApi($infoImages, $type, $idParent, $id = null){
-        $dirParent = Yii::$app->params['imgPath'] . 'uploads';
+        $dirParent = Url::to(Yii::$app->params['imgPath']) . 'uploads';
         if (!is_dir($dirParent)) {
             mkdir($dirParent, 0777);
         }
-        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type];
+        $dir = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type];
         if (!is_dir($dir)) {
             mkdir($dir, 0777);
         }
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         
         move_uploaded_file($infoImages["file"]["tmp_name"], $path);
     }
@@ -171,15 +172,15 @@ class Utility extends Component
      */
     
     public static function uploadCsv($infoCsv, $type, $name){
-        $dirParent = Yii::$app->params['imgPath'] . 'csvUpload';
+        $dirParent = Url::to(Yii::$app->params['imgPath']) . 'csvUpload';
         if (!is_dir($dirParent)) {
             mkdir($dirParent, 0777);
         }
-        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload'][$type];
+        $dir = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload'][$type];
         if (!is_dir($dir)) {
             mkdir($dir, 0777);
         }
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload'][$type] . $name;
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload'][$type] . $name;
         
         $infoCsv->saveAs($path);
     }
@@ -189,7 +190,7 @@ class Utility extends Component
      */
     
     public static function checkExitCsv($type, $fileName){
-        $path = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload'][$type] . $fileName;
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload'][$type] . $fileName;
         
         if (file_exists($path)) {
             return TRUE;
@@ -206,7 +207,7 @@ class Utility extends Component
     
     public static function unzipFile($fileName, $name)
     {
-        $file = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] . $fileName;
+        $file = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName;
         $zip = new \ZipArchive();
         $zipped = $zip->open($file);
         $path = pathinfo(realpath($file), PATHINFO_DIRNAME) . '/' . $name;
@@ -229,44 +230,53 @@ class Utility extends Component
     }
     
     /*
+     * move images
      * 
+     * Auth :
+     * Create : 17-03-2017
      */
     
     public static function moveImages($fileName, $type, $pathFolder, $idParent, $id = null){
-        $dirParent = Yii::$app->params['imgPath'] . 'uploads';
+        $dirParent = Url::to(Yii::$app->params['imgPath']) . 'uploads';
         if (!is_dir($dirParent)) {
             mkdir($dirParent, 0777);
         }
-        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type];
+        $dir = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type];
         if (!is_dir($dir)) {
             mkdir($dir, 0777);
         }
-        $pathTo = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type . '_' . $idParent . '.jpg';
+        $pathTo = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type . '_' . $idParent . '.jpg';
         if ($id) {
-            $pathTo = Yii::$app->params['imgPath'] . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+            $pathTo = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
         }
         $pathFrom = $fileName;
         rename($pathFrom, $pathTo);
     }
     
+    /*
+     * move folder done
+     * 
+     * Auth :
+     * Create : 17-03-2017
+     */
     public static function moveToFolderDone($fileName){
-        $dirParent = Yii::$app->params['imgPath'] . 'csvUpload';
+        $dirParent = Url::to(Yii::$app->params['imgPath']) . 'csvUpload';
         if (!is_dir($dirParent)) {
             mkdir($dirParent, 0777);
         }
-        $dir = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['done'];
+        $dir = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['done'];
         if (!is_dir($dir)) {
             mkdir($dir, 0777);
         }
         //move file csv
-        $pathToCsv = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['done'] . $fileName . '.csv';
-        $pathFromCsv = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] .$fileName . '.csv';
+        $pathToCsv = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['done'] . $fileName . '.csv';
+        $pathFromCsv = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] .$fileName . '.csv';
         rename($pathFromCsv, $pathToCsv);
         //move file tar
         $fileNameFolder = $fileName.'.tar';
         if ( self::checkExitCsv('process', $fileNameFolder)) {
-            $pathToTar = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['done'] . $fileName . '.tar';
-            $pathFromTar = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] .$fileName . '.tar';
+            $pathToTar = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['done'] . $fileName . '.tar';
+            $pathFromTar = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] .$fileName . '.tar';
             rename($pathFromTar, $pathToTar);
         }
     }

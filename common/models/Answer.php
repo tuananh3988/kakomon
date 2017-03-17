@@ -20,6 +20,7 @@ class Answer extends \yii\db\ActiveRecord {
     public $answer_img;
     public $remove_img_flg;
 
+    const MAX_ANS = 8;
     /**
      * @inheritdoc
      */

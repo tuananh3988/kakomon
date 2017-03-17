@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 use Yii;
+use yii\helpers\Url;
 use common\models\LogCsv;
 use common\components\Utility;
 use backend\models\FormImportCSV;
@@ -46,7 +47,7 @@ class CsvController extends \yii\console\Controller
                     Utility::unzipFile($fileNameFolder, $value->file_name);
                 }
                 //read and insert file csv
-                $handle = fopen(Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] . $fileName, "r");
+                $handle = fopen(Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName, "r");
                 while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
                     if ($fileop[0] != 'Year') {
                         $lineErrors++;

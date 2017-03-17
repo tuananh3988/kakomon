@@ -21,6 +21,9 @@ class Question extends \yii\db\ActiveRecord
     const TYPE_RIGHT = 2;
     const TYPE_WRONG = 3;
     const TYPE_DO_NOT = 4;
+    
+    const SCENARIO_LIST_QUIZ = 'list';
+    const SCENARIO_DETAIL_QUIZ = 'detail';
     /**
      * @inheritdoc
      */
@@ -35,8 +38,9 @@ class Question extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['quiz_class'], 'required'],
-            [['quiz_class', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
+            [['quiz_class'], 'required', 'on' => self::SCENARIO_LIST_QUIZ],
+            [['quiz_id'], 'required', 'on' => self::SCENARIO_DETAIL_QUIZ],
+            [['quiz_class', 'quiz_id', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
         ];
     }
     
@@ -67,6 +71,7 @@ class Question extends \yii\db\ActiveRecord
         $query->select(['quiz.*'])
                 ->from('quiz');
         $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
         $query->andFilterWhere(['=', 'quiz.quiz_class', $this->quiz_class]);
         $query->andFilterWhere(['=', 'quiz.category_main_id', $this->category_main_id]);
         $query->andFilterWhere(['=', 'quiz.category_a_id', $this->category_a_id]);

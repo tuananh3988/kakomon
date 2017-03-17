@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\Url;
 use yii\db\ActiveRecord;
 use common\models\Quiz;
 use common\models\Answer;
@@ -103,7 +104,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
                 $quizModel->quiz_class = array_key_exists($data[3], Quiz::$QUIZ_CLASS) ? Quiz::$QUIZ_CLASS[$data[3]] : NULL;
                 $quizModel->save();
                 
-                $pathFolder = Yii::$app->params['imgPath'] . Yii::$app->params['csvUpload']['process'] . $fileName  . '/images';
+                $pathFolder = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName  . '/images';
                 
                 //upload images question
                 $fileNameQuestion = 'question-' . $data[0] . '-' . $data[1];
