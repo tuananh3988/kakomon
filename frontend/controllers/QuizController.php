@@ -13,6 +13,7 @@ use common\models\Answer;
 use common\models\MemberQuizHistory;
 use common\components\Utility;
 use common\models\MemberQuizSearchHistory;
+use common\models\MemberQuizActivity;
 
 /**
  * Site controller
@@ -28,7 +29,7 @@ class QuizController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'list' => ['search', 'total', 'year', 'history-search']
+                    'list' => ['search', 'total', 'year', 'history-search', 'history-ans', 'history-ans-wrong']
                 ],
             ],
             'authenticator' => [
@@ -95,6 +96,7 @@ class QuizController extends Controller
                 'sub_cat' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
                 'quiz_id' => (int)$value['quiz_id'],
                 'question' => $value['question'],
+                'img_question' => Utility::getImage('question', $value['quiz_id'], null, true),
                 'list_ans' => $this->renderListAnsHistory($value['quiz_id'])
             ];
         }
@@ -310,5 +312,93 @@ class QuizController extends Controller
                 'listAns' => $listAns
             ]
         ];
+    }
+    
+    /*
+     * Quiz history ans
+     * 
+     * Auth : 
+     * Create : 17-03-2016
+     */
+    
+    public function actionHistoryAns()
+    {
+        $modelMemberQuizActivity = new MemberQuizActivity();
+        $listAns = $modelMemberQuizActivity->getListAnsForMember();
+        if (count($listAns) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        
+        //return data
+        $data = [];
+        foreach ($listAns as $key => $value) {
+            $data[] = [
+                'category_main_id' => $value['category_main_id'],
+                'category_main_name' => Category::getDetailNameCategory($value['category_main_id']),
+                'sub_cat' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
+                'quiz_id' => (int)$value['quiz_id'],
+                'question' => $value['question'],
+                'img_question' => Utility::getImage('question', $value['quiz_id'], null, true),
+                'list_ans' => $this->renderListAnsHistory($value['quiz_id'])
+            ];
+        }
+        
+        return [
+            'status' => 200,
+            'data' => $data
+        ];
+    }
+    
+    /*
+     * Quiz history ans
+     * 
+     * Auth : 
+     * Create : 17-03-2016
+     */
+    
+    public function actionHistoryAnsWrong()
+    {
+        $modelMemberQuizHistory = new MemberQuizHistory();
+        $listAnsWrong = $modelMemberQuizHistory->getListAnsWrongForMember();
+        if (count($listAnsWrong) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        
+        //return data
+        $data = [];
+        foreach ($listAnsWrong as $key => $value) {
+            $data[] = [
+                'category_main_id' => $value['category_main_id'],
+                'category_main_name' => Category::getDetailNameCategory($value['category_main_id']),
+                'sub_cat' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
+                'quiz_id' => (int)$value['quiz_id'],
+                'question' => $value['question'],
+                'img_question' => Utility::getImage('question', $value['quiz_id'], null, true),
+                'list_ans' => $this->renderListAnsHistory($value['quiz_id'])
+            ];
+        }
+        
+        return [
+            'status' => 200,
+            'data' => $data
+        ];
+    }
+    
+    /*
+     * api ans
+     * 
+     * Auth : 
+     * Create : 17-03-2016
+     */
+    
+    public function actionAns()
+    {
+        
     }
 }

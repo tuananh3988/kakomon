@@ -3,7 +3,8 @@
 namespace common\models;
 
 use Yii;
-
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 /**
  * This is the model class for table "member_quiz_history".
  *
@@ -36,6 +37,20 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
         return 'member_quiz_history';
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                          ActiveRecord::EVENT_BEFORE_INSERT => ['created_date'],
+                          ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_date'],
+                ],
+                'value' => date('Y-m-d H:i:s'),
+            ],
+        ];
+    }
+    
     /**
      * @inheritdoc
      */
@@ -81,6 +96,25 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
         $query->andWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
         $query->orderBy(['member_quiz_history_id' =>SORT_DESC]);
         $query->limit(self::LIMIT_ANS);
+        return $query->all();
+    }
+    
+    /*
+     * Get list ans wrong for member
+     * 
+     * Auth : 
+     * Create : 18-03-2017
+     */
+    
+    public function getListAnsWrongForMember(){
+        $query = new \yii\db\Query();
+        $query->select(['member_quiz_history.*', 'quiz.*'])
+                ->from('member_quiz_history');
+        $query->join('INNER JOIN', 'quiz', 'quiz.quiz_id = member_quiz_history.quiz_id');
+        $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
+        $query->andWhere(['=', 'member_quiz_history.correct_flag', self::FLAG_CORRECT_INCORRECT]);
+        $query->andWhere(['=', 'member_quiz_history.last_ans_flag', self::FLAG_ANS_LAST]);
         return $query->all();
     }
 }

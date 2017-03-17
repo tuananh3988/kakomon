@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use common\models\MemberQuizHistory;
 use common\models\Quiz;
 use common\models\MemberQuizSearchHistory;
+use common\models\MemberQuizActivity;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -93,10 +94,7 @@ class Question extends \yii\db\ActiveRecord
                 $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
                 break;
             case 4:
-                $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
-                $query->andFilterWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
-                $query->andFilterWhere(['=', 'member_quiz_history.correct_flag', MemberQuizHistory::FLAG_CORRECT_NOT_DOING]);
-                $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
+                $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id])->asArray()->all()]);
                 break;
             default :
                 
