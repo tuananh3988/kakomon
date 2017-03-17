@@ -48,6 +48,12 @@ return [
                 'activity/reply/list' => 'activity/list-reply',
             ],
         ],
+        'urlManagerBackend' => [
+                'class' => 'yii\web\urlManager',
+                'baseUrl' => 'backend/web/',
+                'enablePrettyUrl' => true,
+                'showScriptName' => false,
+        ],
         'request' => [
             'baseUrl' => '/api',
             'enableCsrfValidation'=> FALSE

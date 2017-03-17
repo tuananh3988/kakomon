@@ -65,6 +65,12 @@ return [
                 'csv/detail/<logId:\w+>' => 'csv/detail',
             ],
         ],
+        'urlManagerBackend' => [
+                'class' => 'yii\web\urlManager',
+                'baseUrl' => 'backend/web/',
+                'enablePrettyUrl' => true,
+                'showScriptName' => false,
+        ],
         'request' => [
             'baseUrl' => '/backend',
             'enableCookieValidation' => true,

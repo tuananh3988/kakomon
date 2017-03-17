@@ -36,15 +36,17 @@ class Utility extends Component
             return $image;
         }
         $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        $pathApi = Yii::$app->urlManagerBackend->baseUrl . '/' .  Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
         if ($id) {
             $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+            $pathApi = Yii::$app->urlManagerBackend->baseUrl.  '/' . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
         }
         if (file_exists($path)) {
             $type = pathinfo($path, PATHINFO_EXTENSION);
             $data = file_get_contents($path);
             $image = 'data:image/' . $type . ';base64,' . base64_encode($data);
             if ($flagReturn) {
-                return $path;
+                return $pathApi;
             }
         }
         
