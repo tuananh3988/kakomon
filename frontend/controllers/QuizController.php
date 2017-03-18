@@ -14,6 +14,7 @@ use common\models\MemberQuizHistory;
 use common\components\Utility;
 use common\models\MemberQuizSearchHistory;
 use common\models\MemberQuizActivity;
+use frontend\models\Ans;
 
 /**
  * Site controller
@@ -29,7 +30,13 @@ class QuizController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'list' => ['search', 'total', 'year', 'history-search', 'history-ans', 'history-ans-wrong']
+                    'search' => ['get'],
+                    'total' => ['get'],
+                    'year' => ['get'],
+                    'history-search' => ['get'],
+                    'history-ans' => ['get'],
+                    'history-ans-wrong' => ['get'],
+                    'ans' => ['post']
                 ],
             ],
             'authenticator' => [
@@ -399,6 +406,23 @@ class QuizController extends Controller
     
     public function actionAns()
     {
+        $request = Yii::$app->request;
+        $dataPost = $request->post();
         
+        $modelAns = new Ans();
+        $modelAns->setAttributes($dataPost);
+        if (!$modelAns->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelAns->errors
+                ];
+        }
+        if (!$modelAns->saveAns()) {
+            throw new \yii\base\Exception( "System error" );
+        }
+        
+        return  [
+            'status' => 200
+        ];
     }
 }
