@@ -6,23 +6,35 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 /**
- * This is the model class for table "member_quiz_activity".
+ * This is the model class for table "member_category_time".
  *
- * @property integer $member_quiz_activity_id
+ * @property integer $member_category_time_id
  * @property integer $member_id
- * @property integer $quiz_id
- * @property integer $delete_flag
- * @property string $updated_date
+ * @property integer $category_id
+ * @property integer $total_time
  * @property string $created_date
+ * @property string $updated_date
  */
-class MemberQuizActivity extends \yii\db\ActiveRecord
+class MemberCategoryTime extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'member_quiz_activity';
+        return 'member_category_time';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['member_id', 'category_id'], 'required'],
+            [['member_id', 'category_id', 'total_time'], 'integer'],
+            [['created_date', 'updated_date'], 'safe'],
+        ];
     }
 
     public function behaviors()
@@ -42,27 +54,15 @@ class MemberQuizActivity extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
-        return [
-            [['member_id', 'quiz_id'], 'required'],
-            [['member_id', 'quiz_id', 'delete_flag'], 'integer'],
-            [['updated_date', 'created_date'], 'safe'],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
-            'member_quiz_activity_id' => 'Member Quiz Activity ID',
+            'member_category_time_id' => 'Member Category Time ID',
             'member_id' => 'Member ID',
-            'quiz_id' => 'Quiz ID',
-            'delete_flag' => 'Delete Flag',
-            'updated_date' => 'Updated Date',
+            'category_id' => 'Category ID',
+            'total_time' => 'Total Time',
             'created_date' => 'Created Date',
+            'updated_date' => 'Updated Date',
         ];
     }
 }

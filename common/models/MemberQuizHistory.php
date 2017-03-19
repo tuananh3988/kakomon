@@ -117,4 +117,25 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
         $query->andWhere(['=', 'member_quiz_history.last_ans_flag', self::FLAG_ANS_LAST]);
         return $query->all();
     }
+    
+    /*
+     * Get list ans for member
+     * 
+     * Auth : 
+     * Create : 18-03-2017
+     */
+    
+    public function getListAnsForMember(){
+        $quizIdCorrect = MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_CORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all();
+        $quizIdInCorrect = MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_INCORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all();
+        $quizId = array_merge($quizIdCorrect,$quizIdInCorrect);
+        
+        $query = new \yii\db\Query();
+        $query->select(['quiz.*'])
+                ->from('quiz');
+        $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['IN','quiz_id',  $quizId]);
+        $query->andWhere(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
+        return $query->all();
+    }
 }

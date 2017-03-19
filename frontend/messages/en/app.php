@@ -7,7 +7,7 @@
  */
 
 return[
-    'required' => 'Please enter your',
+    'required' => 'Please enter your {attribute}',
     'format' => 'incorrect format',
     'min length' => 'The minimum {field} length is {min_length} characters',
     'field exists' => 'This {field} already exists',

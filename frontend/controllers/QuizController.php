@@ -330,8 +330,8 @@ class QuizController extends Controller
     
     public function actionHistoryAns()
     {
-        $modelMemberQuizActivity = new MemberQuizActivity();
-        $listAns = $modelMemberQuizActivity->getListAnsForMember();
+        $modelMemberQuizHistory = new MemberQuizHistory();
+        $listAns = $modelMemberQuizHistory->getListAnsForMember();
         if (count($listAns) == 0) {
             return [
                 'status' => 204,
@@ -411,6 +411,9 @@ class QuizController extends Controller
         
         $modelAns = new Ans();
         $modelAns->setAttributes($dataPost);
+        if (empty($modelAns->time)) {
+            $modelAns->time = Ans::DEFAULT_TIME;
+        }
         if (!$modelAns->validate()) {
             return [
                     'status' => 400,
