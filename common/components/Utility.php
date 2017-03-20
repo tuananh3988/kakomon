@@ -231,7 +231,7 @@ class Utility extends Component
         if (!is_dir($path)) {
             return [];
         }
-        return FileHelper::findFiles($path, ['only' => [$fileName. '*']]);
+        return FileHelper::findFiles($path, ['only' => [$fileName. '.' . '*']]);
     }
     
     /*
