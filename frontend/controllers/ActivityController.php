@@ -11,6 +11,8 @@ use common\models\Member;
 use common\models\Activity;
 use common\models\Category;
 use common\models\Quiz;
+use common\models\MemberQuizActivity;
+use common\models\ActivitySumary;
 use frontend\models\Like;
 use frontend\models\Comment;
 use frontend\models\Help;
@@ -92,37 +94,36 @@ class ActivityController extends Controller
         
         //insert new record and update status record like
         if (!$activityDetailOld || ($activityDetailOld && $activityDetailOld->status == Activity::STATUS_DELETE && $activityDetailOld->updated_date != null && $modelLike->status != Activity::STATUS_DELETE)) {
-            $modelActivitySave = new Activity();
-            $modelActivitySave->member_id = Yii::$app->user->identity->member_id;
-            $modelActivitySave->status = $modelLike->status;
-            $modelActivitySave->type = Activity::TYPE_LIKE;
-            $modelActivitySave->quiz_id = $activityDetail->quiz_id;
-            $modelActivitySave->relate_id = $modelLike->activity_id;
-            if (!$modelActivitySave->save()) {
-                throw new \yii\base\Exception( "System error" );
-            }
-            //update status for record like
-            if ($activityDetailDisLike) {
-                $activityDetailDisLike->status = Activity::STATUS_DELETE;
-                $activityDetailDisLike->save();
-            }
-            return  [
-                    'status' => 200,
-                    'data' => [
-                        'activity_id' => $modelActivitySave->activity_id
-                    ]
+            $dataSave = $modelLike->saveLike($activityDetail, $activityDetailDisLike);
+            //return error
+            if (!$dataSave) {
+                return [
+                    'status' => 400,
+                    'messages' => 'System error'
                 ];
+            }
+            //return success
+            return  [
+                'status' => 200,
+                'data' => [
+                    'activity_id' => $dataSave
+                ]
+            ];
+            
         } else {
             //update status if status post diff status old
             if ($activityDetailOld->status != $modelLike->status) {
-                $activityDetailOld->status = $modelLike->status;
-                if (!$activityDetailOld->save()) {
-                    throw new \yii\base\Exception( "System error" );
+                if (!$modelLike->updateLikeOrDisLike($activityDetailOld, $activityDetail , 1)) {
+                    return [
+                        'status' => 400,
+                        'messages' => 'System error'
+                    ];
                 }
                 return  [
                     'status' => 200
                 ];
             }
+            
             return  [
                 'status' => 200
             ];
@@ -155,32 +156,29 @@ class ActivityController extends Controller
         
         //insert new record and update status record like
         if (!$activityDetailOld || ($activityDetailOld && $activityDetailOld->status == Activity::STATUS_DELETE && $activityDetailOld->updated_date != null && $modelLike->status != Activity::STATUS_DELETE)) {
-            $modelActivitySave = new Activity();
-            $modelActivitySave->member_id = Yii::$app->user->identity->member_id;
-            $modelActivitySave->status = $modelLike->status;
-            $modelActivitySave->type = Activity::TYPE_DISLIKE;
-            $modelActivitySave->quiz_id = $activityDetail->quiz_id;
-            $modelActivitySave->relate_id = $modelLike->activity_id;
-            if (!$modelActivitySave->save()) {
-                throw new \yii\base\Exception( "System error" );
-            }
-            //update status for record like
-            if ($activityDetailLike) {
-                $activityDetailLike->status = Activity::STATUS_DELETE;
-                $activityDetailLike->save();
-            }
-            return  [
-                    'status' => 200,
-                    'data' => [
-                        'activity_id' => $modelActivitySave->activity_id
-                    ]
+            $dataSave = $modelLike->saveDisLike($activityDetail, $activityDetailLike);
+            //return error
+            if (!$dataSave) {
+                return [
+                    'status' => 400,
+                    'messages' => 'System error'
                 ];
+            }
+            //return success
+            return  [
+                'status' => 200,
+                'data' => [
+                    'activity_id' => $dataSave
+                ]
+            ];
         } else {
             //update status if status post diff status old
             if ($activityDetailOld->status != $modelLike->status) {
-                $activityDetailOld->status = $modelLike->status;
-                if (!$activityDetailOld->save()) {
-                    throw new \yii\base\Exception( "System error" );
+                if (!$modelLike->updateLikeOrDisLike($activityDetailOld, $activityDetail, 2)) {
+                    return [
+                        'status' => 400,
+                        'messages' => 'System error'
+                    ];
                 }
                 return  [
                     'status' => 200
@@ -222,7 +220,15 @@ class ActivityController extends Controller
         if (!$modelComment->save()) {
             throw new \yii\base\Exception( "System error" );
         }
-        
+        //insert table member_quiz_activity
+        $memberQuizActivity = MemberQuizActivity::findOne(['member_id' => Yii::$app->user->identity->member_id, 'quiz_id' => $modelComment->quiz_id]);
+        if (!$memberQuizActivity) {
+            $modelMemberQuizActivity = new MemberQuizActivity();
+            $modelMemberQuizActivity->member_id = Yii::$app->user->identity->member_id;
+            $modelMemberQuizActivity->quiz_id = $modelComment->quiz_id;
+            $modelMemberQuizActivity->save();
+        }
+
         return  [
             'status' => 200,
             'data' => [
@@ -262,9 +268,8 @@ class ActivityController extends Controller
                 'message' => \Yii::t('app', 'data not found')
             ];
         }
-        $commentDetail->status = Activity::STATUS_DELETE;
         //return error system
-        if (!$commentDetail->save()) {
+        if (!$modelComment->updateComment($commentDetail)) {
             throw new \yii\base\Exception( "System error" );
             
         }

@@ -172,4 +172,33 @@ class Comment extends \yii\db\ActiveRecord
         }
         return $listData;
     }
+    
+    
+    /*
+     * update data delete comment
+     * 
+     * Auth : 
+     * Create : 20-03-2017
+     */
+    
+    public function updateComment($commentDetail){
+         $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            $commentDetail->status = Activity::STATUS_DELETE;
+            $commentDetail->save();
+            //update table member_quiz_activity
+            if (count(Activity::checkActivityForMember($commentDetail->quiz_id)) == 0) {
+                $memberQuizActivity = MemberQuizActivity::findOne(['member_id' => Yii::$app->user->identity->member_id, 'quiz_id' => $commentDetail->quiz_id]);
+                if ($memberQuizActivity) {
+                    $memberQuizActivity->delete_flag = MemberQuizActivity::DELETE_DELETE;
+                    $memberQuizActivity->save();
+                }
+            }
+            $transaction->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return FALSE;
+        }
+    }
 }

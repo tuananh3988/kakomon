@@ -25,6 +25,9 @@ class MemberQuizActivity extends \yii\db\ActiveRecord
         return 'member_quiz_activity';
     }
 
+    const DELETE_ACTIVE = 0;
+    const DELETE_DELETE = 1;
+    
     public function behaviors()
     {
         return [

@@ -125,4 +125,27 @@ class Activity extends \yii\db\ActiveRecord
         $query->limit($limit);
         return $query->all();
     }
+    
+    /*
+     * 
+     * Auth : 
+     * Created : 20-03-2017
+     */
+    
+    public static function checkActivityForMember($quizId){
+        $query = new \yii\db\Query();
+        $query->select(['activity.*'])
+                ->from('activity');
+        $query->where(['=', 'activity.member_id', Yii::$app->user->identity->member_id]);
+        $query->andWhere(['=', 'activity.quiz_id', $quizId]);
+        $query->andWhere(['=', 'activity.status', self::STATUS_ACTIVE]);
+        $query->andWhere([
+            'or',
+            'activity.type = '.self::TYPE_COMMENT,
+            'activity.type = '. self::TYPE_LIKE,
+            'activity.type = '. self::TYPE_DISLIKE,
+            
+        ]);
+        return $query->all();
+    }
 }
