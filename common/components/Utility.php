@@ -228,6 +228,9 @@ class Utility extends Component
      */
     
     public static function getImagesInFolder($fileName, $path){
+        if (!is_dir($path)) {
+            return [];
+        }
         return FileHelper::findFiles($path, ['only' => [$fileName. '*']]);
     }
     
