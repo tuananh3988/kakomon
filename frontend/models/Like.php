@@ -175,10 +175,10 @@ class Like extends \yii\db\ActiveRecord
                 $modelMemberQuizActivity->save();
             }
             //insert or update table activity_sumary
-            $activitySumary = ActivitySumary::findOne(['activity_id' => $modelActivitySave->activity_id, 'type' => ActivitySumary::TYPE_LIKE]);
+            $activitySumary = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => ActivitySumary::TYPE_LIKE]);
             if (!$activitySumary) {
                 $modelActivitySumary = new ActivitySumary();
-                $modelActivitySumary->activity_id = $modelActivitySave->activity_id;
+                $modelActivitySumary->activity_id = $this->activity_id;
                 $modelActivitySumary->total = 1;
                 $modelActivitySumary->type = ActivitySumary::TYPE_LIKE;
                 $modelActivitySumary->save();
@@ -261,10 +261,10 @@ class Like extends \yii\db\ActiveRecord
                 $modelMemberQuizActivity->save();
             }
             //insert or update table activity_sumary
-            $activitySumary = ActivitySumary::findOne(['activity_id' => $modelActivitySave->activity_id, 'type' => ActivitySumary::TYPE_DIS_LIKE]);
+            $activitySumary = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => ActivitySumary::TYPE_DIS_LIKE]);
             if (!$activitySumary) {
                 $modelActivitySumary = new ActivitySumary();
-                $modelActivitySumary->activity_id = $modelActivitySave->activity_id;
+                $modelActivitySumary->activity_id = $this->activity_id;
                 $modelActivitySumary->total = 1;
                 $modelActivitySumary->type = ActivitySumary::TYPE_DIS_LIKE;
                 $modelActivitySumary->save();

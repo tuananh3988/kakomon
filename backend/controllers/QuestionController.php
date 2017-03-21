@@ -45,6 +45,7 @@ class QuestionController extends Controller {
         $request = Yii::$app->request;
         $formSearch = new Quiz();
         $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
+        $year = Quiz::find()->select('quiz_year')->where(['delete_flag' => Quiz::QUIZ_ACTIVE])->orderBy(['quiz_year' => SORT_DESC])->distinct()->indexBy('quiz_year')->column();
         $param = $request->queryParams;
         if (!empty($param['Quiz'])) {
             $formSearch->setAttributes($param['Quiz']);
@@ -66,7 +67,8 @@ class QuestionController extends Controller {
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'formSearch' => $formSearch,
-            'rootCat' => $rootCat
+            'rootCat' => $rootCat,
+            'year' => $year
         ]);
     }
     

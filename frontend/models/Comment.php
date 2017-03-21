@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use common\models\Activity;
 use common\models\Quiz;
 use frontend\models\Like;
+use common\components\Utility;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -166,7 +167,8 @@ class Comment extends \yii\db\ActiveRecord
                     'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['meberId']),
                     'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['meberId']),
                     'total_like' => (int)Like::getTotalLikeByActivityId($value['activity_id']),
-                    'total_dislike' => (int)Like::getTotalDisLikeByActivityId($value['activity_id'])
+                    'total_dislike' => (int)Like::getTotalDisLikeByActivityId($value['activity_id']),
+                    'avatar' => Utility::getImage('member', $value['meberId'], null, true)
                 ];
             }
         }

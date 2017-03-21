@@ -69,7 +69,11 @@ if ($formSearch->category_b_id) {
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
                     <?= Html::activeDropDownList($formSearch, 'category_b_id', $subCat2, ['prompt' => 'Select sub2 category', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat', 'id' => 'quiz-category_id_3']); ?>
                     </div>
-
+                    
+                    <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                    <?= Html::activeDropDownList($formSearch, 'quiz_year', $year, ['prompt' => 'Select Year', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat']); ?>
+                    </div>
+                    
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
                     <?= Html::activeTextInput($formSearch, 'question', ['class' => 'form-control col-md-7 col-xs-12', 'placeholder' => 'question']); ?>
                     </div>
@@ -122,6 +126,14 @@ if ($formSearch->category_b_id) {
                                     }
                                 ],
                                 [
+                                    'attribute' => 'quiz_year',
+                                    'label' => 'Year',
+                                    'headerOptions' => ['class' => 'icon-sort'],
+                                    'content' => function ($data) {
+                                        return $data['quiz_year'];
+                                    }
+                                ],
+                                [
                                     'attribute' => 'question',
                                     'label' => 'Question',
                                     'headerOptions' => ['class' => 'icon-sort'],
@@ -151,18 +163,6 @@ if ($formSearch->category_b_id) {
                                     'headerOptions' => ['class' => 'icon-sort'],
                                     'content' => function ($data) {
                                         return Category::getDetailNameCategory($data['category_b_id']);
-                                    }
-                                ],
-                                [
-                                    'attribute' => 'created_date',
-                                    'label' => 'Create Date',
-                                    'headerOptions' => ['class' => 'icon-sort'],
-                                    'content' => function ($data) {
-                                        if (!empty($data['created_date']) && $data['created_date'] != '0000-00-00 00:00:00') {
-                                            return $data['created_date'];
-                                        } else {
-                                            return '';
-                                        }
                                     }
                                 ],
                                 [

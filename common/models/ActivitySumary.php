@@ -47,7 +47,7 @@ class ActivitySumary extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['activity_sumary_id', 'activity_id'], 'required'],
+            [['activity_id'], 'required'],
             [['activity_sumary_id', 'activity_id', 'total', 'type'], 'integer'],
             [['created_date', 'updated_date'], 'safe'],
         ];

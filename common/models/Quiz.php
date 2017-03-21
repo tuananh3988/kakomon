@@ -118,6 +118,7 @@ class Quiz extends \yii\db\ActiveRecord
             'category_a_id' => 'Category Id 2',
             'category_b_id' => 'Category Id 3',
             'answer_id' => 'Answer',
+            'quiz_year' => 'Quiz Year',
             'quiz_answer' => 'Quiz Answer',
             'staff_create' => 'Staff Create',
             'delete_flag' => 'Delete Flag',
@@ -150,7 +151,7 @@ class Quiz extends \yii\db\ActiveRecord
      */
     public function extraFields()
     {
-        return ['question_img', 'answer', 'remove_img_question_flg', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4',
+        return ['question_img', 'quiz_year', 'answer', 'remove_img_question_flg', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4',
             'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8'];
     }
     
@@ -295,6 +296,7 @@ class Quiz extends \yii\db\ActiveRecord
         $query->andFilterWhere(['=', 'category_main_id' , $this->category_main_id]);
         $query->andFilterWhere(['=', 'category_a_id' , $this->category_a_id]);
         $query->andFilterWhere(['=', 'category_b_id' , $this->category_b_id]);
+        $query->andFilterWhere(['=', 'quiz_year' , $this->quiz_year]);
         $query->andFilterWhere(['like', 'question' , $this->question]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -303,6 +305,7 @@ class Quiz extends \yii\db\ActiveRecord
             ],
             'sort' => [
                 'defaultOrder' => [
+                    'quiz_year' => SORT_DESC,
                     'quiz_id' => SORT_DESC,
                     'category_main_id' => SORT_DESC,
                     'category_a_id' => SORT_DESC,
@@ -311,6 +314,10 @@ class Quiz extends \yii\db\ActiveRecord
                 ]
             ],
         ]);
+        $dataProvider->sort->attributes['quiz_year'] = [
+            'desc' => ['quiz.quiz_year' => SORT_DESC],
+            'asc' => ['quiz.quiz_year' => SORT_ASC],
+        ];
         $dataProvider->sort->attributes['quiz_id'] = [
             'desc' => ['quiz.quiz_id' => SORT_DESC],
             'asc' => ['quiz.quiz_id' => SORT_ASC],
