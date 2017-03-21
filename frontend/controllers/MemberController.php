@@ -97,30 +97,19 @@ class MemberController extends Controller
     
     public function actionMyInfo()
     {
-        $request = Yii::$app->request;
-        $param = $request->queryParams;
-        $result = [];
-        $memberDetail = Member::findOne(['auth_key' => $param['access-token']]);
-        if ($memberDetail) {
-            $result = [
-                'status' => 200,
-                'data' => [
-                    'id' => $memberDetail->member_id,
-                    'name' => $memberDetail->name,
-                    'comment' => Activity::getTotalCommentByMember($memberDetail->member_id),
-                    'liked' => Activity::getTotalLikeByMember($memberDetail->member_id)
-                ]
-            ];
-        } else {
-            $result = [
-                'status' => 204,
-                'data' => [
-                    'message' => \Yii::t('app', 'data not found')
-                ]
-            ];
-        }
+        $memberDetail = Yii::$app->user->identity;
+         return [
+            'status' => 200,
+            'data' => [
+                'id' => (int)$memberDetail->member_id,
+                'name' => $memberDetail->name,
+                'comment' => (int)Activity::getTotalCommentByMember($memberDetail->member_id),
+                'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
+                'be_liked' => 810,
+                'followed' => 200,
+            ]
+        ];
         
-        return $result;
         
         return [
             'status' => 200,

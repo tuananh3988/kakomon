@@ -243,7 +243,7 @@ class Category extends \yii\db\ActiveRecord
      * Create : 08-03-2017
      */
     
-    public function getListTimelineHelp($catId, $flag = false){
+    public function getListTimelineHelp($catId, $flag = false, $flagMember = false){
         $query = new \yii\db\Query();
         $query->select(['category.cateory_id', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity'])
                 ->from('category');
@@ -254,6 +254,9 @@ class Category extends \yii\db\ActiveRecord
         $query->andWhere(['quiz.delete_flag' => 0]);
         $query->andWhere(['activity.type' => Activity::TYPE_HELP]);
         $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
+        if ($flagMember) {
+            $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
+        }
         if ($flag) {
             return $query->count();
         }
