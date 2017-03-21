@@ -126,6 +126,14 @@ if ($formSearch->category_b_id) {
                                     }
                                 ],
                                 [
+                                    'attribute' => 'quiz_number',
+                                    'label' => 'Number',
+                                    'headerOptions' => ['class' => 'icon-sort'],
+                                    'content' => function ($data) {
+                                        return $data['quiz_number'];
+                                    }
+                                ],
+                                [
                                     'attribute' => 'quiz_year',
                                     'label' => 'Year',
                                     'headerOptions' => ['class' => 'icon-sort'],
@@ -136,7 +144,7 @@ if ($formSearch->category_b_id) {
                                 [
                                     'attribute' => 'question',
                                     'label' => 'Question',
-                                    'headerOptions' => ['class' => 'icon-sort'],
+                                    'headerOptions' => ['class' => 'icon-sort', 'style' => 'width : 40%'],
                                     'content' => function ($data) {
                                         return $data['question'];
                                     }

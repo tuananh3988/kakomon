@@ -95,7 +95,7 @@ class Quiz extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'category_main_id', 'category_a_id', 'category_b_id', 'staff_create', 'delete_flag'], 'integer'],
+            [['type', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'quiz_number', 'staff_create', 'delete_flag'], 'integer'],
             [['question'], 'required'],
             [['question'], 'string'],
             [['created_date', 'updated_date'], 'safe'],
@@ -119,6 +119,7 @@ class Quiz extends \yii\db\ActiveRecord
             'category_b_id' => 'Category Id 3',
             'answer_id' => 'Answer',
             'quiz_year' => 'Quiz Year',
+            'quiz_number' => 'Quiz Number',
             'quiz_answer' => 'Quiz Answer',
             'staff_create' => 'Staff Create',
             'delete_flag' => 'Delete Flag',
@@ -151,7 +152,7 @@ class Quiz extends \yii\db\ActiveRecord
      */
     public function extraFields()
     {
-        return ['question_img', 'quiz_year', 'answer', 'remove_img_question_flg', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4',
+        return ['question_img', 'quiz_year', 'quiz_number', 'answer', 'remove_img_question_flg', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4',
             'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8'];
     }
     
@@ -306,6 +307,7 @@ class Quiz extends \yii\db\ActiveRecord
             'sort' => [
                 'defaultOrder' => [
                     'quiz_year' => SORT_DESC,
+                    
                     'quiz_id' => SORT_DESC,
                     'category_main_id' => SORT_DESC,
                     'category_a_id' => SORT_DESC,

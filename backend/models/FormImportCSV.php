@@ -101,6 +101,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
                 $quizModel->category_a_id = $sub1ID;
                 $quizModel->category_b_id = $sub2ID;
                 $quizModel->quiz_year = $data[0];
+                $quizModel->quiz_number = $data[1];
                 $quizModel->quiz_class = array_key_exists($data[3], Quiz::$QUIZ_CLASS) ? Quiz::$QUIZ_CLASS[$data[3]] : NULL;
                 $quizModel->save();
                 
