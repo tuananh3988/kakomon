@@ -65,4 +65,19 @@ class MemberCategoryTime extends \yii\db\ActiveRecord
             'updated_date' => 'Updated Date',
         ];
     }
+    
+    /*
+     * get Total time view category
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    
+    public static function getTotalTimeViewByMainCategory($catId){
+        $total = MemberCategoryTime::find()->where(['member_id' => Yii::$app->user->identity->member_id, 'category_id' => $catId])->one();
+        if (!$total) {
+            return null;
+        }
+        return $total->total_time;
+    }
 }

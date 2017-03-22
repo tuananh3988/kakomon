@@ -7,7 +7,6 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\components\Utility;
-use common\models\Member;
 use common\models\Activity;
 use common\models\Category;
 use common\models\Quiz;
@@ -17,6 +16,9 @@ use frontend\models\Like;
 use frontend\models\Comment;
 use frontend\models\Help;
 use frontend\models\Reply;
+use frontend\models\ActivityApi;
+use common\models\MemberCategoryTime;
+
 
 /**
  * Site controller
@@ -46,7 +48,8 @@ class ActivityController extends Controller
                     'listReply' => ['get'],
                     'timeline' => ['get'],
                     'home' => ['get'],
-                    'sumary' => ['get']
+                    'sumary' => ['get'],
+                    'my-sumary' => ['get']
                 ],
             ],
             'authenticator' => [
@@ -676,8 +679,8 @@ class ActivityController extends Controller
     public function actionSumary(){
         $request = Yii::$app->request;
         $param = $request->queryParams;
-        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['timeline'];
-        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['timeline'];
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['sumary'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['sumary'];
         $modelCategory = new Category();
         $listCategory = $modelCategory->getListCategoryForMember($limit, $offset);
         $total = $modelCategory->getListCategoryForMember($limit, $offset, true);
@@ -709,6 +712,75 @@ class ActivityController extends Controller
                 'offset' => $offsetReturn,
                 'category' => $dataCat
             ]
+        ];
+    }
+    
+    /*
+     * List sumary by category
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    
+    public function actionMySumary(){
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['sumary'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['sumary'];
+        $modelActivity = new ActivityApi();
+        $modelActivity->setAttributes($param);
+        if (!$modelActivity->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelActivity->errors
+                ];
+        }
+        
+        $type = $modelActivity->type =  !empty($param['type']) ? $param['type'] : 1;
+        $data = [];
+        switch ($type) {
+            case 1:
+                $listComment = $modelActivity->getListCommnetByCategory($limit, $offset);
+                if (count($listComment) > 0) {
+                    $total = $modelActivity->getListCommnetByCategory($limit, $offset, true);
+                    $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+                    $data['count'] = (int)$total;
+                    $data['offset'] = $offsetReturn;
+                    foreach ($listComment as $key => $value) {
+                        $data['comment'][] = [
+                            'quiz_id' => $value['quiz_id'],
+                            'question' => $value['question'],
+                            'content_comment' => $value['content'],
+                            'total_like' => $value['total_like'],
+                            'total_dis_like' => $value['total_dis_like'],
+                            'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['member_id']),
+                            'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['member_id']),
+                        ];
+                    }
+                }
+                break;
+            case 2:
+                
+                break;
+            case 3:
+                
+                break;
+            default :
+        }
+        //return not found data
+        if (count($data) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        //return data
+        return [
+            'status' => 200,
+            'total_time_view' => (int)MemberCategoryTime::getTotalTimeViewByMainCategory($param['category_main_id']),
+            'total_quiz' => (int)Quiz::getTotalQuizByCategory($param['category_main_id']),
+            'total_ans_quiz' => (int)Quiz::getTotalQuizAnsByCategory($param['category_main_id']),
+            'data' => $data
         ];
     }
 }
