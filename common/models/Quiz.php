@@ -430,4 +430,24 @@ class Quiz extends \yii\db\ActiveRecord
         return $query->count();
     }
     
+    
+    /*
+     * get total quiz not ans by category
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getTotalQuizNotAnsByCategory($catId = null){
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        if ($catId) {
+            $query->andWhere(['quiz.category_main_id' => $catId]);
+        }
+        $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
+        $query->andWhere(['NOT IN','quiz_id',  MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_CORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all()]);
+        $query->andWhere(['NOT IN','quiz_id',  MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_INCORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all()]);
+        return $query->count();
+    }
 }

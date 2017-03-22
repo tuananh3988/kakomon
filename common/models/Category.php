@@ -269,12 +269,15 @@ class Category extends \yii\db\ActiveRecord
      * Auth : 
      * Create : 22-03-2017
      */
-    public function getListCategoryForMember($limit, $offset){
+    public function getListCategoryForMember($limit, $offset, $flag = false){
         $query = new \yii\db\Query();
         $query->select(['category.*', 'member_category_time.total_time'])
                 ->from('category');
         $query->join('LEFT JOIN', 'member_category_time', 'category.cateory_id = member_category_time.category_id AND member_category_time.member_id = ' . Yii::$app->user->identity->member_id);
         $query->where(['category.parent_id' => 0]);
+        if ($flag) {
+            return $query->count();
+        }
         $query->offset($offset);
         $query->limit($limit);
         return $query->all();

@@ -680,7 +680,10 @@ class ActivityController extends Controller
         $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['timeline'];
         $modelCategory = new Category();
         $listCategory = $modelCategory->getListCategoryForMember($limit, $offset);
+        $total = $modelCategory->getListCategoryForMember($limit, $offset, true);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
         $dataCat = [];
+        
         if (count($listCategory) > 0) {
             foreach ($listCategory as $key => $value) {
                 $dataCat[] = [
@@ -689,8 +692,9 @@ class ActivityController extends Controller
                     'total_time_view' => (int)$value['total_time'],
                     'total_quiz' => (int)Quiz::getTotalQuizByCategory($value['cateory_id']),
                     'total_ans_quiz' => (int)Quiz::getTotalQuizAnsByCategory($value['cateory_id']),
-                    'total_comment' => (int)  Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_COMMENT),
-                    'total_like' => (int)  Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_LIKE)
+                    'total_comment' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_COMMENT),
+                    'total_like' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_LIKE),
+                    'total_quiz_not_doing' => (int)Quiz::getTotalQuizNotAnsByCategory($value['cateory_id'])
                 ];
             }
         }
@@ -700,7 +704,9 @@ class ActivityController extends Controller
             'data' => [
                 'total_comment' => (int)Comment::getTotalActivityByMember(Activity::TYPE_COMMENT),
                 'total_like' => (int)Comment::getTotalActivityByMember(Activity::TYPE_LIKE),
-                'total_quiz_not_doing' => 900,
+                'total_quiz_not_doing' => (int)Quiz::getTotalQuizNotAnsByCategory(),
+                'count' => (int)$total,
+                'offset' => $offsetReturn,
                 'category' => $dataCat
             ]
         ];
