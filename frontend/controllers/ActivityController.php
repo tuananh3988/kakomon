@@ -45,7 +45,8 @@ class ActivityController extends Controller
                     'deleteReply' => ['post'],
                     'listReply' => ['get'],
                     'timeline' => ['get'],
-                    'home' => ['get']
+                    'home' => ['get'],
+                    'sumary' => ['get']
                 ],
             ],
             'authenticator' => [
@@ -662,6 +663,46 @@ class ActivityController extends Controller
             'offset' => $offsetReturn,
             'data' => $data
             
+        ];
+    }
+    
+    /*
+     * List sumary
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    
+    public function actionSumary(){
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['timeline'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['timeline'];
+        $modelCategory = new Category();
+        $listCategory = $modelCategory->getListCategoryForMember($limit, $offset);
+        $dataCat = [];
+        if (count($listCategory) > 0) {
+            foreach ($listCategory as $key => $value) {
+                $dataCat[] = [
+                    'category_id' => (int)$value['cateory_id'],
+                    'category_name' => $value['name'],
+                    'total_time_view' => (int)$value['total_time'],
+                    'total_quiz' => (int)Quiz::getTotalQuizByCategory($value['cateory_id']),
+                    'total_ans_quiz' => (int)Quiz::getTotalQuizAnsByCategory($value['cateory_id']),
+                    'total_comment' => (int)  Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_COMMENT),
+                    'total_like' => (int)  Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_LIKE)
+                ];
+            }
+        }
+        
+        return [
+            'status' => 200,
+            'data' => [
+                'total_comment' => (int)Comment::getTotalActivityByMember(Activity::TYPE_COMMENT),
+                'total_like' => (int)Comment::getTotalActivityByMember(Activity::TYPE_LIKE),
+                'total_quiz_not_doing' => 900,
+                'category' => $dataCat
+            ]
         ];
     }
 }

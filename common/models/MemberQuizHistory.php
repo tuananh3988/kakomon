@@ -94,6 +94,7 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
                 ->from('member_quiz_history');
         $query->where(['=', 'member_quiz_history.quiz_id', $quizId]);
         $query->andWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
+        $query->andWhere(['!=', 'member_quiz_history.correct_flag',  self::FLAG_CORRECT_NOT_DOING]);
         $query->orderBy(['member_quiz_history_id' =>SORT_DESC]);
         $query->limit(self::LIMIT_ANS);
         return $query->all();

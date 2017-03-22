@@ -203,4 +203,22 @@ class Comment extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+    
+    /*
+     * get total comment
+     * 
+     * Auth : 
+     * Create : 20-03-2017
+     */
+    
+    public static function getTotalActivityByMember($type){
+        $query = new \yii\db\Query();
+        $query->select(['activity.activity_id'])
+                ->from('activity');
+        $query->where(['activity.member_id' => Yii::$app->user->identity->member_id]);
+        $query->andWhere(['activity.type' => $type]);
+        $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
+        return $query->count();
+    }
+    
 }

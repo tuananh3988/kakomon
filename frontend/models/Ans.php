@@ -25,7 +25,7 @@ class Ans extends \yii\db\ActiveRecord
     public $quiz_answer6;
     public $quiz_answer7;
     public $quiz_answer8;
-    
+    public $quiz_answer;
     
     const DEFAULT_TIME = 9999999999999;
 
@@ -47,7 +47,7 @@ class Ans extends \yii\db\ActiveRecord
             [['quiz_id', 'time'], 'integer'],
             ['quiz_id', 'validateQuizId'],
             ['time', 'validateTime'],
-            [['quiz_id' , 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'time',
+            [['quiz_id' , 'quiz_answer', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'time',
                 'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'created_date', 'updated_date'], 'safe'],
         ];
     }
@@ -72,6 +72,7 @@ class Ans extends \yii\db\ActiveRecord
             'updated_date' => 'Updated Date',
             'question_img' => 'Question Img',
             'remove_img_question_flg' => 'remove_img_question_flg',
+            'quiz_answer' => 'Quiz Answer',
             'quiz_answer1' => 'Quiz Answer1',
             'quiz_answer2' => 'Quiz Answer2',
             'quiz_answer3' => 'Quiz Answer3',
@@ -126,8 +127,7 @@ class Ans extends \yii\db\ActiveRecord
     
     public function validateTime($attribute){
         for ($i = 1; $i <= 8; $i++) {
-            $nameAns = 'quiz_answer'.$i;
-            $data['Quiz']['quiz_answer'.$i] = $this->$nameAns;
+            $data['Quiz']['quiz_answer'.$i] = (in_array($i, $this->quiz_answer)) ? 1 : null;
         }
         $quizAnswer = Utility::renderQuizAnswer($data);
         if ($quizAnswer != Quiz::QUIZ_ANSWER && ($this->time == self::DEFAULT_TIME)) {
@@ -146,8 +146,7 @@ class Ans extends \yii\db\ActiveRecord
         $transaction = \yii::$app->getDb()->beginTransaction();
         try {
             for ($i = 1; $i <= 8; $i++) {
-                $nameAns = 'quiz_answer'.$i;
-                $data['Quiz']['quiz_answer'.$i] = $this->$nameAns;
+                $data['Quiz']['quiz_answer'.$i] = (in_array($i, $this->quiz_answer)) ? 1 : null;
             }
             $quizDetail = Quiz::findOne(['quiz_id' => $this->quiz_id, 'delete_flag' => Quiz::QUIZ_ACTIVE]);
             $quizAnswer = Utility::renderQuizAnswer($data);
@@ -192,7 +191,7 @@ class Ans extends \yii\db\ActiveRecord
                 
             }
             $transaction->commit();
-            return TRUE;
+            return $correctFlag;
         } catch (Exception $ex) {
             $transaction->rollBack();
             return FALSE;

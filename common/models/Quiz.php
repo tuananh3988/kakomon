@@ -10,6 +10,7 @@ use common\components\Utility;
 use common\models\Answer;
 use yii\data\ActiveDataProvider;
 use yii\web\Session;
+use common\models\MemberQuizHistory;
 /**
  * This is the model class for table "quiz".
  *
@@ -389,4 +390,44 @@ class Quiz extends \yii\db\ActiveRecord
         }
         return $list;
     }
+    
+    /*
+     * get total quiz by category
+     * 
+     * Auth : 
+     * Created :22-03-2017
+     */
+    public static function getTotalQuizByCategory($catId) {
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        $query->andWhere(['quiz.category_main_id' => $catId]);
+        $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
+        return $query->count();
+    }
+    
+    /*
+     * get total quiz ans by category
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getTotalQuizAnsByCategory($catId){
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
+        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        $query->andWhere(['quiz.category_main_id' => $catId]);
+        $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
+        $query->andWhere(['member_quiz_history.member_id' => Yii::$app->user->identity->member_id]);
+        $query->andWhere([
+            'or',
+            'member_quiz_history.correct_flag = ' . MemberQuizHistory::FLAG_CORRECT_CORRECT,
+            'member_quiz_history.correct_flag = ' . MemberQuizHistory::FLAG_CORRECT_INCORRECT,
+        ]);
+        return $query->count();
+    }
+    
 }

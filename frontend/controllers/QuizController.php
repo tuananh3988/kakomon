@@ -423,12 +423,16 @@ class QuizController extends Controller
                     'messages' => $modelAns->errors
                 ];
         }
-        if (!$modelAns->saveAns()) {
+        $dataSave = $modelAns->saveAns();
+        if (!$dataSave) {
             throw new \yii\base\Exception( "System error" );
         }
         
         return  [
-            'status' => 200
+            'status' => 200,
+            'data' => [
+                'flag_ans' => $dataSave
+            ]
         ];
     }
 }

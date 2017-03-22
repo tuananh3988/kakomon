@@ -263,4 +263,20 @@ class Category extends \yii\db\ActiveRecord
         return $query->all();
     }
     
+    /*
+     * Get list timeline help
+     * 
+     * Auth : 
+     * Create : 22-03-2017
+     */
+    public function getListCategoryForMember($limit, $offset){
+        $query = new \yii\db\Query();
+        $query->select(['category.*', 'member_category_time.total_time'])
+                ->from('category');
+        $query->join('LEFT JOIN', 'member_category_time', 'category.cateory_id = member_category_time.category_id AND member_category_time.member_id = ' . Yii::$app->user->identity->member_id);
+        $query->where(['category.parent_id' => 0]);
+        $query->offset($offset);
+        $query->limit($limit);
+        return $query->all();
+    }
 }

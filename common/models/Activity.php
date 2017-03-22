@@ -148,4 +148,24 @@ class Activity extends \yii\db\ActiveRecord
         ]);
         return $query->all();
     }
+    
+    /*
+     * get total Activity by category
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getTotalQuizActivityByCategory($catId, $type){
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
+        $query->where(['quiz.type' => Quiz::TYPE_DEFAULT]);
+        $query->andWhere(['quiz.category_main_id' => $catId]);
+        $query->andWhere(['quiz.delete_flag' => Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
+        $query->andWhere(['activity.type' => $type]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        return $query->count();
+    }
 }
