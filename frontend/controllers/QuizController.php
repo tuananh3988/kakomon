@@ -304,11 +304,13 @@ class QuizController extends Controller
         $listAns = [];
         for ($i = 1; $i <= Answer::MAX_ANS; $i++) {
             $ansDetail = Answer::findOne(['quiz_id' => $quizDetail->quiz_id, 'order' => $i]);
-            $listAns[] = [
-                'ans_id' => $i,
-                'content' => ($ansDetail) ? $ansDetail->content : '',
-                'img_ans' => Utility::getImage('answer', $quizDetail->quiz_id, $i, true)
-            ];
+            if ($ansDetail || Utility::getImage('answer', $quizDetail->quiz_id, $i, true)) {
+                $listAns[] = [
+                    'ans_id' => $i,
+                    'content' => ($ansDetail) ? $ansDetail->content : '',
+                    'img_ans' => Utility::getImage('answer', $quizDetail->quiz_id, $i, true)
+                ];
+            }
         }
         return [
             'status' => 200,
@@ -316,7 +318,8 @@ class QuizController extends Controller
                 'quiz_id' => $quizDetail->quiz_id,
                 'question' => $quizDetail->question,
                 'img_question' => Utility::getImage('question', $quizDetail->quiz_id, null, true),
-                'listAns' => $listAns
+                'listAns' => $listAns,
+                'list_ans_two_last' => $this->renderListAnsHistory($quizDetail->quiz_id)
             ]
         ];
     }
