@@ -242,22 +242,22 @@ class QuizController extends Controller
         $data = [];
         foreach ($listHistorySearch as $key => $value) {
             $data[] = [
-                'member_quiz_search_history_id' => $value['member_quiz_search_history_id'],
+                'member_quiz_search_history_id' => (int)$value['member_quiz_search_history_id'],
                 'quiz_class' => $value['quiz_class'],
-                'category_main_id' => [
-                    'id' => $value['category_main_id'],
+                'category_main' => [
+                    'id' => (int)$value['category_main_id'],
                     'name' => Category::getDetailNameCategory($value['category_main_id'])
                 ],
-                'category_a_id' => [
-                    'id' => $value['category_a_id'],
+                'category_a' => [
+                    'id' => (int)$value['category_a_id'],
                     'name' => Category::getDetailNameCategory($value['category_a_id'])
                 ],
-                'category_b_id' => [
-                    'id' => $value['category_b_id'],
+                'category_b' => [
+                    'id' => (int)$value['category_b_id'],
                     'name' => Category::getDetailNameCategory($value['category_b_id'])
                 ],
-                'quiz_year' => $value['quiz_year'],
-                'type_quiz' => $value['type'],
+                'quiz_year' => (int)$value['quiz_year'],
+                'type_quiz' => (int)$value['type'],
             ];
         }
         
