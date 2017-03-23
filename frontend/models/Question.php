@@ -118,12 +118,12 @@ class Question extends \yii\db\ActiveRecord
     public function getListYear()
     {
         $query = new \yii\db\Query();
-        $query->select(['quiz_year'])
+        $query->select(['test_times', 'quiz_year'])
                 ->from('quiz');
         $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
         $query->distinct();
-        $query->orderBy(['quiz_year' => SORT_ASC]);
-        return $query->column();
+        $query->orderBy(['quiz_year' => SORT_DESC]);
+        return $query->all();
     }
     
     /*
