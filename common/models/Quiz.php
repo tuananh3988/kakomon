@@ -247,10 +247,6 @@ class Quiz extends \yii\db\ActiveRecord
                     }
                     //update images ans
                     if ($flag == 1) {
-                        //update content ans if content null
-                        if ($answer[$key]->order != NULL && empty($answer[$key]->content)) {
-                            $answer[$key]->save();
-                        }
                         //remove images
                         if ($answer[$key]->remove_img_flg == 1) {
                             $utility->removeImages('answer', $this->quiz_id, $order);

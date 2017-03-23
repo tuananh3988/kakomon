@@ -110,6 +110,25 @@ class Utility extends Component
     }
     
     /*
+     * render quiz answer
+     * 
+     * Auth : 
+     * Create : 28-02-2017
+     */
+    
+    public static function exportQuizAnswer($data)
+    {
+        $dataAns = [];
+        $dataQuizAnswer = str_split($data);
+        for ($i = 0; $i < count($dataQuizAnswer); $i++) {
+            if ($dataQuizAnswer[$i] == 1) {
+                $dataAns[] = $i+1;
+            }
+        }
+        return $dataAns;
+    }
+    
+    /*
      * render offset
      * 
      * Auth :
