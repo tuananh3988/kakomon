@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use common\models\Member;
 
 /**
  * This is the model class for table "follow".
@@ -72,8 +73,9 @@ class Follow extends \yii\db\ActiveRecord
     
     public function validateFollowing($attribute)
     {
+        $member = Member::findOne(['member_id' => $this->member_id_following]);
         $follow = Follow::findOne(['member_id_followed' => $this->member_id_followed, 'member_id_following' => $this->member_id_following, 'delete_flag' => 0]);
-        if ($follow) {
+        if ($follow || !$member || ($this->member_id_following == $this->member_id_followed)) {
             $this->addError($attribute, \Yii::t('app', 'existing',['attribute' => $this->attributeLabels()[$attribute]]));
         }
     }

@@ -8,6 +8,7 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Follow;
 use common\models\Member;
+use common\components\Utility;
 
 /**
  * Site controller
@@ -79,7 +80,8 @@ class FollowController extends Controller
             $listData[] = [
                 'member_id' => $value['member_id'],
                 'member_name' => $value['name'],
-                'info' => $value['city'] . ' ' . $value['favorite_animal'] . ' ' . $value['favorite_film']
+                'info' => $value['city'] . ' ' . $value['favorite_animal'] . ' ' . $value['favorite_film'],
+                'avatar' => Utility::getImage('member', $value['member_id'], null, true)
             ];
         }
         return [
@@ -119,7 +121,8 @@ class FollowController extends Controller
             $listData[] = [
                 'member_id' => $value['member_id'],
                 'member_name' => $value['name'],
-                'info' => $value['city'] . ' ' . $value['favorite_animal'] . ' ' . $value['favorite_film']
+                'info' => $value['city'] . ' ' . $value['favorite_animal'] . ' ' . $value['favorite_film'],
+                'avatar' => Utility::getImage('member', $value['member_id'], null, true)
             ];
         }
         return [

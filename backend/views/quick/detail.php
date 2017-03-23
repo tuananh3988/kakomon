@@ -8,7 +8,7 @@ use common\models\Category;
 use common\models\Answer;
 
 Yii::$app->view->title = 'Detail Question';
-
+$quizAns = Utility::exportQuizAnswer($quizItem->quiz_answer);
 ?>
 <link rel="stylesheet" href="<?= Yii::$app->request->baseUrl; ?>/css/colorbox.css" />
 <script src="<?= Yii::$app->request->baseUrl; ?>/js/jquery.colorbox.js"></script>
@@ -43,6 +43,20 @@ Yii::$app->view->title = 'Detail Question';
                             </div>
                         </div>
                     <?php endif;?>
+                    
+                    <div class="form-group row">
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Quiz Answer :</label>
+                        <div class="col-md-10 col-sm-9 col-xs-12">
+                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left">
+                                <?php if(count($quizAns) > 0) : ?>
+                                    <?php foreach ($quizAns as $key => $value) : ?>
+                                    Answer <?= $value; ?> <?= (($key+1) != count($quizAns) ? ',' : '')?>
+                                    <?php endforeach;?>
+                                <?php endif;?>
+                            </label>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
