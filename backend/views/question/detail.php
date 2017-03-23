@@ -74,6 +74,14 @@ Yii::$app->view->title = 'Detail Question';
                             <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= $quizItem->quiz_number;?></label>
                         </div>
                     </div>
+                    
+                    <div class="form-group row">
+                        <label class="control-label col-md-2 col-sm-3 col-xs-12">Test Times :</label>
+                        <div class="col-md-10 col-sm-9 col-xs-12">
+                            <label class="control-label col-md-12 col-sm-3 col-xs-12 text-left"><?= $quizItem->test_times;?></label>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

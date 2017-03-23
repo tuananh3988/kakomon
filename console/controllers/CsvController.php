@@ -49,7 +49,7 @@ class CsvController extends \yii\console\Controller
                 //read and insert file csv
                 $handle = fopen(Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName, "r");
                 while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
-                    if ($fileop[0] != 'Year') {
+                    if ($fileop[0] != 'year') {
                         $lineErrors++;
                         if (!$model->saveData($fileop, $value->file_name, $flagFolder)) {
                             $messageErrors[] = $lineErrors;

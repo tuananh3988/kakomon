@@ -45,7 +45,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
     public function saveData($data, $fileName, $flagFolder)
     {
         //insert main category
-        $mainCatName = trim($data[4]);
+        $mainCatName = trim($data[5]);
         if (empty($mainCatName)) {
             return FALSE;
         } else {
@@ -60,7 +60,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
                     $categoryMain->save();
                 }
                 //insert sub1 category
-                $sub1CatName = trim($data[5]);
+                $sub1CatName = trim($data[6]);
                 if (!empty($sub1CatName)) {
                     $rootCatId = $categoryMain->cateory_id;
                     $categorySub1 = Category::findOne(['parent_id' => $rootCatId, 'name' => $sub1CatName, 'level' => 2]);
@@ -73,7 +73,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
                     }
                 }
                 //insert sub2 category
-                $sub2CatName = trim($data[6]);
+                $sub2CatName = trim($data[7]);
                 if (!empty($sub2CatName)) {
                     $sub1CatId = $categorySub1->cateory_id;
                     $categorySub2 = Category::findOne(['parent_id' => $sub1CatId, 'name' => $sub2CatName, 'level' => 3]);
@@ -95,14 +95,15 @@ class FormImportCSV extends \yii\db\ActiveRecord
                 $sub2ID = (!empty($sub2CatName)) ? $categorySub2->cateory_id : '';
 
                 $quizModel->type = Quiz::TYPE_NORMAL;
-                $quizModel->question = $data[7];
-                $quizModel->quiz_answer = Utility::renderQuizAnswerImport($data[2]);
+                $quizModel->question = $data[8];
+                $quizModel->quiz_answer = Utility::renderQuizAnswerImport($data[3]);
                 $quizModel->category_main_id = $mainId;
                 $quizModel->category_a_id = $sub1ID;
                 $quizModel->category_b_id = $sub2ID;
                 $quizModel->quiz_year = $data[0];
                 $quizModel->quiz_number = $data[1];
-                $quizModel->quiz_class = array_key_exists($data[3], Quiz::$QUIZ_CLASS) ? Quiz::$QUIZ_CLASS[$data[3]] : NULL;
+                $quizModel->test_times = $data[2];
+                $quizModel->quiz_class = array_key_exists($data[4], Quiz::$QUIZ_CLASS) ? Quiz::$QUIZ_CLASS[$data[4]] : NULL;
                 $quizModel->save();
                 
                 $pathFolder = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName  . '/images';
@@ -120,14 +121,14 @@ class FormImportCSV extends \yii\db\ActiveRecord
                 for ($i = 1 ; $i <= 8; $i++) {
                     $answerDetail = Answer::findOne(['quiz_id' => $quizModel->quiz_id, 'order' => $i]);
                     //delete answer if not content answer
-                    if (empty($data[$i+7]) && $answerDetail) {
+                    if (empty($data[$i+8]) && $answerDetail) {
                         $answerDetail->delete();
                     }
                     //update or insert answer
-                    if (!empty($data[$i+7])) {
+                    if (!empty($data[$i+8])) {
                         $modelAnswer = ($answerDetail) ? $answerDetail : new Answer();
                         $modelAnswer->quiz_id = $quizModel->quiz_id;
-                        $modelAnswer->content = trim($data[$i+7]);
+                        $modelAnswer->content = trim($data[$i+8]);
                         $modelAnswer->order = $i;
                         $modelAnswer->save();
                     }
