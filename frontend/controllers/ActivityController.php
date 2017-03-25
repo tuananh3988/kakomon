@@ -86,6 +86,7 @@ class ActivityController extends Controller
         $request = Yii::$app->request;
         $dataPost = $request->post();
         $modelLike = new Like();
+        $modelLike->scenario  = Like::SCENARIO_LIKE;
         $modelLike->setAttributes($dataPost);
         if (!$modelLike->validate()) {
             return [
@@ -148,6 +149,7 @@ class ActivityController extends Controller
         $request = Yii::$app->request;
         $dataPost = $request->post();
         $modelLike = new Like();
+        $modelLike->scenario  = Like::SCENARIO_DIS_LIKE;
         $modelLike->setAttributes($dataPost);
         if (!$modelLike->validate()) {
             return [

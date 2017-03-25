@@ -10,6 +10,7 @@ use common\models\Activity;
 use common\models\Quiz;
 use common\components\Utility;
 use frontend\models\Reply;
+use common\models\ActivitySumary;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -143,9 +144,15 @@ class Help extends \yii\db\ActiveRecord
     public static function getListHelpByQuizId($quizId, $limit, $offset)
     {
         $query = new \yii\db\Query();
-        $query->select(['activity.*', 'member.member_id AS meberId', 'member.name'])
+        $query->select(['activity.*', 'member.member_id AS meberId', 'member.name',
+            'activity_sumary_like.total AS total_like', 'activity_sumary_dis_like.total AS total_dislike', 
+            'activity_is_like.activity_id AS isLike', 'activity_is_dis_like.activity_id AS isDisLike'])
                 ->from('activity');
         $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
+        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_like', 'activity_sumary_like.activity_id = activity.activity_id AND activity_sumary_like.type = '. ActivitySumary::TYPE_LIKE);
+        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_dis_like', 'activity_sumary_dis_like.activity_id = activity.activity_id AND activity_sumary_dis_like.type = '. ActivitySumary::TYPE_DIS_LIKE);
+        $query->join('LEFT JOIN', 'activity AS activity_is_like', 'activity_is_like.relate_id = activity.activity_id AND activity_is_like.member_id = '. Yii::$app->user->identity->member_id . ' AND activity_is_like.type = ' .Activity::TYPE_LIKE . ' AND activity_is_like.status = ' . Activity::STATUS_ACTIVE);
+        $query->join('LEFT JOIN', 'activity AS activity_is_dis_like', 'activity_is_dis_like.relate_id = activity.activity_id AND activity_is_dis_like.member_id = '. Yii::$app->user->identity->member_id . ' AND activity_is_dis_like.type = ' .Activity::TYPE_DISLIKE . ' AND activity_is_dis_like.status = ' . Activity::STATUS_ACTIVE);
         $query->andWhere(['activity.quiz_id' => $quizId]);
         $query->andWhere(['activity.type' => Activity::TYPE_HELP]);
         $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
@@ -177,11 +184,12 @@ class Help extends \yii\db\ActiveRecord
                 $listData[] = [
                     'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
+                    'avatar' => Utility::getImage('member', $value['meberId'], null, true),
                     'content' => $value['content'],
-                    'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['meberId']),
-                    'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['meberId']),
-                    'total_like' => (int)Like::getTotalLikeByActivityId($value['activity_id']),
-                    'total_dislike' => (int)Like::getTotalDisLikeByActivityId($value['activity_id']),
+                    'isDisLike' => ($value['isDisLike']) ? true : false,
+                    'isLike' => ($value['isLike']) ? true : false,
+                    'total_like' => (int)$value['total_like'],
+                    'total_dislike' => (int)$value['total_dislike'],
                     'reply' => Reply::renderListReply($value['activity_id'], $limit, $offset),
                     'total_reply' => (int)$total,
                     'offset_reply' => (int)$offsetReturn

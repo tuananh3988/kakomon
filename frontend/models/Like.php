@@ -15,6 +15,8 @@ use common\models\ActivitySumary;
 class Like extends \yii\db\ActiveRecord
 {
     
+    const SCENARIO_LIKE = 'like';
+    const SCENARIO_DIS_LIKE = 'dis-like';
     /**
      * @inheritdoc
      */
@@ -32,6 +34,8 @@ class Like extends \yii\db\ActiveRecord
             [['activity_id', 'status'], 'required'],
             [['activity_id', 'status'], 'integer'],
             ['activity_id', 'validateActivityId'],
+            ['status', 'validateStatusLike', 'on' => self::SCENARIO_LIKE],
+            ['status', 'validateStatusDisLike', 'on' => self::SCENARIO_DIS_LIKE],
             [['created_date', 'updated_date'], 'safe'],
         ];
     }
@@ -78,6 +82,36 @@ class Like extends \yii\db\ActiveRecord
         }
     }
     
+    /*
+     * validate status
+     * 
+     * Auth :
+     * Created : 25-02-2017
+     */
+    public function validateStatusLike($attribute){
+        if (!$this->hasErrors()) {
+            $activity = Activity::findOne(['relate_id' => $this->activity_id, 'type' => Activity::TYPE_LIKE, 'status' => Activity::STATUS_ACTIVE]);
+            if (!$activity && ($this->$attribute == Activity::STATUS_DELETE)) {
+                $this->addError($attribute, 'Invalid data');
+            }
+        }
+    }
+
+    /*
+     * validate status
+     * 
+     * Auth :
+     * Created : 25-02-2017
+     */
+    public function validateStatusDisLike($attribute){
+        if (!$this->hasErrors()) {
+            $activity = Activity::findOne(['relate_id' => $this->activity_id, 'type' => Activity::TYPE_DISLIKE, 'status' => Activity::STATUS_ACTIVE]);
+            if (!$activity && ($this->$attribute == Activity::STATUS_DELETE)) {
+                $this->addError($attribute, 'Invalid data');
+            }
+        }
+    }
+
     /*
      * check like
      * 
@@ -186,7 +220,12 @@ class Like extends \yii\db\ActiveRecord
                 $activitySumary->total = $activitySumary->total + 1;
                 $activitySumary->save();
             }
-            
+            //update record dislike
+            $activitySumaryDisLike = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => ActivitySumary::TYPE_DIS_LIKE]);
+            if ($activitySumaryDisLike) {
+                $activitySumaryDisLike->total = $activitySumaryDisLike->total - 1;
+                $activitySumaryDisLike->save();
+            }
             $transaction->commit();
             return $modelActivitySave->activity_id;
         } catch (Exception $ex) {
@@ -271,6 +310,12 @@ class Like extends \yii\db\ActiveRecord
             } else {
                 $activitySumary->total = $activitySumary->total + 1;
                 $activitySumary->save();
+            }
+            //update total record like
+            $activitySumaryLike = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => ActivitySumary::TYPE_LIKE]);
+            if ($activitySumaryLike) {
+                $activitySumaryLike->total = $activitySumaryLike->total - 1;
+                $activitySumaryLike->save();
             }
             
             $transaction->commit();
