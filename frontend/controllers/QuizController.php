@@ -414,9 +414,6 @@ class QuizController extends Controller
         
         $modelAns = new Ans();
         $modelAns->setAttributes($dataPost);
-        if (empty($modelAns->time)) {
-            $modelAns->time = Ans::DEFAULT_TIME;
-        }
         if (!$modelAns->validate()) {
             return [
                     'status' => 400,

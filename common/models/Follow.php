@@ -19,6 +19,8 @@ use common\models\Member;
  */
 class Follow extends \yii\db\ActiveRecord
 {
+    const FOLLOW_ACTIVE = 0;
+    const FOLLOW_DELETED = 1;
     /**
      * @inheritdoc
      */
@@ -108,15 +110,54 @@ class Follow extends \yii\db\ActiveRecord
      * Create : 28-02-2017
      */
     
-    public function getListFollowing($memberId, $limit, $offset){
+    public function getListFollowing($limit, $offset){
         $query = new \yii\db\Query();
         $query->select(['member.*'])
                 ->from('follow');
         $query->join('INNER JOIN', 'member', 'follow.member_id_followed = member.member_id');
-        $query->where(['=', 'follow.delete_flag', 0]);
-        $query->andWhere(['=', 'follow.member_id_following', $memberId]);
+        $query->where(['=', 'follow.delete_flag', self::FOLLOW_ACTIVE]);
+        $query->andWhere(['=', 'follow.member_id_following', Yii::$app->user->identity->member_id]);
         $query->offset($offset);
         $query->limit($limit);
         return $query->all();
+    }
+    
+    /*
+     * check follow
+     * 
+     * Auth : 
+     * Created : 26-03-2017
+     */
+    public static function checkFollowing($memberId)
+    {
+        $idFollow  = Follow::findOne(['member_id_following' => $memberId, 'member_id_followed' => Yii::$app->user->identity->member_id, 'delete_flag' => self::FOLLOW_ACTIVE]);
+        if (!$idFollow) {
+            return false;
+        }
+        return true;
+    }
+    
+    /*
+     * Get total followed
+     * 
+     * Auth : 
+     * Creat : 28-02-2017
+     */
+    
+    public static function getTotalFollowedByMember($memberId)
+    {
+        return Follow::find()->where(['member_id_followed' => $memberId, 'delete_flag' => self::FOLLOW_ACTIVE])->count();
+    }
+    
+    /*
+     * Get total following
+     * 
+     * Auth : 
+     * Creat : 28-02-2017
+     */
+    
+    public static function getTotalFollowingByMember($memberId)
+    {
+        return Follow::find()->where(['member_id_following' => $memberId, 'delete_flag' => self::FOLLOW_ACTIVE])->count();
     }
 }

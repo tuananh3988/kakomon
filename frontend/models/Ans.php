@@ -27,7 +27,6 @@ class Ans extends \yii\db\ActiveRecord
     public $quiz_answer8;
     public $quiz_answer;
     
-    const DEFAULT_TIME = 9999999999999;
 
     /**
      * @inheritdoc
@@ -43,13 +42,16 @@ class Ans extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['quiz_id'], 'required'],
+            [['quiz_id', 'time'], 'required'],
             [['quiz_id', 'time'], 'integer'],
             ['quiz_id', 'validateQuizId'],
-            ['time', 'validateTime'],
             [['quiz_id' , 'quiz_answer', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'time',
                 'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'created_date', 'updated_date'], 'safe'],
         ];
+    }
+
+    public function __construct() {
+        $this->quiz_answer = [];
     }
 
     /**
@@ -118,23 +120,6 @@ class Ans extends \yii\db\ActiveRecord
     }
     
     /*
-     * Validate time
-     * 
-     * Auth :
-     * Create : 08-03-2017
-     * 
-     */
-    
-    public function validateTime($attribute){
-        for ($i = 1; $i <= 8; $i++) {
-            $data['Quiz']['quiz_answer'.$i] = (in_array($i, $this->quiz_answer)) ? 1 : null;
-        }
-        $quizAnswer = Utility::renderQuizAnswer($data);
-        if ($quizAnswer != Quiz::QUIZ_ANSWER && ($this->time == self::DEFAULT_TIME)) {
-            $this->addError($attribute, \Yii::t('app', 'required', ['attribute' => $this->attributeLabels()[$attribute]]));
-        }
-    }
-    /*
      * save ans
      * 
      * Auth : 
@@ -172,24 +157,22 @@ class Ans extends \yii\db\ActiveRecord
             $modelMemberQuizHistory->member_id = Yii::$app->user->identity->member_id;
             $modelMemberQuizHistory->answer = $quizAnswer;
             $modelMemberQuizHistory->correct_flag = $correctFlag;
-            $modelMemberQuizHistory->time = ($this->time == self::DEFAULT_TIME) ? null : $this->time;
+            $modelMemberQuizHistory->time = $this->time;
             $modelMemberQuizHistory->save();
             
             //update or inset table member_category_time
-            if ($quizAnswer != Quiz::QUIZ_ANSWER) {
-                $memberCategoryTime = MemberCategoryTime::findOne(['member_id' => Yii::$app->user->identity->member_id, 'category_id' => $quizDetail->category_main_id]);
-                if (!$memberCategoryTime) {
-                    $modelMemberCategoryTime = new MemberCategoryTime();
-                    $modelMemberCategoryTime->member_id = Yii::$app->user->identity->member_id;
-                    $modelMemberCategoryTime->category_id = $quizDetail->category_main_id;
-                    $modelMemberCategoryTime->total_time = $this->time;
-                    $modelMemberCategoryTime->save();
-                } else {
-                    $memberCategoryTime->total_time = $memberCategoryTime->total_time + $this->time;
-                    $memberCategoryTime->save();
-                }
-                
+            $memberCategoryTime = MemberCategoryTime::findOne(['member_id' => Yii::$app->user->identity->member_id, 'category_id' => $quizDetail->category_main_id]);
+            if (!$memberCategoryTime) {
+                $modelMemberCategoryTime = new MemberCategoryTime();
+                $modelMemberCategoryTime->member_id = Yii::$app->user->identity->member_id;
+                $modelMemberCategoryTime->category_id = $quizDetail->category_main_id;
+                $modelMemberCategoryTime->total_time = $this->time;
+                $modelMemberCategoryTime->save();
+            } else {
+                $memberCategoryTime->total_time = $memberCategoryTime->total_time + $this->time;
+                $memberCategoryTime->save();
             }
+            
             $transaction->commit();
             return $correctFlag;
         } catch (Exception $ex) {

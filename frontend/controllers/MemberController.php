@@ -8,9 +8,12 @@ use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Member;
 use common\models\Activity;
+use common\models\Quiz;
+use common\models\Follow;
 use common\components\Utility;
 use frontend\models\LoginForm;
 use frontend\models\FormUpload;
+use frontend\models\MemberApi;
 use yii\web\UploadedFile;
 /**
  * Site controller
@@ -83,13 +86,13 @@ class MemberController extends Controller
                 'furigana' => $memberDetail->furigana,
                 'mail' => $memberDetail->mail,
                 'nickname' => $memberDetail->nickname,
-                'link_avatar' => ''
+                'avatar' => Utility::getImage('member', $memberDetail->member_id, null, true)
             ]
         ];
     }
     
     /*
-     *Member detail
+     * my info
      * 
      * Auth :
      * Create : 27-02-2017
@@ -98,103 +101,77 @@ class MemberController extends Controller
     public function actionMyInfo()
     {
         $memberDetail = Yii::$app->user->identity;
-         return [
+        return [
             'status' => 200,
             'data' => [
                 'id' => (int)$memberDetail->member_id,
                 'name' => $memberDetail->name,
+                'city' => $memberDetail->city,
+                'job' => $memberDetail->job,
+                'type_blood' => $memberDetail->type_blood,
+                'favorite_animal' => $memberDetail->favorite_animal,
+                'favorite_film' => $memberDetail->favorite_film,
+                'birthday' => $memberDetail->birthday,
+                'sex' => $memberDetail->sex,
+                'furigana' => $memberDetail->furigana,
+                'mail' => $memberDetail->mail,
+                'avatar' => Utility::getImage('member', $memberDetail->member_id, null, true),
                 'comment' => (int)Activity::getTotalCommentByMember($memberDetail->member_id),
                 'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
-                'be_liked' => 810,
-                'followed' => 200,
+                'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
+                'nashi' => (int)Quiz::getTotalQuizNotAnsByCategory(),
+                'followed' => (int)Follow::getTotalFollowedByMember($memberDetail->member_id),
+                'following' => (int)Follow::getTotalFollowingByMember($memberDetail->member_id),
             ]
-        ];
-        
-        
-        return [
-            'status' => 200,
-                'data' => [
-                    'id' => 1,
-                    'name' => 'anhct',
-                    'comment' => 101,
-                    'liked' => 900,
-                    'be_liked' => 810,
-                    'nashi' => 1500,
-                    'followed' => 200,
-                    'following' => 99,
-                    'category_activity' => [
-                        [
-                            'category_id' => 1,
-                            'category_name' => 'sex',
-                            'total_quiz' => 600,
-                            'time_view' => 2,
-                            'total_complete' => 700,
-                            'comment' => 100,
-                            'like' => 200,
-                            'nashi' => 300,
-                            
-                        ],
-                        [
-                            'category_id' => 2,
-                            'category_name' => 'make love',
-                            'total_quiz' => 600,
-                            'time_view' => 2,
-                            'total_complete' => 700,
-                            'comment' => 100,
-                            'like' => 200,
-                            'nashi' => 300,
-                            
-                        ]
-                    ]
-                ]
         ];
     }
     
-    public function actionInfo($id)
+    /*
+     * info
+     * 
+     * Auth :
+     * Create : 26-03-2017
+     */
+    
+    public function actionInfo()
     {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['sumary'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['sumary'];
+        
+        $modelMember = new MemberApi();
+        $modelMember->setAttributes($param);
+        $modelMember->scenario  = MemberApi::SCENARIO_INFO;
+        if (!$modelMember->validate()) {
+            return [
+                'status' => 400,
+                'messages' => $modelMember->errors
+            ];
+        }
+        $memberDetail = Member::findOne(['member_id' => $modelMember->member_id]);
         return [
             'status' => 200,
             'data' => [
-                'id' => 2,
-                'name' => 'hiennv',
-                'followed' => 200,
-                'following' => 99,
-                'activity' => [
-                    [
-                        'category_id' => 1,
-                        'category_name' => 'sex',
-                        'sub_category_id' => '12',
-                        'sub_category_name' => 'sex',
-                        'type' => 1,
-                        'like' => 100,
-                        'dislike' => 200,
-                        'member_name' => 'anhct',
-                        'comment' => 'abc'
-                    ],
-                    [
-                        'category_id' => 2,
-                        'category_name' => 'sex',
-                        'sub_category_id' => '12',
-                        'sub_category_name' => 'sex',
-                        'type' => 2,
-                        'like' => 100,
-                        'dislike' => 200,
-                        'member_name' => 'anhct',
-                        'comment' => 'abc'
-                    ],
-                    [
-                        'category_id' => 3,
-                        'category_name' => 'sex',
-                        'sub_category_id' => '12',
-                        'sub_category_name' => 'sex',
-                        'type' => 3,
-                        'like' => 100,
-                        'dislike' => 200,
-                        'member_name' => 'anhct',
-                        'comment' => 'abc'
-                    ]
-                    
-                ]
+                'id' => (int)$memberDetail->member_id,
+                'name' => $memberDetail->name,
+                'city' => $memberDetail->city,
+                'job' => $memberDetail->job,
+                'type_blood' => $memberDetail->type_blood,
+                'favorite_animal' => $memberDetail->favorite_animal,
+                'favorite_film' => $memberDetail->favorite_film,
+                'birthday' => $memberDetail->birthday,
+                'sex' => $memberDetail->sex,
+                'furigana' => $memberDetail->furigana,
+                'mail' => $memberDetail->mail,
+                'isFollow' => Follow::checkFollowing($memberDetail->member_id),
+                'avatar' => Utility::getImage('member', $memberDetail->member_id, null, true),
+                'comment' => (int)Activity::getTotalCommentByMember($memberDetail->member_id),
+                'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
+                'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
+                'nashi' => (int)Quiz::getTotalQuizNotAnsByCategory(),
+                'followed' => (int)Follow::getTotalFollowedByMember($memberDetail->member_id),
+                'following' => (int)Follow::getTotalFollowingByMember($memberDetail->member_id),
             ]
         ];
     }

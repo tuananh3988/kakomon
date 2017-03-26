@@ -106,7 +106,7 @@ class FollowController extends Controller
         $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['follow'];
         
         $modelFollow = new Follow();
-        $listFollow = $modelFollow->getListFollowing(Yii::$app->user->identity->member_id, $limit, $offset);
+        $listFollow = $modelFollow->getListFollowing($limit, $offset);
         //return if not found data
         if (count($listFollow) ==  0) {
             return [
@@ -119,8 +119,9 @@ class FollowController extends Controller
         $listData = [];
         foreach ($listFollow as $key => $value) {
             $listData[] = [
-                'member_id' => $value['member_id'],
+                'member_id' => (int)$value['member_id'],
                 'member_name' => $value['name'],
+                'isFollow' => Follow::checkFollowing($value['member_id']),
                 'info' => $value['city'] . ' ' . $value['favorite_animal'] . ' ' . $value['favorite_film'],
                 'avatar' => Utility::getImage('member', $value['member_id'], null, true)
             ];

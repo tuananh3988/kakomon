@@ -91,7 +91,19 @@ class Activity extends \yii\db\ActiveRecord
     
     public static function getTotalLikeByMember($memberId)
     {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => 4])->count();
+        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_LIKE])->count();
+    }
+    
+     /*
+     * Get total dis like
+     * 
+     * Auth : 
+     * Creat : 6-03-2017
+     */
+    
+    public static function getTotalDisLikeByMember($memberId)
+    {
+        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_DISLIKE])->count();
     }
     
     /*
@@ -103,7 +115,7 @@ class Activity extends \yii\db\ActiveRecord
     
     public static function getTotalCommentByMember($memberId)
     {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => 1])->count();
+        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_COMMENT])->count();
     }
     
     /*
