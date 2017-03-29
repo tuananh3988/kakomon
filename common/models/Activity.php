@@ -180,4 +180,24 @@ class Activity extends \yii\db\ActiveRecord
         $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
         return $query->count();
     }
+    
+    /*
+     * get info activity
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getInforActivity($activityId) {
+        $query = new \yii\db\Query();
+        $query->select(['activity_member.*', 'member.name'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity as activity_member', 'activity_member.activity_id = activity.relate_id');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity_member.member_id');
+        $query->where(['activity.activity_id' => $activityId]);
+        $query->andWhere(['quiz.delete_flag' => Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
+        $query->andWhere(['activity.type' => $type]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        return $query->count();
+    }
 }

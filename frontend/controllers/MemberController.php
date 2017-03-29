@@ -119,7 +119,7 @@ class MemberController extends Controller
                 'comment' => (int)Activity::getTotalCommentByMember($memberDetail->member_id),
                 'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
                 'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
-                'nashi' => (int)Quiz::getTotalQuizNotAnsByCategory(),
+                'nashi' => (int)Quiz::getTotalQuizNasiByCategory(),
                 'followed' => (int)Follow::getTotalFollowedByMember($memberDetail->member_id),
                 'following' => (int)Follow::getTotalFollowingByMember($memberDetail->member_id),
             ]

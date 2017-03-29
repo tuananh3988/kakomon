@@ -11,6 +11,7 @@ use common\models\Answer;
 use yii\data\ActiveDataProvider;
 use yii\web\Session;
 use common\models\MemberQuizHistory;
+use common\models\MemberQuizActivity;
 /**
  * This is the model class for table "quiz".
  *
@@ -445,6 +446,25 @@ class Quiz extends \yii\db\ActiveRecord
         $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
         $query->andWhere(['NOT IN','quiz_id',  MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_CORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all()]);
         $query->andWhere(['NOT IN','quiz_id',  MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_INCORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all()]);
+        return $query->count();
+    }
+    
+    /*
+     * get total quiz not ans by category
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getTotalQuizNasiByCategory($catId = null){
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        if ($catId) {
+            $query->andWhere(['quiz.category_main_id' => $catId]);
+        }
+        $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
+        $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->asArray()->all()]);
         return $query->count();
     }
 }

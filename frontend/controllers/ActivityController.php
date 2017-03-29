@@ -48,8 +48,9 @@ class ActivityController extends Controller
                     'listReply' => ['get'],
                     'timeline' => ['get'],
                     'home' => ['get'],
-                    'sumary' => ['get'],
-                    'my-sumary' => ['get']
+                    'summary' => ['get'],
+                    'my-summary' => ['get'],
+                    'member-summary' => ['get']
                 ],
             ],
             'authenticator' => [
@@ -678,7 +679,7 @@ class ActivityController extends Controller
      * Created : 22-03-2017
      */
     
-    public function actionSumary(){
+    public function actionMySummary(){
         $request = Yii::$app->request;
         $param = $request->queryParams;
         $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['sumary'];
@@ -699,7 +700,7 @@ class ActivityController extends Controller
                     'total_ans_quiz' => (int)Quiz::getTotalQuizAnsByCategory($value['cateory_id']),
                     'total_comment' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_COMMENT),
                     'total_like' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_LIKE),
-                    'total_quiz_not_doing' => (int)Quiz::getTotalQuizNotAnsByCategory($value['cateory_id'])
+                    'total_nasi' => (int)Quiz::getTotalQuizNasiByCategory($value['cateory_id'])
                 ];
             }
         }
@@ -707,9 +708,6 @@ class ActivityController extends Controller
         return [
             'status' => 200,
             'data' => [
-                'total_comment' => (int)Comment::getTotalActivityByMember(Activity::TYPE_COMMENT),
-                'total_like' => (int)Comment::getTotalActivityByMember(Activity::TYPE_LIKE),
-                'total_quiz_not_doing' => (int)Quiz::getTotalQuizNotAnsByCategory(),
                 'count' => (int)$total,
                 'offset' => $offsetReturn,
                 'category' => $dataCat
@@ -718,18 +716,65 @@ class ActivityController extends Controller
     }
     
     /*
+     * List sumary
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    
+    public function actionMemberActivity(){
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['sumary'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['sumary'];
+        $modelActivity = new ActivityApi();
+        $modelActivity->scenario  = ActivityApi::SCENARIO_DETAIL_ACTIVITY;
+        $modelActivity->setAttributes($param);
+        if (!$modelActivity->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelActivity->errors
+                ];
+        }
+        
+        $listData = $modelActivity->getListActivityForMember($limit, $offset);
+//        $total = $modelCategory->getListCategoryForMember($limit, $offset, true);
+//        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+        $data = [];
+        if (count($listData) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        $listLikeAndDisLike = [Activity::TYPE_LIKE, Activity::TYPE_DISLIKE];
+        foreach ($listData as $key => $value) {
+            $data[] = [
+                'category_id' => (int)$value['category_main_id'],
+                'category_name' => $value['main_name'],
+                'sub_category_id' => ($value['category_a_id']) ? (int)$value['category_a_id'] : null,
+                'sub_category_name' => $value['sub_name'],
+                'type' => (int)$value['type'],
+                'member_name' => (!in_array($value['type'], $listLikeAndDisLike)) ? $value['name_meber'] : ''
+            ];
+        }
+        
+        return $data;;
+    }
+    /*
      * List sumary by category
      * 
      * Auth : 
      * Created : 22-03-2017
      */
     
-    public function actionMySumary(){
+    public function actionDetailSummary(){
         $request = Yii::$app->request;
         $param = $request->queryParams;
         $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['sumary'];
         $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['sumary'];
         $modelActivity = new ActivityApi();
+        $modelActivity->scenario  = ActivityApi::SCENARIO_DETAIL_SUMMARY;
         $modelActivity->setAttributes($param);
         if (!$modelActivity->validate()) {
             return [
