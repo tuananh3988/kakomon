@@ -144,11 +144,15 @@ class Activity extends \yii\db\ActiveRecord
      * Created : 20-03-2017
      */
     
-    public static function checkActivityForMember($quizId){
+    public static function checkActivityForMember($quizId, $memberId = null){
         $query = new \yii\db\Query();
         $query->select(['activity.*'])
                 ->from('activity');
-        $query->where(['=', 'activity.member_id', Yii::$app->user->identity->member_id]);
+        if ($memberId == null) {
+            $query->where(['=', 'activity.member_id', Yii::$app->user->identity->member_id]);
+        } else {
+            $query->where(['=', 'activity.member_id', $memberId]);
+        }
         $query->andWhere(['=', 'activity.quiz_id', $quizId]);
         $query->andWhere(['=', 'activity.status', self::STATUS_ACTIVE]);
         $query->andWhere([

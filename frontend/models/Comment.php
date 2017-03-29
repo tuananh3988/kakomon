@@ -11,6 +11,7 @@ use common\models\Quiz;
 use frontend\models\Like;
 use common\components\Utility;
 use common\models\ActivitySumary;
+use frontend\models\ActivityApi;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -190,19 +191,13 @@ class Comment extends \yii\db\ActiveRecord
      * Create : 20-03-2017
      */
     
-    public function updateComment($commentDetail){
-         $transaction = \yii::$app->getDb()->beginTransaction();
+    public function updateComment($commentDetail, $activityId, $quizId){
+        $transaction = \yii::$app->getDb()->beginTransaction();
         try {
             $commentDetail->status = Activity::STATUS_DELETE;
             $commentDetail->save();
-            //update table member_quiz_activity
-            if (count(Activity::checkActivityForMember($commentDetail->quiz_id)) == 0) {
-                $memberQuizActivity = MemberQuizActivity::findOne(['member_id' => Yii::$app->user->identity->member_id, 'quiz_id' => $commentDetail->quiz_id]);
-                if ($memberQuizActivity) {
-                    $memberQuizActivity->delete_flag = MemberQuizActivity::DELETE_DELETE;
-                    $memberQuizActivity->save();
-                }
-            }
+            ActivityApi::deleteActivity($activityId, $quizId);
+            
             $transaction->commit();
             return TRUE;
         } catch (Exception $ex) {

@@ -198,4 +198,26 @@ class Help extends \yii\db\ActiveRecord
         }
         return $listData;
     }
+    
+    /*
+     * update data delete help
+     * 
+     * Auth : 
+     * Create : 20-03-2017
+     */
+    
+    public function updateHelp($helpDetail, $activityId, $quizId){
+        $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            $helpDetail->status = Activity::STATUS_DELETE;
+            $helpDetail->save();
+            //update activity
+            ActivityApi::deleteActivity($activityId, $quizId);
+            $transaction->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return FALSE;
+        }
+    }
 }

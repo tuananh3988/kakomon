@@ -277,7 +277,7 @@ class ActivityController extends Controller
             ];
         }
         //return error system
-        if (!$modelComment->updateComment($commentDetail)) {
+        if (!$modelComment->updateComment($commentDetail, $modelComment->activity_id, $commentDetail->quiz_id)) {
             throw new \yii\base\Exception( "System error" );
             
         }
@@ -456,17 +456,8 @@ class ActivityController extends Controller
         }
         //update status
         $helpDetail = Help::findOne(['activity_id' => $modelHelp->activity_id, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP]);
-        //return if not found data
-        if (!$helpDetail) {
-            return [
-                'status' => 204,
-                'message' => \Yii::t('app', 'data not found')
-            ];
-        }
-        
-        $helpDetail->status = Activity::STATUS_DELETE;
         //return system error
-        if (!$helpDetail->save()) {
+        if (!$modelHelp->updateHelp($helpDetail, $modelHelp->activity_id, $helpDetail->quiz_id)) {
             throw new \yii\base\Exception( "System error" );
         }
         //return success
@@ -540,17 +531,8 @@ class ActivityController extends Controller
         }
         //update status
         $replyDetail = Reply::findOne(['activity_id' => $modelReply->activity_id, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_REPLY]);
-        //return if not found data
-        if (!$replyDetail) {
-            return [
-                'status' => 204,
-                'message' => \Yii::t('app', 'data not found')
-            ];
-        }
-        
-        $replyDetail->status = Activity::STATUS_DELETE;
         //return system error
-        if (!$replyDetail->save()) {
+        if (!$modelReply->updateReply($replyDetail, $modelReply->activity_id, $replyDetail->quiz_id)) {
             throw new \yii\base\Exception( "System error" );
         }
         //return success

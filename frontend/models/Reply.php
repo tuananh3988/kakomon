@@ -208,4 +208,26 @@ class Reply extends \yii\db\ActiveRecord
         }
         return $listData;
     }
+    
+    /*
+     * update data delete reply
+     * 
+     * Auth : 
+     * Create : 20-03-2017
+     */
+    
+    public function updateReply($replyDetail, $activityId, $quizId){
+        $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            $replyDetail->status = Activity::STATUS_DELETE;
+            $replyDetail->save();
+            //update activity
+            ActivityApi::deleteActivity($activityId, $quizId);
+            $transaction->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return FALSE;
+        }
+    }
 }

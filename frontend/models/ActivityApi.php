@@ -10,6 +10,7 @@ use common\models\Category;
 use common\models\ActivitySumary;
 use common\models\Activity;
 use common\models\Member;
+use common\models\MemberQuizActivity;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -171,4 +172,109 @@ class ActivityApi extends \yii\db\ActiveRecord
     }
     
     
+    /*
+     * Delete activity
+     * 
+     * Auth :
+     * Created : 29-03-2017
+     */
+    
+    public static function deleteActivity($activityId, $quizId){
+        $activity = Activity::findOne(['activity_id' => $activityId]);
+        $type = $activity->type;
+        $this->updateActivitySumary($activityId);
+        
+        switch ($type) {
+            case 1:
+                $listMember = Activity::find()->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->all();
+                //update table activity
+                Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $activityId);
+                if (count($listMember) > 0) {
+                    $this->updateMemberQuizActivity($listMember);
+                }
+                break;
+            case 2:
+                //find all reply
+                $activityReply = Activity::find()->where(['relate_id' => $activity->activity_id, 'type' => Activity::TYPE_REPLY, 'status' => Activity::STATUS_ACTIVE])->all();
+                
+                $listMemberHelp = Activity::find()->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->all();
+                //update table activity
+                Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $activityId);
+                if (count($listMemberHelp) > 0) {
+                    $this->updateMemberQuizActivity($listMemberHelp);
+                }
+                
+                if (count($activityReply) > 0){
+                    foreach ($activityReply as $key => $value) {
+                        //update table activity reply
+                        Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $value['activity_id']);
+                        $this->updateActivitySumary($value['activity_id']);
+                        $listMemberReply = Activity::find()->where(['relate_id' => $value['activity_id'], 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->all();
+                        if (count($listMemberReply) > 0) {
+                            $this->updateMemberQuizActivity($listMemberReply);
+                        }
+                    }
+                }
+                
+                break;
+            case 3:
+                $listMember = Activity::find()->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->all();
+                //update table activity
+                Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $activityId);
+                if (count($listMember) > 0) {
+                    $this->updateMemberQuizActivity($listMember);
+                }
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+    
+    /*
+     * Update table MemberQuizActivity
+     * 
+     * Auth : 
+     * Created : 29-03-2017
+     * 
+     */
+    public function updateMemberQuizActivity($data){
+        foreach ($data as $key => $value) {
+            //update table member_quiz_activity
+            if (count(Activity::checkActivityForMember($quizId, $value['member_id'])) == 0) {
+                $memberQuizActivity = MemberQuizActivity::findOne(['member_id' => $value['member_id'], 'quiz_id' => $quizId]);
+                if ($memberQuizActivity) {
+                    $memberQuizActivity->delete_flag = MemberQuizActivity::DELETE_DELETE;
+                    $memberQuizActivity->save();
+                }
+            }
+        }
+        return true;
+    }
+    
+    /*
+     * Update table ActivitySumary
+     * 
+     * Auth : 
+     * Created : 29-03-2017
+     * 
+     */
+    public function updateActivitySumary($activityId){
+        $activitySumaryLike = ActivitySumary::findOne(['activity_id' => $activityId, 'type' => ActivitySumary::TYPE_LIKE]);
+        $activitySumaryDisLike = ActivitySumary::findOne(['activity_id' => $activityId, 'type' => ActivitySumary::TYPE_DIS_LIKE]);
+        if ($activitySumaryLike) {
+            $activitySumaryLike->total = 0;
+            $activitySumaryLike->save();
+        }
+        if ($activitySumaryDisLike) {
+            $activitySumaryDisLike->total = 0;
+            $activitySumaryDisLike->save();
+        }
+        
+        return true;
+    }
 }
