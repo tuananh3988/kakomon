@@ -192,10 +192,13 @@ class ActivityApi extends \yii\db\ActiveRecord
         self::updateActivitySumary($activityId);
         switch ($type) {
             case 1:
-                $listMember = Activity::find()->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->all();
+                $listMember = Activity::find()->select('member_id')->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->column();
                 //update table activity
                 Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $activityId);
                 if (count($listMember) > 0) {
+                    if (!in_array(Yii::$app->user->identity->member_id, $listMember)) {
+                        $listMember[] = Yii::$app->user->identity->member_id;
+                    }
                     self::updateMemberQuizActivity($listMember, $quizId);
                 }
                 break;
@@ -203,31 +206,35 @@ class ActivityApi extends \yii\db\ActiveRecord
                 //find all reply
                 $activityReply = Activity::find()->where(['relate_id' => $activity->activity_id, 'type' => Activity::TYPE_REPLY, 'status' => Activity::STATUS_ACTIVE])->all();
                 
-                $listMemberHelp = Activity::find()->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->all();
+                $listMemberHelp = Activity::find()->select('member_id')->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->column();
                 //update table activity
                 Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $activityId);
-                if (count($listMemberHelp) > 0) {
-                    self::updateMemberQuizActivity($listMemberHelp, $quizId);
-                }
-                
                 if (count($activityReply) > 0){
                     foreach ($activityReply as $key => $value) {
+                        $listMemberReply = Activity::find()->select('member_id')->where(['relate_id' => $value['activity_id'], 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->column();
                         //update table activity reply
                         Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $value['activity_id']);
                         self::updateActivitySumary($value['activity_id']);
-                        $listMemberReply = Activity::find()->where(['relate_id' => $value['activity_id'], 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->all();
                         if (count($listMemberReply) > 0) {
                             self::updateMemberQuizActivity($listMemberReply, $quizId);
                         }
                     }
                 }
-                
+                if (count($listMemberHelp) > 0) {
+                    if (!in_array(Yii::$app->user->identity->member_id, $listMemberHelp)) {
+                        $listMemberHelp[] = Yii::$app->user->identity->member_id;
+                    }
+                    self::updateMemberQuizActivity($listMemberHelp, $quizId);
+                }
                 break;
             case 3:
-                $listMember = Activity::find()->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->all();
+                $listMember = Activity::find()->select('member_id')->where(['relate_id' => $activityId, 'status' => Activity::STATUS_ACTIVE])->groupBy(['member_id'])->column();
                 //update table activity
                 Activity::updateAll(['status' => Activity::STATUS_DELETE], 'relate_id = ' . $activityId);
                 if (count($listMember) > 0) {
+                    if (!in_array(Yii::$app->user->identity->member_id, $listMember)) {
+                        $listMember[] = Yii::$app->user->identity->member_id;
+                    }
                     self::updateMemberQuizActivity($listMember, $quizId);
                 }
                 break;
@@ -251,8 +258,8 @@ class ActivityApi extends \yii\db\ActiveRecord
     public static function updateMemberQuizActivity($data, $quizId){
         foreach ($data as $key => $value) {
             //update table member_quiz_activity
-            if (count(Activity::checkActivityForMember($quizId, $value['member_id'])) == 0) {
-                $memberQuizActivity = MemberQuizActivity::findOne(['member_id' => $value['member_id'], 'quiz_id' => $quizId]);
+            if (count(Activity::checkActivityForMember($quizId, (int)$value)) == 0) {
+                $memberQuizActivity = MemberQuizActivity::findOne(['member_id' => (int)$value, 'quiz_id' => $quizId]);
                 if ($memberQuizActivity) {
                     $memberQuizActivity->delete_flag = MemberQuizActivity::DELETE_DELETE;
                     $memberQuizActivity->save();
@@ -305,6 +312,35 @@ class ActivityApi extends \yii\db\ActiveRecord
         $query->andWhere(['=', 'activity.type', Activity::TYPE_LIKE]);
         $query->andWhere(['=', 'activity.member_id', Yii::$app->user->identity->member_id]);
         $query->andWhere(['=', 'activity.status', Activity::STATUS_ACTIVE]);
+        if ($flag) {
+            return $query->count();
+        }
+        $query->offset($offset);
+        $query->limit($limit);
+        return $query->all();
+    }
+    
+    /*
+     * 
+     * Auth :
+     * Created : 22-03-2017
+     */
+    
+    public function getListNasiByCategory($limit, $offset ,$flag = false){
+        $query = new \yii\db\Query();
+        $query->select(['activity_like.activity_id', 'quiz.quiz_id','activity_like.content AS content', 'activity_like.type', 'quiz.question','activity_sumary_like.total AS total_like' ,
+            'activity_sumary_dis_like.total AS total_dis_like', 'member.name' ,'member.member_id'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
+        $query->join('INNER JOIN', 'activity AS activity_like', 'activity_like.activity_id = activity.relate_id');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity_like.member_id');
+        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_like', 'activity_sumary_like.activity_id = activity_like.activity_id AND activity_sumary_like.type = '. ActivitySumary::TYPE_LIKE);
+        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_dis_like', 'activity_sumary_dis_like.activity_id = activity_like.activity_id AND activity_sumary_dis_like.type = '. ActivitySumary::TYPE_DIS_LIKE);
+        $query->where(['=', 'quiz.category_main_id', $this->category_main_id]);
+        $query->andWhere(['=', 'activity.type', Activity::TYPE_LIKE]);
+        $query->andWhere(['=', 'activity.member_id', Yii::$app->user->identity->member_id]);
+        $query->andWhere(['=', 'activity.status', Activity::STATUS_ACTIVE]);
+        $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->asArray()->all()]);
         if ($flag) {
             return $query->count();
         }

@@ -110,7 +110,7 @@ class Help extends \yii\db\ActiveRecord
     public function validateActivityId($attribute)
     {
         if (!$this->hasErrors()) {
-            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'type' => Activity::TYPE_HELP]);
+            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP]);
             if (!$activity) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
