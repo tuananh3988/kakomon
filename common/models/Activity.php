@@ -191,17 +191,80 @@ class Activity extends \yii\db\ActiveRecord
      * Auth : 
      * Created : 22-03-2017
      */
-    public static function getInforActivity($activityId) {
+    public static function getInforNameByActivity($activityId) {
         $query = new \yii\db\Query();
-        $query->select(['activity_member.*', 'member.name'])
+        $query->select(['member.name'])
                 ->from('activity');
         $query->join('INNER JOIN', 'activity as activity_member', 'activity_member.activity_id = activity.relate_id');
         $query->join('INNER JOIN', 'member', 'member.member_id = activity_member.member_id');
         $query->where(['activity.activity_id' => $activityId]);
-        $query->andWhere(['quiz.delete_flag' => Quiz::QUIZ_ACTIVE]);
-        $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
-        $query->andWhere(['activity.type' => $type]);
         $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
-        return $query->count();
+        $data = $query->one();
+        if ($data) {
+            return $data['name'];
+        }
+        return '';
+    }
+    
+    /*
+     * get info content activity
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getInforContentByActivity($activityId) {
+        $query = new \yii\db\Query();
+        $query->select(['activity_content.content'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity as activity_content', 'activity_content.activity_id = activity.relate_id');
+        $query->where(['activity.activity_id' => $activityId]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        $data = $query->one();
+        if ($data) {
+            return $data['content'];
+        }
+        return '';
+    }
+    
+    /*
+     * get info total like activity
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getInforTotalLikeOrDisLikeByActivity($activityId, $type) {
+        $query = new \yii\db\Query();
+        $query->select(['activity_like.activity_id'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity as activity_like', 'activity_like.activity_id = activity.relate_id');
+        $query->join('LEFT JOIN', 'activity_sumary', 'activity_sumary.activity_id = activity_like.activity_id AND activity_sumary.type = ' . $type);
+        $query->where(['activity.activity_id' => $activityId]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        $data = $query->count();
+        if ($data > 0) {
+            return (int)$data;
+        }
+        return '';
+    }
+    
+    /*
+     * get info total like activity
+     * 
+     * Auth : 
+     * Created : 22-03-2017
+     */
+    public static function getInforLikeOrDisLikeByActivity($activityId, $memberId, $type) {
+        $query = new \yii\db\Query();
+        $query->select(['activity_like_or_dislike.activity_id'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity as activity_like', 'activity_like.activity_id = activity.relate_id');
+        $query->join('LEFT JOIN', 'activity as activity_like_or_dislike', 'activity_like_or_dislike.relate_id = activity_like.activity_id AND activity_like_or_dislike.member_id = '.$memberId .' AND activity_like_or_dislike.type = ' . $type);
+        $query->where(['activity.activity_id' => $activityId]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        $data = $query->one();
+        if ($data) {
+            return true;
+        }
+        return false;
     }
 }

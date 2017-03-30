@@ -195,6 +195,7 @@ class Reply extends \yii\db\ActiveRecord
         if (count($list) > 0){
             foreach ($list as $key => $value) {
                 $listData[] = [
+                    'activity_id' => (int)$value['activity_id'],
                     'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
                     'content' => $value['content'],

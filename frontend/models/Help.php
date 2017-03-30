@@ -182,6 +182,7 @@ class Help extends \yii\db\ActiveRecord
                 $offsetReturn = Utility::renderOffset($total, $limit, $offset);
                 
                 $listData[] = [
+                    'activity_id' => (int)$value['activity_id'],
                     'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
                     'avatar' => Utility::getImage('member', $value['meberId'], null, true),

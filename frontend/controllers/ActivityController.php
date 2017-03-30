@@ -50,7 +50,8 @@ class ActivityController extends Controller
                     'home' => ['get'],
                     'summary' => ['get'],
                     'my-summary' => ['get'],
-                    'member-summary' => ['get']
+                    'member-summary' => ['get'],
+                    'detail-summary' => ['get']
                 ],
             ],
             'authenticator' => [
@@ -720,8 +721,8 @@ class ActivityController extends Controller
         }
         
         $listData = $modelActivity->getListActivityForMember($limit, $offset);
-//        $total = $modelCategory->getListCategoryForMember($limit, $offset, true);
-//        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+        $total = $modelActivity->getListActivityForMember($limit, $offset, true);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
         $data = [];
         if (count($listData) == 0) {
             return [
@@ -737,11 +738,23 @@ class ActivityController extends Controller
                 'sub_category_id' => ($value['category_a_id']) ? (int)$value['category_a_id'] : null,
                 'sub_category_name' => $value['sub_name'],
                 'type' => (int)$value['type'],
-                'member_name' => (!in_array($value['type'], $listLikeAndDisLike)) ? $value['name_meber'] : ''
+                'member_name' => (!in_array($value['type'], $listLikeAndDisLike)) ? $value['name_member'] : Activity::getInforNameByActivity($value['activity_id']),
+                'content' => (!in_array($value['type'], $listLikeAndDisLike)) ? $value['content'] : Activity::getInforContentByActivity($value['activity_id']),
+                'total_like' => (!in_array($value['type'], $listLikeAndDisLike)) ? (int)$value['total_like'] : Activity::getInforTotalLikeOrDisLikeByActivity($value['activity_id'], ActivitySumary::TYPE_LIKE),
+                'total_dis_like' => (!in_array($value['type'], $listLikeAndDisLike)) ? (int)$value['total_dis_like'] : Activity::getInforTotalLikeOrDisLikeByActivity($value['activity_id'], ActivitySumary::TYPE_DIS_LIKE),
+                'isLike' => (!in_array($value['type'], $listLikeAndDisLike)) ? (($value['isLike']) ? true : false) : Activity::getInforLikeOrDisLikeByActivity($value['activity_id'], $modelActivity->member_id, Activity::TYPE_LIKE),
+                'isDisLike' => (!in_array($value['type'], $listLikeAndDisLike)) ? (($value['isDisLike']) ? true : false) : Activity::getInforLikeOrDisLikeByActivity($value['activity_id'], $modelActivity->member_id, Activity::TYPE_DISLIKE)
             ];
         }
         
-        return $data;;
+        return [
+            'status' => 200,
+            'data' => [
+                'count' => (int)$total,
+                'offset' => $offsetReturn,
+                'activity' => $data
+            ]
+        ];
     }
     /*
      * List sumary by category
@@ -777,11 +790,12 @@ class ActivityController extends Controller
                     $data['offset'] = $offsetReturn;
                     foreach ($listComment as $key => $value) {
                         $data['comment'][] = [
-                            'quiz_id' => $value['quiz_id'],
+                            'activity_id' => (int)$value['activity_id'],
+                            'quiz_id' => (int)$value['quiz_id'],
                             'question' => $value['question'],
                             'content_comment' => $value['content'],
-                            'total_like' => $value['total_like'],
-                            'total_dis_like' => $value['total_dis_like'],
+                            'total_like' => (int)$value['total_like'],
+                            'total_dis_like' => (int)$value['total_dis_like'],
                             'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['member_id']),
                             'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['member_id']),
                         ];
@@ -789,7 +803,25 @@ class ActivityController extends Controller
                 }
                 break;
             case 2:
-                
+                $listLike = $modelActivity->getListLikeByCategory($limit, $offset);
+                if (count($listLike) > 0) {
+                    $total = $modelActivity->getListLikeByCategory($limit, $offset, true);
+                    $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+                    $data['count'] = (int)$total;
+                    $data['offset'] = $offsetReturn;
+                    foreach ($listLike as $key => $value) {
+                        $data['like'][] = [
+                            'activity_id' => (int)$value['activity_id'],
+                            'quiz_id' => (int)$value['quiz_id'],
+                            'content' => $value['content'],
+                            'type' => (int)$value['type'],
+                            'member_name' => $value['name'],
+                            'avatar' => Utility::getImage('member', $value['member_id'], null, true),
+                            'total_like' => (int)$value['total_like'],
+                            'total_dis_like' => (int)$value['total_dis_like'],
+                        ];
+                    }
+                }
                 break;
             case 3:
                 
@@ -808,7 +840,7 @@ class ActivityController extends Controller
             'status' => 200,
             'total_time_view' => (int)MemberCategoryTime::getTotalTimeViewByMainCategory($param['category_main_id']),
             'total_quiz' => (int)Quiz::getTotalQuizByCategory($param['category_main_id']),
-            'total_ans_quiz' => (int)Quiz::getTotalQuizAnsByCategory($param['category_main_id']),
+            'total_ans_quiz' => (int)Quiz::getTotalQuizNasiByCategory($param['category_main_id']),
             'data' => $data
         ];
     }
