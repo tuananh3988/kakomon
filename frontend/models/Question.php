@@ -120,7 +120,7 @@ class Question extends \yii\db\ActiveRecord
         $query = new \yii\db\Query();
         $query->select(['test_times', 'quiz_year'])
                 ->from('quiz');
-        $query->where(['=', 'quiz.type', Quiz::TYPE_DEFAULT]);
+        $query->where(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
         $query->andWhere(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
         $query->andWhere(['not',  ['quiz.quiz_year' => null]]);
         $query->andWhere(['not',  ['quiz.test_times' => null]]);

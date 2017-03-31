@@ -93,7 +93,7 @@ class Comment extends \yii\db\ActiveRecord
     public function validateQuizId($attribute)
     {
         if (!$this->hasErrors()) {
-            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'type' => Quiz::TYPE_DEFAULT]);
+            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'type' => Quiz::TYPE_NORMAL]);
             if (!$quizDetail) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }

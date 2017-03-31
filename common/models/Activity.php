@@ -176,7 +176,7 @@ class Activity extends \yii\db\ActiveRecord
         $query->select(['quiz.quiz_id'])
                 ->from('quiz');
         $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
-        $query->where(['quiz.type' => Quiz::TYPE_DEFAULT]);
+        $query->where(['quiz.type' => Quiz::TYPE_NORMAL]);
         $query->andWhere(['quiz.category_main_id' => $catId]);
         $query->andWhere(['quiz.delete_flag' => Quiz::QUIZ_ACTIVE]);
         $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);

@@ -112,7 +112,7 @@ class Ans extends \yii\db\ActiveRecord
     public function validateQuizId($attribute)
     {
         if (!$this->hasErrors()) {
-            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'type' => Quiz::TYPE_DEFAULT, 'delete_flag' => Quiz::QUIZ_ACTIVE]);
+            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'type' => Quiz::TYPE_NORMAL, 'delete_flag' => Quiz::QUIZ_ACTIVE]);
             if (!$quizDetail) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }

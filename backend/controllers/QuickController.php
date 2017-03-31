@@ -112,7 +112,7 @@ class QuickController extends Controller {
         }
         if ($request->isPost) {
             $dataPost = $request->Post();
-            $question->addQuiz($dataPost, $answer, $flag, Quiz::TYPE_CREATE);
+            $question->addQuiz($dataPost, $answer, $flag, Quiz::TYPE_QUICK_QUIZ);
         }
         return $this->render('save', [
             'question' => $question,

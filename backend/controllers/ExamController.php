@@ -10,6 +10,7 @@ use yii\web\Response;
 use yii\web\Session;
 use common\models\Exam;
 use common\models\ExamQuiz;
+use common\models\Notification;
 
 class ExamController extends Controller {
 
@@ -70,6 +71,11 @@ class ExamController extends Controller {
             $examItem->status = 1;
             $examItem->start_date = date('Y-m-d H:i:s');
             $examItem->save(false);
+            //insert table notification
+            $modelNotification = new Notification();
+            $modelNotification->type = Notification::TYPE_EXAM;
+            $modelNotification->related_id = $examId;
+            $modelNotification->save();
             $message = 'You start exam!';
             Yii::$app->session->setFlash('sucess_exam',$message);
         }

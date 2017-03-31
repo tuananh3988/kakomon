@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Session;
 use common\models\MemberQuizHistory;
 use common\models\MemberQuizActivity;
+use common\models\Notification;
 /**
  * This is the model class for table "quiz".
  *
@@ -197,7 +198,7 @@ class Quiz extends \yii\db\ActiveRecord
      * Create : 15-02-2017
      */
     
-    public function addQuiz($dataPost, $answer, $flag, $type = self::TYPE_DEFAULT){
+    public function addQuiz($dataPost, $answer, $flag, $type = self::TYPE_NORMAL){
         $transaction = \yii::$app->getDb()->beginTransaction();
         try {
             $this->load($dataPost);
@@ -232,7 +233,13 @@ class Quiz extends \yii\db\ActiveRecord
                         $utility->uploadImages(UploadedFile::getInstance($this, 'question_img'), 'question', $this->quiz_id);
                     }
                 }
-                
+                //insert table notification
+                if ($flag == 0 && $type == self::TYPE_QUICK_QUIZ) {
+                    $modelNotification = new Notification();
+                    $modelNotification->type = Notification::TYPE_QUICK_QUIZ;
+                    $modelNotification->related_id = $this->quiz_id;
+                    $modelNotification->save();
+                }
                 //insert table answer
                 foreach ($dataPost['Answer'] as $key => $value) {
                     $order = (int) filter_var($key,FILTER_SANITIZE_NUMBER_INT);
@@ -399,7 +406,7 @@ class Quiz extends \yii\db\ActiveRecord
         $query = new \yii\db\Query();
         $query->select(['quiz.quiz_id'])
                 ->from('quiz');
-        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        $query->where(['quiz.type' => self::TYPE_NORMAL]);
         $query->andWhere(['quiz.category_main_id' => $catId]);
         $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
         return $query->count();
@@ -416,7 +423,7 @@ class Quiz extends \yii\db\ActiveRecord
         $query->select(['quiz.quiz_id'])
                 ->from('quiz');
         $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
-        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        $query->where(['quiz.type' => self::TYPE_NORMAL]);
         $query->andWhere(['quiz.category_main_id' => $catId]);
         $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
         $query->andWhere(['member_quiz_history.member_id' => Yii::$app->user->identity->member_id]);
@@ -439,7 +446,7 @@ class Quiz extends \yii\db\ActiveRecord
         $query = new \yii\db\Query();
         $query->select(['quiz.quiz_id'])
                 ->from('quiz');
-        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        $query->where(['quiz.type' => self::TYPE_NORMAL]);
         if ($catId) {
             $query->andWhere(['quiz.category_main_id' => $catId]);
         }
@@ -459,7 +466,7 @@ class Quiz extends \yii\db\ActiveRecord
         $query = new \yii\db\Query();
         $query->select(['quiz.quiz_id'])
                 ->from('quiz');
-        $query->where(['quiz.type' => self::TYPE_DEFAULT]);
+        $query->where(['quiz.type' => self::TYPE_NORMAL]);
         if ($catId) {
             $query->andWhere(['quiz.category_main_id' => $catId]);
         }
