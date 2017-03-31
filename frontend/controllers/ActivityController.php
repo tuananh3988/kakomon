@@ -49,9 +49,9 @@ class ActivityController extends Controller
                     'timeline' => ['get'],
                     'home' => ['get'],
                     'summary' => ['get'],
-                    'my-summary' => ['get'],
-                    'member-summary' => ['get'],
-                    'detail-summary' => ['get']
+                    'mySummary' => ['get'],
+                    'memberSummary' => ['get'],
+                    'detailSummary' => ['get']
                 ],
             ],
             'authenticator' => [
