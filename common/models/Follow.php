@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use common\models\Member;
+use common\models\Notification;
 
 /**
  * This is the model class for table "follow".
@@ -159,5 +160,32 @@ class Follow extends \yii\db\ActiveRecord
     public static function getTotalFollowingByMember($memberId)
     {
         return Follow::find()->where(['member_id_following' => $memberId, 'delete_flag' => self::FOLLOW_ACTIVE])->count();
+    }
+    
+    /*
+     * save follow
+     * 
+     * Auth : 
+     * Create : 20-03-2017
+     */
+    
+    public function addFollow(){
+        $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            //save table reply
+            $this->save();
+            //save table notification
+            $modelNotification = new Notification();
+            $modelNotification->type = Notification::TYPE_FOLLOW;
+            $modelNotification->related_id = $this->follow_id;
+            $modelNotification->member_id = $this->member_id_following;
+            $modelNotification->save();
+            
+            $transaction->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return FALSE;
+        }
     }
 }

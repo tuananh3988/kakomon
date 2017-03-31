@@ -10,6 +10,7 @@ use common\models\Activity;
 use common\models\Quiz;
 use common\components\Utility;
 use common\models\ActivitySumary;
+use common\models\Notification;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -231,4 +232,37 @@ class Reply extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+    /*
+     * save reply
+     * 
+     * Auth : 
+     * Create : 20-03-2017
+     */
+    public function addReply($activityDetail){
+        $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            //save table reply
+            $dataSave = new Reply();
+            $dataSave->member_id = Yii::$app->user->identity->member_id;
+            $dataSave->status = Activity::STATUS_ACTIVE;
+            $dataSave->type = Activity::TYPE_REPLY;
+            $dataSave->relate_id = $activityDetail->activity_id;
+            $dataSave->quiz_id = $activityDetail->quiz_id;
+            $dataSave->content = $this->content;
+            $dataSave->save();
+            //save table notification
+            $modelNotification = new Notification();
+            $modelNotification->type = Notification::TYPE_REPLY;
+            $modelNotification->related_id = $activityDetail->activity_id;
+            $modelNotification->member_id = $activityDetail->member_id;
+            $modelNotification->save();
+            
+            $transaction->commit();
+            return $dataSave->activity_id;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return FALSE;
+        }
+    }
+    
 }

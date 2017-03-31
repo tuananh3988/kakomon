@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use common\models\Activity;
 use common\models\MemberQuizActivity;
 use common\models\ActivitySumary;
+use common\models\Notification;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -226,6 +227,13 @@ class Like extends \yii\db\ActiveRecord
                 $activitySumaryDisLike->total = $activitySumaryDisLike->total - 1;
                 $activitySumaryDisLike->save();
             }
+            //insert table notification
+            $modelNotification = new Notification();
+            $modelNotification->type = Notification::TYPE_LIKE;
+            $modelNotification->related_id = $activityDetail->activity_id;
+            $modelNotification->member_id = $activityDetail->member_id;
+            $modelNotification->save();
+            
             $transaction->commit();
             return $modelActivitySave->activity_id;
         } catch (Exception $ex) {

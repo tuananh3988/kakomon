@@ -156,7 +156,7 @@ class FollowController extends Controller
             ];
         }
         //return after save data
-        if ($modelFollow->save()) {
+        if ($modelFollow->addFollow()) {
             return [
                 'status' => 200
             ];

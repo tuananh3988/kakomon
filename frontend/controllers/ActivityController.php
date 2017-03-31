@@ -489,23 +489,16 @@ class ActivityController extends Controller
                 ];
         }
         $activityDetail = Activity::findOne(['activity_id' => $modelReply->activity_id]);
-        //save data
-        $dataSave = new Reply();
-        $dataSave->member_id = Yii::$app->user->identity->member_id;
-        $dataSave->status = Activity::STATUS_ACTIVE;
-        $dataSave->type = Activity::TYPE_REPLY;
-        $dataSave->relate_id = $activityDetail->activity_id;
-        $dataSave->quiz_id = $activityDetail->quiz_id;
-        $dataSave->content = $modelReply->content;
         //return system error
-        if (!$dataSave->save()) {
+        $dataSave = $modelReply->addReply($activityDetail);
+        if (!$dataSave) {
             throw new \yii\base\Exception( "System error" );
         }
         //return success
         return  [
             'status' => 200,
             'data' => [
-                'activity_id' => $dataSave->activity_id
+                'activity_id' => $dataSave
             ]
         ];
     }
