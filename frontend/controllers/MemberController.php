@@ -10,6 +10,7 @@ use common\models\Member;
 use common\models\Activity;
 use common\models\Quiz;
 use common\models\Follow;
+use common\models\MemberDevices;
 use common\components\Utility;
 use frontend\models\LoginForm;
 use frontend\models\FormUpload;
@@ -200,7 +201,7 @@ class MemberController extends Controller
         $memberModel->password = Yii::$app->security->generatePasswordHash($memberModel->password);
         $memberModel->auth_key = Yii::$app->security->generateRandomString(50);
         //return error
-        if (!$memberModel->save()) {
+        if (!$memberModel->saveMember()) {
             throw new \yii\base\Exception( "System error" );
             
         }
@@ -279,6 +280,20 @@ class MemberController extends Controller
         }
         //return success
         $member = Member::findOne(['mail' => $dataPost['mail']]);
+        //update or insert member device
+        $memberDevice = MemberDevices::findOne(['member_id' => $member->member_id, 'device_id' => $modelLogin->device_id]);
+        if (!$memberDevice) {
+            $modelMemberDevices = new MemberDevices();
+            $modelMemberDevices->member_id = $member->member_id;
+            $modelMemberDevices->device_id = $modelLogin->device_id;
+            $modelMemberDevices->device_type = MemberDevices::DEVICE_TYPE_IOS;
+            $modelMemberDevices->device_token = $modelLogin->device_token;
+            $modelMemberDevices->save();
+        } else {
+            $memberDevice->delete_flag = MemberDevices::DEVICE_ACTIVE;
+            $memberDevice->save();
+        }
+        
         return [
             'status' => 200,
             'data' => [

@@ -11,6 +11,8 @@ class LoginForm extends Model
 {
     public $mail;
     public $password;
+    public $device_id;
+    public $device_token;
 
     private $_user;
 
@@ -22,13 +24,25 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['mail', 'password'], 'required'],
+            [['mail', 'password', 'device_id' , 'device_token'], 'required'],
             ['mail', 'email'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
     }
-
+    
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'mail' => 'Mail',
+            'password' => 'Password',
+            'device_token' => 'Device Token',
+            'device_id' => 'Device Id'
+        ];
+    }
     /**
      * Validates the password.
      * This method serves as the inline validation for password.

@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use common\models\MemberDevices;
 
 /**
  * This is the model class for table "member".
@@ -29,6 +30,9 @@ use yii\behaviors\TimestampBehavior;
  */
 class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
+    public $device_id;
+    public $device_token;
+
     const STATUS_ACTIVE = 1;
     /**
      * @inheritdoc
@@ -67,6 +71,7 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             ['mail', 'email'],
             [['mail'], 'validateUniqueMail', 'on' => self::SCENARIO_SAVE],
             [['password'], 'required', 'on' => self::SCENARIO_SAVE],
+            [['device_id', 'device_token'], 'required', 'on' => self::SCENARIO_SAVE],
             [['password'], 'string', 'min' => 8],
             [['birthday', 'created_date', 'updated_date'], 'safe'],
             [['city', 'job', 'favorite_animal', 'favorite_film', 'name', 'furigana', 'mail', 'password', 'nickname'], 'string', 'max' => 255],
@@ -96,7 +101,26 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'auth_key' => 'Auth Key',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
+            'device_token' => 'Device Token',
+            'device_id' => 'Device Id'
         ];
+    }
+    
+     /**
+     * @inheritdoc
+     */
+    public function safeAttributes()
+    {
+        $safe = parent::safeAttributes();
+        return array_merge($safe, $this->extraFields());
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function extraFields()
+    {
+        return ['device_token', 'device_id'];
     }
     
     /*
@@ -151,5 +175,30 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             return false;
         }
         return true;
+    }
+    
+    /*
+     * save member
+     * 
+     * Auth : 
+     * Created : 31-03-2017
+     */
+    
+    public function saveMember(){
+        $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            $this->save();
+            $modelMemberDevices = new MemberDevices();
+            $modelMemberDevices->member_id = $this->member_id;
+            $modelMemberDevices->device_id = $this->device_id;
+            $modelMemberDevices->device_type = MemberDevices::DEVICE_TYPE_IOS;
+            $modelMemberDevices->device_token = $this->device_token;
+            $modelMemberDevices->save();
+            $transaction->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return FALSE;
+        }
     }
 }
