@@ -183,6 +183,7 @@ class Help extends \yii\db\ActiveRecord
                 
                 $listData[] = [
                     'activity_id' => (int)$value['activity_id'],
+                    'created_date' => $value['created_date'],
                     'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
                     'avatar' => Utility::getImage('member', $value['meberId'], null, true),

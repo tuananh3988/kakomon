@@ -383,7 +383,7 @@ class ActivityController extends Controller
                     'messages' => $modelHelp->errors
                 ];
         }
-        
+        $category = Quiz::getNameCategoryByQuizId($param['quiz_id']);
         //return data
         $total = Help::getTotalHelpByQuizId($param['quiz_id']);
         $offsetReturn = Utility::renderOffset($total, $limit, $offset);
@@ -391,6 +391,10 @@ class ActivityController extends Controller
             'status' => 200,
             'count' => (int)$total,
             'offset' => $offsetReturn,
+            'main_name' => $category['main_name'],
+            'cateory_id_main' => $category['cateory_id_main'],
+            'sub_name' => $category['sub_name'],
+            'cateory_id_sub' => $category['cateory_id_sub'],
             'data' => Help::renderListHelp($param['quiz_id'], $limit, $offset)
             
         ];
@@ -565,7 +569,9 @@ class ActivityController extends Controller
                 'message' => \Yii::t('app', 'data not found')
             ];
         }
+        
         //list data
+        $categoryName = Category::findOne(['cateory_id' => $categoryFirst->cateory_id]);
         $data = [];
         foreach ($listHelp as $key => $value) {
             $data[] = [
@@ -576,6 +582,7 @@ class ActivityController extends Controller
                 'cateory_id' => (int)$value['cateory_id'],
                 'member_id' => (int)$value['member_id'],
                 'name' => $value['name'],
+                'created_date' => $value['created_date_activity'],
                 'avatar' => Utility::getImage('member', $value['member_id'], null, true)
             ];
         }
@@ -586,6 +593,8 @@ class ActivityController extends Controller
             'status' => 200,
             'count' => (int)$total,
             'offset' => $offsetReturn,
+            'cateory_id' => $categoryName->cateory_id,
+            'name_category' => $categoryName->name,
             'data' => $data
             
         ];
@@ -623,6 +632,7 @@ class ActivityController extends Controller
             ];
         }
         //list data
+        $categoryName = Category::findOne(['cateory_id' => $categoryFirst->cateory_id]);
         $data = [];
         foreach ($listHelp as $key => $value) {
             $data[] = [
@@ -633,6 +643,7 @@ class ActivityController extends Controller
                 'cateory_id' => (int)$value['cateory_id'],
                 'member_id' => (int)$value['member_id'],
                 'name' => $value['name'],
+                'created_date' => $value['created_date_activity'],
                 'avatar' => Utility::getImage('member', $value['member_id'], null, true)
             ];
         }
@@ -643,6 +654,8 @@ class ActivityController extends Controller
             'status' => 200,
             'count' => (int)$total,
             'offset' => $offsetReturn,
+            'cateory_id' => $categoryName->cateory_id,
+            'name_category' => $categoryName->name,
             'data' => $data
             
         ];

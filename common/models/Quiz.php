@@ -474,4 +474,22 @@ class Quiz extends \yii\db\ActiveRecord
         $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->asArray()->all()]);
         return $query->count();
     }
+    
+    /*
+     * Get name category
+     * 
+     * Auth : 
+     * Created : 31-03-2017
+     */
+    public static function getNameCategoryByQuizId($quizId){
+        $query = new \yii\db\Query();
+        $query->select(['category_main.name as main_name', 'category_main.cateory_id as cateory_id_main', 'category_sub.name as sub_name', 'category_sub.cateory_id as cateory_id_sub'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'category as category_main', 'category_main.cateory_id = quiz.category_main_id');
+        $query->join('LEFT JOIN', 'category as category_sub', 'category_sub.cateory_id = quiz.category_a_id');
+        $query->andWhere(['quiz.quiz_id' => $quizId]);
+        $query->andWhere(['quiz.type' => self::TYPE_NORMAL]);
+        $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
+        return $query->one();
+    }
 }

@@ -245,7 +245,7 @@ class Category extends \yii\db\ActiveRecord
     
     public function getListTimelineHelp($catId, $flag = false, $flagMember = false){
         $query = new \yii\db\Query();
-        $query->select(['category.cateory_id', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity'])
+        $query->select(['category.cateory_id', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity', 'activity.created_date AS created_date_activity'])
                 ->from('category');
         $query->join('INNER JOIN', 'quiz', 'quiz.category_main_id = category.cateory_id');
         $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');

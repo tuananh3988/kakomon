@@ -197,6 +197,7 @@ class Reply extends \yii\db\ActiveRecord
             foreach ($list as $key => $value) {
                 $listData[] = [
                     'activity_id' => (int)$value['activity_id'],
+                    'created_date' => $value['created_date'],
                     'member_id' => (int)$value['meberId'],
                     'member_name' => $value['name'],
                     'content' => $value['content'],
