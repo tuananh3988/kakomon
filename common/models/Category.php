@@ -243,17 +243,17 @@ class Category extends \yii\db\ActiveRecord
      * Create : 08-03-2017
      */
     
-    public function getListTimelineHelp($catId, $flag = false, $flagMember = false){
+    public function getListTimelineHelp($catId = null, $flag = false, $flagMember = false){
         $query = new \yii\db\Query();
-        $query->select(['category.cateory_id', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity', 'activity.created_date AS created_date_activity'])
+        $query->select(['category.cateory_id', 'category.name as name_category', 'quiz.*', 'member.name', 'member.member_id', 'activity.content as content_activity', 'activity.activity_id','activity.created_date AS created_date_activity'])
                 ->from('category');
         $query->join('INNER JOIN', 'quiz', 'quiz.category_main_id = category.cateory_id');
         $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
         $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
-        $query->andWhere(['category.cateory_id' => $catId]);
-        $query->andWhere(['quiz.delete_flag' => 0]);
+        $query->where(['quiz.delete_flag' => 0]);
         $query->andWhere(['activity.type' => Activity::TYPE_HELP]);
         $query->andWhere(['activity.status' => Activity::STATUS_ACTIVE]);
+        $query->andFilterWhere(['category.cateory_id' => $catId]);
         if ($flagMember) {
             $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
         }

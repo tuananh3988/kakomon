@@ -552,14 +552,7 @@ class ActivityController extends Controller
         $param = $request->queryParams;
         $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['timeline'];
         $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['timeline'];
-        $categoryFirst = Category::find()->where(['parent_id' => 0])->orderBy(['cateory_id' => SORT_ASC])->one();
-        if (!isset($param['category_id']) && !$categoryFirst) {
-            return [
-                'status' => 204,
-                'message' => \Yii::t('app', 'data not found')
-            ];
-        }
-        $categoryId = isset($param['category_id']) ? $param['category_id'] : $categoryFirst->cateory_id;
+        $categoryId = isset($param['category_id']) ? $param['category_id'] : null;
         $modelCategory = new Category();
         $listHelp = $modelCategory->getListTimelineHelp($categoryId);
         //return no data
@@ -571,15 +564,16 @@ class ActivityController extends Controller
         }
         
         //list data
-        $categoryName = Category::findOne(['cateory_id' => $categoryFirst->cateory_id]);
         $data = [];
         foreach ($listHelp as $key => $value) {
             $data[] = [
                 'quiz_id' => (int)$value['quiz_id'],
+                'activity_id' => (int)$value['activity_id'],
                 'content_activity' => $value['content_activity'],
                 'question' => $value['question'],
                 'sub_menu' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
                 'cateory_id' => (int)$value['cateory_id'],
+                'name_category' => $value['name_category'],
                 'member_id' => (int)$value['member_id'],
                 'name' => $value['name'],
                 'created_date' => $value['created_date_activity'],
@@ -593,8 +587,6 @@ class ActivityController extends Controller
             'status' => 200,
             'count' => (int)$total,
             'offset' => $offsetReturn,
-            'cateory_id' => $categoryName->cateory_id,
-            'name_category' => $categoryName->name,
             'data' => $data
             
         ];
@@ -614,14 +606,7 @@ class ActivityController extends Controller
         $param = $request->queryParams;
         $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['timeline'];
         $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['timeline'];
-        $categoryFirst = Category::find()->where(['parent_id' => 0])->orderBy(['cateory_id' => SORT_ASC])->one();
-        if (!isset($param['category_id']) && !$categoryFirst) {
-            return [
-                'status' => 204,
-                'message' => \Yii::t('app', 'data not found')
-            ];
-        }
-        $categoryId = isset($param['category_id']) ? $param['category_id'] : $categoryFirst->cateory_id;
+        $categoryId = isset($param['category_id']) ? $param['category_id'] : null;
         $modelCategory = new Category();
         $listHelp = $modelCategory->getListTimelineHelp($categoryId, false, true);
         //return no data
@@ -632,15 +617,16 @@ class ActivityController extends Controller
             ];
         }
         //list data
-        $categoryName = Category::findOne(['cateory_id' => $categoryFirst->cateory_id]);
         $data = [];
         foreach ($listHelp as $key => $value) {
             $data[] = [
                 'quiz_id' => (int)$value['quiz_id'],
+                'activity_id' => (int)$value['activity_id'],
                 'content_activity' => $value['content_activity'],
                 'question' => $value['question'],
                 'sub_menu' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
                 'cateory_id' => (int)$value['cateory_id'],
+                'name_category' => $value['name_category'],
                 'member_id' => (int)$value['member_id'],
                 'name' => $value['name'],
                 'created_date' => $value['created_date_activity'],
@@ -654,8 +640,6 @@ class ActivityController extends Controller
             'status' => 200,
             'count' => (int)$total,
             'offset' => $offsetReturn,
-            'cateory_id' => $categoryName->cateory_id,
-            'name_category' => $categoryName->name,
             'data' => $data
             
         ];
