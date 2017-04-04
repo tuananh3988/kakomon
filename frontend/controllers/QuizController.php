@@ -80,7 +80,8 @@ class QuizController extends Controller
                 'message' => \Yii::t('app', 'data not found')
             ];
         }
-        $modelQuiz->category_main_id =  !empty($param['category_main_id']) ? $param['category_main_id'] : $firtCat['cateory_id'];
+        $cateoryMainSearch[] = $firtCat['cateory_id'];
+        $modelQuiz->category_main_search =  !empty($param['category_main_search']) ? $param['category_main_search'] : $cateoryMainSearch;
         
         //insert table member_quiz_search_history
         $modelQuiz->insertHistorySearch();
@@ -98,8 +99,8 @@ class QuizController extends Controller
         $data = [];
         foreach ($listQuiz as $key => $value) {
             $data[] = [
-                'category_main_id' => $modelQuiz->category_main_id,
-                'category_main_name' => Category::getDetailNameCategory($modelQuiz->category_main_id),
+                'category_main_id' => (int)$value['category_main_id'],
+                'category_main_name' => Category::getDetailNameCategory($value['category_main_id']),
                 'sub_cat' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
                 'quiz_id' => (int)$value['quiz_id'],
                 'question' => $value['question'],
@@ -169,7 +170,8 @@ class QuizController extends Controller
                 'message' => \Yii::t('app', 'data not found')
             ];
         }
-        $modelQuiz->category_main_id =  !empty($param['category_main_id']) ? $param['category_main_id'] : $firtCat['cateory_id'];
+        $cateoryMainSearch[] = $firtCat['cateory_id'];
+        $modelQuiz->category_main_search =  !empty($param['category_main_search']) ? $param['category_main_search'] : $cateoryMainSearch;
         $modelQuiz->type_quiz = Question::TYPE_ALL;
         $totalAll = $modelQuiz->getListQuiz(null, null, true);
         $modelQuiz->type_quiz = Question::TYPE_RIGHT;
@@ -244,19 +246,10 @@ class QuizController extends Controller
             $data[] = [
                 'member_quiz_search_history_id' => (int)$value['member_quiz_search_history_id'],
                 'quiz_class' => $value['quiz_class'],
-                'category_main' => [
-                    'id' => (int)$value['category_main_id'],
-                    'name' => Category::getDetailNameCategory($value['category_main_id'])
-                ],
-                'category_a' => [
-                    'id' => (int)$value['category_a_id'],
-                    'name' => Category::getDetailNameCategory($value['category_a_id'])
-                ],
-                'category_b' => [
-                    'id' => (int)$value['category_b_id'],
-                    'name' => Category::getDetailNameCategory($value['category_b_id'])
-                ],
-                'quiz_year' => (int)$value['quiz_year'],
+                'category_main' => self::renderHistorySearch($value['category_main_id']),
+                'category_a' => self::renderHistorySearch($value['category_a_id']),
+                'category_b' => self::renderHistorySearch($value['category_b_id']),
+                'quiz_year' => json_decode($value['quiz_year']),
                 'type_quiz' => (int)$value['type'],
             ];
         }
@@ -431,5 +424,26 @@ class QuizController extends Controller
                 'flag_ans' => $dataSave
             ]
         ];
+    }
+    
+    /*
+     * render history search
+     * 
+     * Auth : 
+     * Created : 05-04-2017
+     */
+    
+    public static function renderHistorySearch($data){
+        $dataReturn = [];
+        $data = json_decode($data);
+        if (count($data) > 0) {
+            foreach ($data as $key => $value) {
+                $dataReturn[] = [
+                    'id' => (int)$value,
+                    'name' => Category::getDetailNameCategory($value)
+                ];
+            }
+        }
+        return $dataReturn;
     }
 }

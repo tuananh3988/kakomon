@@ -50,7 +50,7 @@ class MemberQuizSearchHistory extends \yii\db\ActiveRecord
     {
         return [
             [['member_id'], 'required'],
-            [['member_id', 'quiz_class', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type'], 'integer'],
+            [['member_id', 'quiz_class', 'type'], 'integer'],
             [['created_date'], 'safe'],
         ];
     }

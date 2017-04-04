@@ -56,6 +56,9 @@ class CategoryController extends Controller
     
     public function actionList()
     {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        
         $listMainCat = Category::find()->where(['parent_id' => 0])->all();
         if (count($listMainCat) == 0) {
             return [
@@ -63,20 +66,33 @@ class CategoryController extends Controller
                 'message' => \Yii::t('app', 'data not found')
             ];
         }
+        $listMainCategory = [];
+        $listMainSubACategory = [];
+        $listMainSubBCategory = [];
+        $firtCat = Category::find()->where(['parent_id' => 0])->orderBy(['cateory_id' => SORT_ASC])->one();
+        $listMainCategory[] = $firtCat->cateory_id;
+        $firtSubACat = Category::find()->where(['parent_id' => $firtCat->cateory_id])->orderBy(['cateory_id' => SORT_ASC])->one();
+        if ($firtSubACat && !isset($param['category_main_id'])) {
+            $listMainSubACategory[] = $firtSubACat->cateory_id;
+        }
+        $listMainCatRequest = isset($param['category_main_id']) ? $param['category_main_id'] : $listMainCategory;
+        $listSubACatRequest = isset($param['category_a_id']) ? $param['category_a_id'] : $listMainSubACategory;
         $listData = [];
         foreach ($listMainCat as $key => $value) {
-            if (self::getListSubCat($value['cateory_id'], $value['level'])) {
-                $listData[] = [
-                    'id' => $value['cateory_id'],
-                    'name' => $value['name'],
-                    'sub-cat-'.$value['level'] => self::getListSubCat($value['cateory_id'], $value['level'])
-                ];
-            } else {
-                $listData[] = [
-                    'id' => $value['cateory_id'],
-                    'name' => $value['name']
-                ];
-            }
+            $listData['mainCategory'][] = [
+                'id' => $value['cateory_id'],
+                'name' => $value['name']
+            ];
+        }
+        $listSubA = self::getListSubCat($listMainCatRequest);
+        $listSubB = self::getListSubCat($listSubACatRequest);
+        $listData['subA'] = [];
+        $listData['subB'] = [];
+        if (count($listSubA) > 0) {
+            $listData['subA'] = $listSubA;
+        }
+        if (count($listSubB) > 0) {
+            $listData['subB'] = $listSubB;
         }
         return [
             'status' => 200,
@@ -85,29 +101,22 @@ class CategoryController extends Controller
         
     }
     
-    public static function getListSubCat($categoryId, $level){
-        $listSubCat = Category::find()->where(['parent_id' => $categoryId])->all();
-        if (count($listSubCat) == 0) {
-            return false;
-        }
-        
-        $listSub = [];
-        foreach ($listSubCat as $key => $value) {
-            if ($value['level'] <= Category::$MAXCAT) {
-                if (self::getListSubCat($value['cateory_id'], $value['level'])) {
-                    $listSub[] = [
-                        'id' => $value['cateory_id'],
-                        'name' => $value['name'],
-                        'sub-cat-'.$value['level'] => self::getListSubCat($value['cateory_id'], $value['level'])
-                    ];
-                } else {
-                    $listSub[] = [
-                        'id' => $value['cateory_id'],
-                        'name' => $value['name']
-                    ];
+    public static function getListSubCat($listCategoryId){
+        $data = [];
+        if (count($listCategoryId) > 0) {
+            foreach ($listCategoryId as $key => $value) {
+                $listCat = Category::find()->where(['parent_id' =>$value])->orderBy(['cateory_id' => SORT_ASC])->all();
+                if (count($listCat) > 0) {
+                    foreach ($listCat as $key1 => $value1) {
+                        $data[] = [
+                            'id' => $value1['cateory_id'],
+                            'name' => $value1['name']
+                        ];
+                    }
                 }
             }
         }
-        return $listSub;
+        
+        return $data;
     }
 }

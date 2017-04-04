@@ -106,7 +106,7 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         ];
     }
     
-     /**
+    /**
      * @inheritdoc
      */
     public function safeAttributes()

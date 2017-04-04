@@ -16,7 +16,10 @@ use common\models\MemberQuizActivity;
 class Question extends \yii\db\ActiveRecord
 {
     public $type_quiz;
-
+    public $category_main_search;
+    public $category_a_search;
+    public $category_b_search;
+    public $quiz_year_search;
 
     const TYPE_ALL = 1;
     const TYPE_RIGHT = 2;
@@ -40,6 +43,7 @@ class Question extends \yii\db\ActiveRecord
     {
         return [
             [['quiz_class'], 'required', 'on' => self::SCENARIO_LIST_QUIZ],
+            [['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search'], 'validateType', 'on' => self::SCENARIO_LIST_QUIZ],
             [['quiz_id'], 'required', 'on' => self::SCENARIO_DETAIL_QUIZ],
             [['quiz_class', 'quiz_id', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
         ];
@@ -59,6 +63,38 @@ class Question extends \yii\db\ActiveRecord
         ];
     }
     
+    /**
+     * @inheritdoc
+     */
+    public function safeAttributes()
+    {
+        $safe = parent::safeAttributes();
+        return array_merge($safe, $this->extraFields());
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function extraFields()
+    {
+        return ['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search'];
+    }
+    
+     /*
+     * validate unique mail
+     * 
+     * Auth : 
+     * Create : 03-01-2017
+     */
+    public function validateType($attribute)
+    {
+        if (!$this->hasErrors()) {
+            if (!is_array($this->$attribute)) {
+                $this->addError($attribute, 'Data must be an array');
+            }
+        }
+    }
+    
     /*
      * Get list question
      * 
@@ -74,10 +110,10 @@ class Question extends \yii\db\ActiveRecord
         $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
         $query->andWhere(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
         $query->andFilterWhere(['=', 'quiz.quiz_class', $this->quiz_class]);
-        $query->andFilterWhere(['=', 'quiz.category_main_id', $this->category_main_id]);
-        $query->andFilterWhere(['=', 'quiz.category_a_id', $this->category_a_id]);
-        $query->andFilterWhere(['=', 'quiz.category_b_id', $this->category_b_id]);
-        $query->andFilterWhere(['=', 'quiz.quiz_year', $this->quiz_year]);
+        $query->andFilterWhere(['IN', 'quiz.category_main_id', $this->category_main_search]);
+        $query->andFilterWhere(['IN', 'quiz.category_a_id', $this->category_a_search]);
+        $query->andFilterWhere(['IN', 'quiz.category_b_id', $this->category_b_search]);
+        $query->andFilterWhere(['IN', 'quiz.quiz_year', $this->quiz_year_search]);
         switch ($type) {
             case 1:
                 break;
@@ -138,13 +174,17 @@ class Question extends \yii\db\ActiveRecord
     
     public function insertHistorySearch(){
         $type = ($this->type_quiz) ? $this->type_quiz : self::TYPE_ALL;
+        $categoryMainSearch = ($this->category_main_search) ? json_encode($this->category_main_search) : json_encode([]);
+        $categoryASearch = ($this->category_a_search) ? json_encode($this->category_a_search) : json_encode([]);
+        $categoryBSearch = ($this->category_b_search) ? json_encode($this->category_b_search) : json_encode([]);
+        $quizYearSearch = ($this->quiz_year_search) ? json_encode($this->quiz_year_search) : json_encode([]);
         $quizSearchHistory = new MemberQuizSearchHistory();
         $quizSearchHistory->member_id = Yii::$app->user->identity->member_id;
         $quizSearchHistory->quiz_class = $this->quiz_class;
-        $quizSearchHistory->category_main_id = $this->category_main_id;
-        $quizSearchHistory->category_a_id = $this->category_a_id;
-        $quizSearchHistory->category_b_id = $this->category_b_id;
-        $quizSearchHistory->quiz_year = $this->quiz_year;
+        $quizSearchHistory->category_main_id = $categoryMainSearch;
+        $quizSearchHistory->category_a_id = $categoryASearch;
+        $quizSearchHistory->category_b_id = $categoryBSearch;
+        $quizSearchHistory->quiz_year = $quizYearSearch;
         $quizSearchHistory->type = $type;
         $quizSearchHistory->save();
     }
