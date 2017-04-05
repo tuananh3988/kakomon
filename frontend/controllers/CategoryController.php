@@ -7,6 +7,7 @@ use yii\filters\VerbFilter;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use common\models\Category;
+use frontend\models\ListCategory;
 
 /**
  * Site controller
@@ -59,6 +60,15 @@ class CategoryController extends Controller
         $request = Yii::$app->request;
         $param = $request->queryParams;
         
+        $modelCategory = new ListCategory();
+        $modelCategory->setAttributes($param);
+        if (!$modelCategory->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelCategory->errors
+                ];
+        }
+        
         $listMainCat = Category::find()->where(['parent_id' => 0])->all();
         if (count($listMainCat) == 0) {
             return [
@@ -66,9 +76,9 @@ class CategoryController extends Controller
                 'message' => \Yii::t('app', 'data not found')
             ];
         }
+        
         $listMainCategory = [];
         $listMainSubACategory = [];
-        $listMainSubBCategory = [];
         $firtCat = Category::find()->where(['parent_id' => 0])->orderBy(['cateory_id' => SORT_ASC])->one();
         $listMainCategory[] = $firtCat->cateory_id;
         $firtSubACat = Category::find()->where(['parent_id' => $firtCat->cateory_id])->orderBy(['cateory_id' => SORT_ASC])->one();
