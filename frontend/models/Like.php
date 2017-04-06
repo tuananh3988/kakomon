@@ -224,7 +224,7 @@ class Like extends \yii\db\ActiveRecord
             //update record dislike
             $activitySumaryDisLike = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => ActivitySumary::TYPE_DIS_LIKE]);
             if ($activitySumaryDisLike) {
-                $activitySumaryDisLike->total = $activitySumaryDisLike->total - 1;
+                $activitySumaryDisLike->total = ($activitySumaryDisLike->total == 0) ? 0 : $activitySumaryDisLike->total - 1;
                 $activitySumaryDisLike->save();
             }
             //insert table notification
@@ -257,7 +257,7 @@ class Like extends \yii\db\ActiveRecord
             //update table activity_sumary
             $activitySumary = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => $type]);
             if ($activitySumary) {
-                $activitySumary->total = $activitySumary->total - 1;
+                $activitySumary->total = ($activitySumary->total == 0) ? 0 : $activitySumary->total - 1;
                 $activitySumary->save();
             }
             //update table member_quiz_activity
@@ -322,7 +322,7 @@ class Like extends \yii\db\ActiveRecord
             //update total record like
             $activitySumaryLike = ActivitySumary::findOne(['activity_id' => $this->activity_id, 'type' => ActivitySumary::TYPE_LIKE]);
             if ($activitySumaryLike) {
-                $activitySumaryLike->total = $activitySumaryLike->total - 1;
+                $activitySumaryLike->total = ($activitySumaryLike->total ==0) ? 0 : $activitySumaryLike->total - 1;
                 $activitySumaryLike->save();
             }
             
