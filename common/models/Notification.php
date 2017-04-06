@@ -5,6 +5,11 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use common\models\Activity;
+use common\models\Follow;
+use common\models\Quiz;
+use common\models\Exam;
+use frontend\models\Reply;
 /**
  * This is the model class for table "notification".
  *
@@ -71,5 +76,121 @@ class Notification extends \yii\db\ActiveRecord
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
         ];
+    }
+    
+    /*
+     * Get List comment
+     * 
+     * Auth : 
+     * Creat : 02-03-2017
+     */
+    
+    public static function getListNotificationByMember($limit, $offset, $flag = false)
+    {
+        $query1 = (new \yii\db\Query())
+            ->select('notification.*')
+            ->from('notification')
+            ->where(['=', 'member_id', Yii::$app->user->identity->member_id]);
+
+        $query2 = (new \yii\db\Query())
+            ->select("notification.*")
+            ->from('notification')
+            ->where(['IS', 'member_id', NULL]);
+
+        $query1->union($query2, false);
+        $sql = $query1->createCommand()->getRawSql();
+        $sql .= ' ORDER BY notification_id DESC';
+        if (!$flag) {
+            $sql .= ' LIMIT '. $limit . ' OFFSET ' . $offset;
+        }
+        $query = Notification::findBySql($sql);
+        if ($flag) {
+            return $query->count();
+        }
+        return $query->all();
+    }
+    
+    /*
+     * Render List Comment
+     * 
+     * Auth : 
+     * Create : 02-03-2017
+     */
+    
+    public static function renderListNotification($limit, $offset)
+    {
+        $listData = [];
+        $list = self::getListNotificationByMember($limit, $offset);
+        if (count($list) > 0){
+            foreach ($list as $key => $value) {
+                $type = (int)$value['type'];
+                switch ($type) {
+                    case 1:
+                        $activity = Activity::getInforNotification($value['related_id']);
+                        $listData[] = [
+                            'type' => (int)$value['type'],
+                            'activity_id' => (int)$activity['activity_id'],
+                            'member_id' => (int)$activity['member_id'],
+                            'quiz_id' => (int)$activity['quiz_id'],
+                            'content' => $activity['content'],
+                            'title' => $activity['name'] . 'さんから「いいね！」GET!' . $activity['total'],
+                            'created_date' => $value['created_date']
+                        ];
+                        break;
+                    case 2:
+                        $reply = Reply::getInforNotification($value['related_id']);
+                        $listData[] = [
+                            'type' => (int)$value['type'],
+                            'activity_id' => (int)$reply['activity_id'],
+                            'member_id' => (int)$reply['member_id'],
+                            'quiz_id' => (int)$reply['quiz_id'],
+                            'content' => $reply['content'],
+                            'title' => $reply['name'] . 'さんから「いいね！」GET!',
+                            'created_date' => $value['created_date']
+                        ];
+                        break;
+                    case 3:
+                        $follow = Follow::getInforNotification($value['related_id']);
+                        $listData[] = [
+                            'type' => (int)$value['type'],
+                            'activity_id' => null,
+                            'member_id' => (int)$value['member_id'],
+                            'quiz_id' => null,
+                            'content' => null,
+                            'title' => $follow['name'] . 'さんからフォローされました。',
+                            'created_date' => $value['created_date']
+                        ];
+                        break;
+                    case 4:
+                        $quiz = Quiz::getInforNotification($value['related_id']);
+                        $listData[] = [
+                            'type' => (int)$value['type'],
+                            'activity_id' => null,
+                            'member_id' => null,
+                            'quiz_id' => $quiz['quiz_id'],
+                            'content' => $quiz['question'],
+                            'title' => $quiz['question'],
+                            'created_date' => $value['created_date']
+                        ];
+                        break;
+                    case 5:
+                        $exam = Exam::getInforNotification($value['related_id']);
+                        $listData[] = [
+                            'type' => (int)$value['type'],
+                            'activity_id' => null,
+                            'member_id' => null,
+                            'quiz_id' => null,
+                            'content' => $exam['name'],
+                            'title' => date("Y-m-d H:i", strtotime($exam['start_date'])) . ' ' . $exam['name'] . '<br/>これを逃すと、もうできない！ ',
+                            'created_date' => $value['created_date']
+                        ];
+                        break;
+                    case 6:
+                        break;
+                    default :
+                }
+            }
+        }
+        return $listData;
     }
 }

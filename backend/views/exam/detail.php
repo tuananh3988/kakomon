@@ -24,6 +24,12 @@ Yii::$app->view->title = 'Detail Exam';
         </div>
     <?php endif; ?>
 
+    <?php if ($totalQuiz == $examItem->total_quiz && ($examItem->status == 0)) : ?>
+    <div class="btn btn-warning alert-dismissible fade in" role="alert" style="width: 100%; display: inline-block; text-align: left">
+            To start the exam the start time must be less than the end time
+        </div>
+    <?php endif; ?>
+    
     <div class="row">
         <?php $form = ActiveForm::begin(['options' => ['class' => '', 'role' => 'form']]); ?>
         <div class="col-md-12 col-xs-12">
@@ -69,7 +75,7 @@ Yii::$app->view->title = 'Detail Exam';
                         <div class="form-group">
                             <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
                                 <a href="<?= Url::to(['/exam/index']); ?>" class="btn btn-success"><i class="fa fa-reply"></i>&nbsp;&nbsp;Back</a>
-                                <?php if ($totalQuiz == $examItem->total_quiz && ($examItem->status == 0)) : ?>
+                                <?php if ($totalQuiz == $examItem->total_quiz && ($examItem->status == 0) && (strtotime(date('Y-m-d H:i:s')) < strtotime($examItem->end_date))) : ?>
                                 <?= Html::submitButton('<i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;Start Exam', ['class' => 'btn btn-success', 'name' => 'Start Exam']) ?>
                                 <?php endif;?>
                             </div>

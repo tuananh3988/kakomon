@@ -188,4 +188,19 @@ class Follow extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+    
+    /*
+     * Get info notification
+     * 
+     * Auth : 
+     * Created : 06-04-2017
+     */
+    public static function getInforNotification($followId){
+        $query = new \yii\db\Query();
+        $query->select(['member.member_id','member.name'])
+                ->from('follow');
+        $query->join('INNER JOIN', 'member', 'member.member_id = follow.member_id_followed');
+        $query->where(['follow.follow_id' => $followId]);
+        return $query->one();
+    }
 }

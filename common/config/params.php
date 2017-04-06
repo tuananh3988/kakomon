@@ -25,15 +25,17 @@ return [
         'timeline' => 10,
         'comment' => 4,
         'reply' => 4,
-        'help' => 4
+        'help' => 4,
+        'notification' => 4
     ],
     'offset' => [
         'sumary' => 0,
         'quiz' => 0,
         'follow' => 0,
-        'timeline' => 10,
+        'timeline' => 0,
         'comment' => 0,
         'reply' => 0,
-        'help' => 0
+        'help' => 0,
+        'notification' => 0
     ]
 ];

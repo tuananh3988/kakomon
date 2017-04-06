@@ -91,7 +91,7 @@ class Activity extends \yii\db\ActiveRecord
     
     public static function getTotalLikeByMember($memberId)
     {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_LIKE])->count();
+        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_LIKE, 'status' => self::STATUS_ACTIVE])->count();
     }
     
      /*
@@ -103,7 +103,7 @@ class Activity extends \yii\db\ActiveRecord
     
     public static function getTotalDisLikeByMember($memberId)
     {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_DISLIKE])->count();
+        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_DISLIKE, 'status' => self::STATUS_ACTIVE])->count();
     }
     
     /*
@@ -115,7 +115,7 @@ class Activity extends \yii\db\ActiveRecord
     
     public static function getTotalCommentByMember($memberId)
     {
-        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_COMMENT])->count();
+        return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_COMMENT, 'status' => self::STATUS_ACTIVE])->count();
     }
     
     /*
@@ -266,5 +266,23 @@ class Activity extends \yii\db\ActiveRecord
             return true;
         }
         return false;
+    }
+    
+    /*
+     * Get info notification
+     * 
+     * Auth : 
+     * Created : 06-04-2017
+     */
+    public static function getInforNotification($activityId){
+        $query = new \yii\db\Query();
+        $query->select(['activity_like.activity_id','member.name', 'member.member_id', 'activity_sumary.total', 'activity_like.quiz_id', 'activity_like.content'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity as activity_like', 'activity_like.activity_id = activity.relate_id');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
+        $query->join('LEFT JOIN', 'activity_sumary', 'activity_sumary.activity_id = activity_like.activity_id');
+        $query->where(['activity.activity_id' => $activityId]);
+        //$query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        return $query->one();
     }
 }

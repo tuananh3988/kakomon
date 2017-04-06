@@ -492,4 +492,19 @@ class Quiz extends \yii\db\ActiveRecord
         $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
         return $query->one();
     }
+    
+    /*
+     * Get info notification
+     * 
+     * Auth : 
+     * Created : 06-04-2017
+     */
+    public static function getInforNotification($quizId){
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id', 'quiz.question'])
+                ->from('quiz');
+        $query->where(['quiz.quiz_id' => $quizId]);
+        $query->andWhere(['type' => self::TYPE_QUICK_QUIZ]);
+        return $query->one();
+    }
 }

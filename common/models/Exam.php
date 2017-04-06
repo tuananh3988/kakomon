@@ -170,4 +170,18 @@ class Exam extends \yii\db\ActiveRecord
         }
         return $listExam;
     }
+    
+    /*
+     * Get info notification
+     * 
+     * Auth : 
+     * Created : 06-04-2017
+     */
+    public static function getInforNotification($examId){
+        $query = new \yii\db\Query();
+        $query->select(['exam.*'])
+                ->from('exam');
+        $query->where(['exam.exam_id' => $examId]);
+        return $query->one();
+    }
 }

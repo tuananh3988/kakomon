@@ -254,7 +254,7 @@ class Reply extends \yii\db\ActiveRecord
             //save table notification
             $modelNotification = new Notification();
             $modelNotification->type = Notification::TYPE_REPLY;
-            $modelNotification->related_id = $activityDetail->activity_id;
+            $modelNotification->related_id = $dataSave->activity_id;
             $modelNotification->member_id = $activityDetail->member_id;
             $modelNotification->save();
             
@@ -264,6 +264,23 @@ class Reply extends \yii\db\ActiveRecord
             $transaction->rollBack();
             return FALSE;
         }
+    }
+    
+    /*
+     * Get info notification
+     * 
+     * Auth : 
+     * Created : 06-04-2017
+     */
+    public static function getInforNotification($activityId){
+        $query = new \yii\db\Query();
+        $query->select(['activity_like.activity_id','member.name', 'member.member_id', 'activity_like.quiz_id', 'activity_like.content'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity as activity_like', 'activity_like.activity_id = activity.relate_id');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
+        $query->where(['activity.activity_id' => $activityId]);
+        //$query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        return $query->one();
     }
     
 }

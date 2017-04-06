@@ -230,7 +230,7 @@ class Like extends \yii\db\ActiveRecord
             //insert table notification
             $modelNotification = new Notification();
             $modelNotification->type = Notification::TYPE_LIKE;
-            $modelNotification->related_id = $activityDetail->activity_id;
+            $modelNotification->related_id = $modelActivitySave->activity_id;
             $modelNotification->member_id = $activityDetail->member_id;
             $modelNotification->save();
             
