@@ -462,7 +462,6 @@ class QuizController extends Controller
         $category = [];
         if (!empty($param['category_main_search']) && count($param['category_main_search'])) {
             foreach ($param['category_main_search'] as $key => $value) {
-                
                 if (!empty($param['category_a_search']) && count($param['category_a_search'])) {
                     foreach ($param['category_a_search'] as $key1 => $value1) {
                         $subA = Category::findOne(['parent_id' => $value, 'cateory_id' => $value1]);
@@ -471,6 +470,10 @@ class QuizController extends Controller
                                 'main-id' => (int)$value,
                                 'sub-a' => (int)$value1,
                                 'sub-b' => (!empty($param['category_b_search'])) ? self::renderParamSubSearch($param['category_b_search'], $value1) : []
+                            ];
+                        } else {
+                            $category[] = [
+                                'main-id' => $value
                             ];
                         }
                     }
