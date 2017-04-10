@@ -102,46 +102,57 @@ class Question extends \yii\db\ActiveRecord
      * Create : 15-03-2017
      */
     
-    public function getListQuiz($limit = null, $offset = null , $flag = false){
+    public function getListQuiz($paramSearch, $limit = null, $offset = null , $flag = false){
+        $connection = Yii::$app->getDb();
+        $sql = '';
         $type = ($this->type_quiz) ? $this->type_quiz : self::TYPE_ALL;
-        $query = new \yii\db\Query();
-        $query->select(['quiz.*'])
-                ->from('quiz');
-        $query->where(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
-        $query->andWhere(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
-        $query->andFilterWhere(['=', 'quiz.quiz_class', $this->quiz_class]);
-        $query->andFilterWhere(['IN', 'quiz.category_main_id', $this->category_main_search]);
-        $query->andFilterWhere(['IN', 'quiz.category_a_id', $this->category_a_search]);
-        $query->andFilterWhere(['IN', 'quiz.category_b_id', $this->category_b_search]);
-        $query->andFilterWhere(['IN', 'quiz.quiz_year', $this->quiz_year_search]);
-        switch ($type) {
-            case 1:
-                break;
-            case 2:
-                $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
-                $query->andFilterWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
-                $query->andFilterWhere(['=', 'member_quiz_history.correct_flag', MemberQuizHistory::FLAG_CORRECT_CORRECT]);
-                $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
-                break;
-            case 3:
-                $query->join('INNER JOIN', 'member_quiz_history', 'quiz.quiz_id = member_quiz_history.quiz_id');
-                $query->andFilterWhere(['=', 'member_quiz_history.member_id', Yii::$app->user->identity->member_id]);
-                $query->andFilterWhere(['=', 'member_quiz_history.correct_flag', MemberQuizHistory::FLAG_CORRECT_INCORRECT]);
-                $query->andFilterWhere(['=', 'member_quiz_history.last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
-                break;
-            case 4:
-                $query->andWhere(['NOT IN','quiz_id',  MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_CORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all()]);
-                $query->andWhere(['NOT IN','quiz_id',  MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_INCORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all()]);
-                break;
-            default :
-                
+        foreach ($paramSearch as $key => $value) {
+            $sql .= ' SELECT quiz.* FROM quiz';
+            switch ($type) {
+                case 1:
+                        break;
+                case 2:
+                        $sql .= ' INNER JOIN `member_quiz_history` ON quiz.quiz_id = member_quiz_history.quiz_id'
+                        . ' AND `member_quiz_history`.`member_id` = ' . Yii::$app->user->identity->member_id . ' AND `member_quiz_history`.`correct_flag` = '. MemberQuizHistory::FLAG_CORRECT_CORRECT . ' AND `member_quiz_history`.`last_ans_flag` = '. MemberQuizHistory::FLAG_ANS_LAST;
+                        break;
+                case 3:
+                        $sql .= ' INNER JOIN `member_quiz_history` ON quiz.quiz_id = member_quiz_history.quiz_id'
+                        . ' AND `member_quiz_history`.`member_id` = ' . Yii::$app->user->identity->member_id . ' AND `member_quiz_history`.`correct_flag` = '. MemberQuizHistory::FLAG_CORRECT_INCORRECT . ' AND `member_quiz_history`.`last_ans_flag` = '. MemberQuizHistory::FLAG_ANS_LAST;
+                        break;
+                case 4:
+                        $listQuiz = $this->getListQuizCorrectAndIncorrect();
+                        if (!is_null($listQuiz)) {
+                            $sql .= ' WHERE `quiz`.`quiz_id` NOT IN '. $listQuiz;
+                        }
+                        break;
+                default :
+            }
+            if ($type == 4) {
+                $sql .= ' AND `quiz`.`delete_flag` = '. Quiz::QUIZ_ACTIVE;
+            } else {
+                $sql .= ' WHERE `quiz`.`delete_flag` = '. Quiz::QUIZ_ACTIVE;
+            }
+            $sql .= ' AND `quiz`.`type` = '. Quiz::TYPE_NORMAL;
+            $sql .= ' AND `quiz`.`quiz_class` = '. $this->quiz_class;
+            $sql .= ' AND `quiz`.`category_main_id` = '. $value['main-id'];
+            if (!empty($value['sub-a'])) {
+                $sql .= ' AND `quiz`.`category_a_id` = '. $value['sub-a'];
+            }
+            if (!empty($value['sub-b']) && !is_null($value['sub-b'])) {
+                $sql .= ' AND `quiz`.`category_b_id` IN '. $value['sub-b'];
+            }
+            if (!empty($this->quiz_year_search)) {
+                $sql .= ' AND `quiz`.`quiz_year` IN '. $this->quiz_year_search;
+            }
+            if ($key != (count($paramSearch) - 1)) {
+                $sql .= ' UNION';
+            }
         }
         if ($flag) {
-            return $query->count();
+            return count($connection->createCommand($sql)->queryAll());
         }
-        $query->offset($offset);
-        $query->limit($limit);
-        return $query->all();
+        $sql .= ' LIMIT '. $limit . ' OFFSET ' . $offset;
+        return $connection->createCommand($sql)->queryAll();
     }
     
     /*
@@ -188,4 +199,28 @@ class Question extends \yii\db\ActiveRecord
         $quizSearchHistory->type = $type;
         $quizSearchHistory->save();
     }
+    
+    /*
+     * get list quiz CORRECT and INCORRECT
+     */
+    public static function getListQuizCorrectAndIncorrect(){
+        
+        $correct = MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_CORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all();
+        $incorrect = MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_INCORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST])->asArray()->all();
+        $data = array_merge($correct, $incorrect);
+        $dataReturn = null;
+        if (count($data) > 0) {
+            $dataReturn .= '(';
+            foreach ($data as $key => $value) {
+                if ($key != count($data) -1) {
+                    $dataReturn .= $value['quiz_id'] . ',';
+                } else {
+                    $dataReturn .= $value['quiz_id'];
+                }
+            }
+            $dataReturn .= ')';
+        }
+        return $dataReturn;
+    }
+    
 }

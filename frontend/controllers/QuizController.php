@@ -81,12 +81,14 @@ class QuizController extends Controller
             ];
         }
         $cateoryMainSearch[] = $firtCat['cateory_id'];
-        $modelQuiz->category_main_search =  !empty($param['category_main_search']) ? $param['category_main_search'] : $cateoryMainSearch;
+        $param['category_main_search'] = !empty($param['category_main_search']) ? $param['category_main_search'] : $cateoryMainSearch;
+        $paramSearch = $this->renderParamSearch($param);
         
         //insert table member_quiz_search_history
         $modelQuiz->insertHistorySearch();
         
-        $listQuiz = $modelQuiz->getListQuiz($limit, $offset);
+        $listQuiz = $modelQuiz->getListQuiz($paramSearch, $limit, $offset);
+        
         //return if not found data
         if (count($listQuiz) == 0) {
             return [
@@ -110,7 +112,7 @@ class QuizController extends Controller
         }
         
         //return success
-        $total = $modelQuiz->getListQuiz($limit, $offset, true);
+        $total = $modelQuiz->getListQuiz($paramSearch, $limit, $offset, true);
         $offsetReturn = Utility::renderOffset($total, $limit, $offset);
         return [
             'status' => 200,
@@ -171,15 +173,18 @@ class QuizController extends Controller
             ];
         }
         $cateoryMainSearch[] = $firtCat['cateory_id'];
+        $param['category_main_search'] = !empty($param['category_main_search']) ? $param['category_main_search'] : $cateoryMainSearch;
+        $paramSearch = $this->renderParamSearch($param);
+        
         $modelQuiz->category_main_search =  !empty($param['category_main_search']) ? $param['category_main_search'] : $cateoryMainSearch;
         $modelQuiz->type_quiz = Question::TYPE_ALL;
-        $totalAll = $modelQuiz->getListQuiz(null, null, true);
+        $totalAll = $modelQuiz->getListQuiz($paramSearch, null, null, true);
         $modelQuiz->type_quiz = Question::TYPE_RIGHT;
-        $totalRight = $modelQuiz->getListQuiz(null, null, true);
+        $totalRight = $modelQuiz->getListQuiz($paramSearch, null, null, true);
         $modelQuiz->type_quiz = Question::TYPE_WRONG;
-        $totalWrong = $modelQuiz->getListQuiz(null, null, true);
+        $totalWrong = $modelQuiz->getListQuiz($paramSearch, null, null, true);
         $modelQuiz->type_quiz = Question::TYPE_DO_NOT;
-        $totalDoNot = $modelQuiz->getListQuiz(null, null, true);
+        $totalDoNot = $modelQuiz->getListQuiz($paramSearch, null, null, true);
         
         return [
             'status' => 200,
@@ -443,6 +448,64 @@ class QuizController extends Controller
                     'name' => Category::getDetailNameCategory($value)
                 ];
             }
+        }
+        return $dataReturn;
+    }
+    
+    /*
+     * Render param search
+     * 
+     * Auth : 
+     * Created : 10-04-2017
+     */
+    public static function renderParamSearch($param) {
+        $category = [];
+        if (!empty($param['category_main_search']) && count($param['category_main_search'])) {
+            foreach ($param['category_main_search'] as $key => $value) {
+                
+                if (!empty($param['category_a_search']) && count($param['category_a_search'])) {
+                    foreach ($param['category_a_search'] as $key1 => $value1) {
+                        $subA = Category::findOne(['parent_id' => $value, 'cateory_id' => $value1]);
+                        if ($subA) {
+                            $category[] = [
+                                'main-id' => (int)$value,
+                                'sub-a' => (int)$value1,
+                                'sub-b' => (!empty($param['category_b_search'])) ? self::renderParamSubSearch($param['category_b_search'], $value1) : []
+                            ];
+                        }
+                    }
+                } else {
+                    $category[] = [
+                        'main-id' => $value
+                    ];
+                }
+            }
+        }
+        return $category;
+        
+    }
+    
+    public static function renderParamSubSearch($param, $valueParent) {
+        $data = [];
+        if (count($param) > 0) {
+            foreach ($param as $key => $value) {
+                $subA = Category::findOne(['parent_id' => $valueParent, 'cateory_id' => $value]);
+                if ($subA) {
+                    $data[] = (int)$value;
+                }
+            }
+        }
+        $dataReturn = null;
+        if (count($data) > 0) {
+            $dataReturn .= '(';
+            foreach ($data as $key => $value) {
+                if ($key != count($data) -1) {
+                    $dataReturn .= $value . ',';
+                } else {
+                    $dataReturn .= $value;
+                }
+            }
+            $dataReturn .= ')';
         }
         return $dataReturn;
     }
