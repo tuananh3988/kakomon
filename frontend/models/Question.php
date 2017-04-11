@@ -141,8 +141,8 @@ class Question extends \yii\db\ActiveRecord
             if (!empty($value['sub-b']) && !is_null($value['sub-b'])) {
                 $sql .= ' AND `quiz`.`category_b_id` IN '. $value['sub-b'];
             }
-            if (!empty($this->quiz_year_search)) {
-                $sql .= ' AND `quiz`.`quiz_year` IN '. $this->quiz_year_search;
+            if (!empty($this->quiz_year_search) && (count($this->quiz_year_search) > 0)) {
+                $sql .= ' AND `quiz`.`quiz_year` IN '. $this->renderString($this->quiz_year_search);
             }
             if ($key != (count($paramSearch) - 1)) {
                 $sql .= ' UNION';
@@ -223,4 +223,25 @@ class Question extends \yii\db\ActiveRecord
         return $dataReturn;
     }
     
+    /*
+     * conver string from array
+     * 
+     * Auth : 
+     * Created : 11-04-2017
+     */
+    public static function renderString($data){
+        $dataReturn = null;
+        if (count($data) > 0) {
+            $dataReturn .= '(';
+            foreach ($data as $key => $value) {
+                if ($key != count($data) -1) {
+                    $dataReturn .= $value . ',';
+                } else {
+                    $dataReturn .= $value;
+                }
+            }
+            $dataReturn .= ')';
+        }
+        return $dataReturn;
+    }
 }
