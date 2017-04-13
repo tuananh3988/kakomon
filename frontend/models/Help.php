@@ -20,6 +20,7 @@ class Help extends \yii\db\ActiveRecord
     const SCENARIO_ADD_HELP = 'add';
     const SCENARIO_DELETE_HELP = 'delete';
     const SCENARIO_LIST_HELP = 'list';
+    const SCENARIO_LIST_EDIT = 'edit';
     
     
     /**
@@ -41,6 +42,10 @@ class Help extends \yii\db\ActiveRecord
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_ADD_HELP],
             [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_HELP],
             ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_HELP],
+            
+            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_LIST_EDIT],
+            [['activity_id'], 'integer', 'on' => self::SCENARIO_LIST_EDIT],
+            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_LIST_EDIT],
             
             [['quiz_id'], 'required', 'on' => self::SCENARIO_LIST_HELP],
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_LIST_HELP],
@@ -110,7 +115,7 @@ class Help extends \yii\db\ActiveRecord
     public function validateActivityId($attribute)
     {
         if (!$this->hasErrors()) {
-            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP]);
+            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'member_id' => Yii::$app->user->identity->member_id, 'type' => Activity::TYPE_HELP, 'status' => Activity::STATUS_ACTIVE]);
             if (!$activity) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }

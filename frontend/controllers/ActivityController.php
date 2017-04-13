@@ -38,12 +38,15 @@ class ActivityController extends Controller
                     'like' => ['post'],
                     'dislike' => ['post'],
                     'addComment' => ['post'],
+                    'editComment' => ['post'],
                     'deleteComment' => ['post'],
                     'listComment' => ['get'],
                     'addHelp' => ['post'],
+                    'editHelp' => ['post'],
                     'deleteHelp' => ['post'],
                     'listHelp' => ['get'],
                     'addReply' => ['post'],
+                    'editReply' => ['post'],
                     'deleteReply' => ['post'],
                     'listReply' => ['get'],
                     'timeline' => ['get'],
@@ -246,6 +249,41 @@ class ActivityController extends Controller
         ];
     }
     
+    /*
+     * Edit comment
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionEditComment()
+    {
+        $request = Yii::$app->request;
+        $dataPost = $request->post();
+        
+        $modelComment = new Comment();
+        $modelComment->setAttributes($dataPost);
+        $modelComment->scenario  = Comment::SCENARIO_LIST_EDIT;
+        if (!$modelComment->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelComment->errors
+                ];
+        }
+        $dataComment = Comment::findOne(['activity_id' => $modelComment->activity_id, 'type' => Activity::TYPE_COMMENT, 'member_id' => Yii::$app->user->identity->member_id, 'status' => Activity::STATUS_ACTIVE]);
+        //save data
+        $dataComment->content = $modelComment->content;
+        //return error system
+        if (!$dataComment->save()) {
+            throw new \yii\base\Exception( "System error" );
+        }
+        return  [
+            'status' => 200,
+            'data' => [
+                'activity_id' => (int)$modelComment->activity_id
+            ]
+        ];
+    }
     
     /*
      * Delete comment
@@ -440,6 +478,45 @@ class ActivityController extends Controller
     
     
     /*
+     * Add help
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionEditHelp()
+    {
+        $request = Yii::$app->request;
+        $dataPost = $request->post();
+        $modelHelp = new Help();
+        $modelHelp->setAttributes($dataPost);
+        $modelHelp->scenario  = Help::SCENARIO_LIST_EDIT;
+        if (!$modelHelp->validate()) {
+            return [
+                'status' => 400,
+                'messages' => $modelHelp->errors
+            ];
+        }
+        
+        $dataHelp = Help::findOne(['activity_id' => $modelHelp->activity_id, 'type' => Activity::TYPE_HELP, 'member_id' => Yii::$app->user->identity->member_id, 'status' => Activity::STATUS_ACTIVE]);
+        
+        //save data
+        $dataHelp->content = $modelHelp->content;
+        //return system error
+        if (!$dataHelp->save()) {
+            throw new \yii\base\Exception( "System error" );
+            
+        }
+        //return success
+        return  [
+            'status' => 200,
+            'data' => [
+                'activity_id' => (int)$modelHelp->activity_id
+            ]
+        ];
+    }
+    
+    /*
      * Delete help
      * 
      * Auth : 
@@ -506,6 +583,43 @@ class ActivityController extends Controller
             ]
         ];
     }
+    
+    /*
+     * Add reply
+     * 
+     * Auth : 
+     * Create : 01-03-2017
+     */
+    
+    public function actionEditReply()
+    {
+        $request = Yii::$app->request;
+        $dataPost = $request->post();
+        $modelReply = new Reply();
+        $modelReply->setAttributes($dataPost);
+        $modelReply->scenario  = Reply::SCENARIO_LIST_EDIT;
+        if (!$modelReply->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelReply->errors
+                ];
+        }
+        $dataReply = Help::findOne(['activity_id' => $modelReply->activity_id, 'member_id' => Yii::$app->user->identity->member_id,'type' => Activity::TYPE_REPLY, 'status' => Activity::STATUS_ACTIVE]);
+        
+        $dataReply->content = $modelReply->content;
+        if (!$dataReply->save()) {
+            throw new \yii\base\Exception( "System error" );
+        }
+        //return success
+        return  [
+            'status' => 200,
+            'data' => [
+                'activity_id' => (int)$modelReply->activity_id
+            ]
+        ];
+    }
+    
+    
     
     /*
      * Delete Reply
