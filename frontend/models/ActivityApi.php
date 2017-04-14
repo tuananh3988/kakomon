@@ -21,6 +21,7 @@ class ActivityApi extends \yii\db\ActiveRecord
     
     const SCENARIO_DETAIL_SUMMARY = 'detail-summary';
     const SCENARIO_DETAIL_ACTIVITY = 'deail-activity';
+    const SCENARIO_EDIT_ACTIVITY = 'edit';
     
     /**
      * @inheritdoc
@@ -41,7 +42,12 @@ class ActivityApi extends \yii\db\ActiveRecord
             ['category_main_id', 'validateMainCategory', 'on' => self::SCENARIO_DETAIL_SUMMARY],
             [['member_id'], 'required', 'on' => self::SCENARIO_DETAIL_ACTIVITY],
             [['member_id'], 'validateMemberId', 'on' => self::SCENARIO_DETAIL_ACTIVITY],
-            [['member_id', 'category_main_id', 'type', 'created_date', 'updated_date'], 'safe'],
+            
+            [['activity_id', 'content', 'type'], 'required', 'on' => self::SCENARIO_EDIT_ACTIVITY],
+            [['activity_id', 'type'], 'integer', 'on' => self::SCENARIO_EDIT_ACTIVITY],
+            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_EDIT_ACTIVITY],
+            
+            [['member_id', 'category_main_id', 'type', 'activity_id', 'content', 'created_date', 'updated_date'], 'safe'],
         ];
     }
     
@@ -53,7 +59,8 @@ class ActivityApi extends \yii\db\ActiveRecord
         return [
             'category_main_id' => 'Category Main Id',
             'type' => 'Type',
-            'member_id' => 'Member Id'
+            'member_id' => 'Member Id',
+            'activity_id' => 'Activity Id'
         ];
     }
     
@@ -70,6 +77,16 @@ class ActivityApi extends \yii\db\ActiveRecord
         if (!$this->hasErrors()) {
             $memberDetail = Member::findOne(['member_id' => $this->$attribute]);
             if (!$memberDetail) {
+                $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
+            }
+        }
+    }
+    
+    public function validateActivityId($attribute)
+    {
+        if (!$this->hasErrors()) {
+            $activity = Activity::findOne(['activity_id' => $this->$attribute, 'type' => $this->type, 'member_id' => Yii::$app->user->identity->member_id, 'status' => Activity::STATUS_ACTIVE]);
+            if (!$activity) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
         }

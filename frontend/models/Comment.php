@@ -21,10 +21,7 @@ class Comment extends \yii\db\ActiveRecord
     const SCENARIO_ADD_COMMENT = 'add';
     const SCENARIO_DELETE_COMMENT = 'delete';
     const SCENARIO_LIST_COMMENT = 'list';
-    const SCENARIO_LIST_EDIT = 'edit';
 
-
-    
     /**
      * @inheritdoc
      */
@@ -44,10 +41,6 @@ class Comment extends \yii\db\ActiveRecord
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_ADD_COMMENT],
             [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_COMMENT],
             ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_COMMENT],
-            
-            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_LIST_EDIT],
-            [['activity_id'], 'integer', 'on' => self::SCENARIO_LIST_EDIT],
-            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_LIST_EDIT],
             
             [['quiz_id'], 'required', 'on' => self::SCENARIO_LIST_COMMENT],
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_LIST_COMMENT],

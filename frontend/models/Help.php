@@ -20,8 +20,6 @@ class Help extends \yii\db\ActiveRecord
     const SCENARIO_ADD_HELP = 'add';
     const SCENARIO_DELETE_HELP = 'delete';
     const SCENARIO_LIST_HELP = 'list';
-    const SCENARIO_LIST_EDIT = 'edit';
-    
     
     /**
      * @inheritdoc
@@ -42,10 +40,6 @@ class Help extends \yii\db\ActiveRecord
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_ADD_HELP],
             [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_HELP],
             ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_HELP],
-            
-            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_LIST_EDIT],
-            [['activity_id'], 'integer', 'on' => self::SCENARIO_LIST_EDIT],
-            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_LIST_EDIT],
             
             [['quiz_id'], 'required', 'on' => self::SCENARIO_LIST_HELP],
             ['quiz_id', 'validateQuizId', 'on' => self::SCENARIO_LIST_HELP],

@@ -20,8 +20,6 @@ class Reply extends \yii\db\ActiveRecord
     const SCENARIO_ADD_REPLY = 'add';
     const SCENARIO_DELETE_REPLY = 'delete';
     const SCENARIO_LIST_REPLY = 'list';
-    const SCENARIO_LIST_EDIT = 'edit';
-    
     
     /**
      * @inheritdoc
@@ -42,10 +40,6 @@ class Reply extends \yii\db\ActiveRecord
             ['activity_id', 'validateActivityIdReply', 'on' => self::SCENARIO_ADD_REPLY],
             [['activity_id'], 'required', 'on' => self::SCENARIO_DELETE_REPLY],
             ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_DELETE_REPLY],
-            
-            [['activity_id', 'content'], 'required', 'on' => self::SCENARIO_LIST_EDIT],
-            [['activity_id'], 'integer', 'on' => self::SCENARIO_LIST_EDIT],
-            ['activity_id', 'validateActivityId', 'on' => self::SCENARIO_LIST_EDIT],
             
             [['activity_id'], 'required', 'on' => self::SCENARIO_LIST_REPLY],
             ['activity_id', 'validateActivityIdForList', 'on' => self::SCENARIO_LIST_REPLY],
