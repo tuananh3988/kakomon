@@ -260,6 +260,7 @@ class Category extends \yii\db\ActiveRecord
         if ($flag) {
             return $query->count();
         }
+        $query->orderBy(['activity.activity_id' => SORT_DESC]);
         return $query->all();
     }
     
