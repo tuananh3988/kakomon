@@ -10,6 +10,7 @@ use common\models\Follow;
 use common\models\Quiz;
 use common\models\Exam;
 use frontend\models\Reply;
+use common\components\Utility;
 /**
  * This is the model class for table "notification".
  *
@@ -131,6 +132,7 @@ class Notification extends \yii\db\ActiveRecord
                             'type' => (int)$value['type'],
                             'activity_id' => (int)$activity['activity_id'],
                             'member_id' => (int)$activity['member_id'],
+                            'avatar' => Utility::getImage('member', $activity['member_id'], null, true),
                             'quiz_id' => (int)$activity['quiz_id'],
                             'content' => $activity['content'],
                             'title' => $activity['name'] . 'さんから「いいね！」GET!' . $activity['total'],
@@ -143,6 +145,7 @@ class Notification extends \yii\db\ActiveRecord
                             'type' => (int)$value['type'],
                             'activity_id' => (int)$reply['activity_id'],
                             'member_id' => (int)$reply['member_id'],
+                            'avatar' => Utility::getImage('member', $reply['member_id'], null, true),
                             'quiz_id' => (int)$reply['quiz_id'],
                             'content' => $reply['content'],
                             'title' => $reply['name'] . 'さんから「いいね！」GET!',
@@ -154,7 +157,8 @@ class Notification extends \yii\db\ActiveRecord
                         $listData[] = [
                             'type' => (int)$value['type'],
                             'activity_id' => null,
-                            'member_id' => (int)$value['member_id'],
+                            'member_id' => (int)$follow['member_id'],
+                            'avatar' => Utility::getImage('member', $follow['member_id'], null, true),
                             'quiz_id' => null,
                             'content' => null,
                             'title' => $follow['name'] . 'さんからフォローされました。',
@@ -167,6 +171,7 @@ class Notification extends \yii\db\ActiveRecord
                             'type' => (int)$value['type'],
                             'activity_id' => null,
                             'member_id' => null,
+                            'avatar' => null,
                             'quiz_id' => $quiz['quiz_id'],
                             'content' => $quiz['question'],
                             'title' => $quiz['question'],
@@ -179,6 +184,7 @@ class Notification extends \yii\db\ActiveRecord
                             'type' => (int)$value['type'],
                             'activity_id' => null,
                             'member_id' => null,
+                            'avatar' => null,
                             'quiz_id' => null,
                             'content' => $exam['name'],
                             'title' => date("Y-m-d H:i", strtotime($exam['start_date'])) . ' ' . $exam['name'] . '<br/>これを逃すと、もうできない！ ',

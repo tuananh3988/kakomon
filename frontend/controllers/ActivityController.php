@@ -768,7 +768,8 @@ class ActivityController extends Controller
                 'total_like' => (!in_array($value['type'], $listLikeAndDisLike)) ? (int)$value['total_like'] : Activity::getInforTotalLikeOrDisLikeByActivity($value['activity_id'], ActivitySumary::TYPE_LIKE),
                 'total_dis_like' => (!in_array($value['type'], $listLikeAndDisLike)) ? (int)$value['total_dis_like'] : Activity::getInforTotalLikeOrDisLikeByActivity($value['activity_id'], ActivitySumary::TYPE_DIS_LIKE),
                 'isLike' => (!in_array($value['type'], $listLikeAndDisLike)) ? (($value['isLike']) ? true : false) : Activity::getInforLikeOrDisLikeByActivity($value['activity_id'], $modelActivity->member_id, Activity::TYPE_LIKE),
-                'isDisLike' => (!in_array($value['type'], $listLikeAndDisLike)) ? (($value['isDisLike']) ? true : false) : Activity::getInforLikeOrDisLikeByActivity($value['activity_id'], $modelActivity->member_id, Activity::TYPE_DISLIKE)
+                'isDisLike' => (!in_array($value['type'], $listLikeAndDisLike)) ? (($value['isDisLike']) ? true : false) : Activity::getInforLikeOrDisLikeByActivity($value['activity_id'], $modelActivity->member_id, Activity::TYPE_DISLIKE),
+                'created_date' => $value['created_date']
             ];
         }
         
