@@ -471,7 +471,7 @@ class Quiz extends \yii\db\ActiveRecord
             $query->andWhere(['quiz.category_main_id' => $catId]);
         }
         $query->andWhere(['quiz.delete_flag' => self::QUIZ_ACTIVE]);
-        $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->asArray()->all()]);
+        $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->indexBy('quiz_id')->column()]);
         return $query->count();
     }
     

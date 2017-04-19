@@ -815,15 +815,19 @@ class ActivityController extends Controller
                     $data['count'] = (int)$total;
                     $data['offset'] = $offsetReturn;
                     foreach ($listComment as $key => $value) {
-                        $data['comment'][] = [
+                        $data['data_list'][] = [
                             'activity_id' => (int)$value['activity_id'],
                             'quiz_id' => (int)$value['quiz_id'],
                             'question' => $value['question'],
                             'content_comment' => $value['content'],
+                            'member_id' => (int)Yii::$app->user->identity->member_id,
+                            'member_name' => Yii::$app->user->identity->name,
+                            'avatar' => Utility::getImage('member', Yii::$app->user->identity->member_id, null, true),
+                            'created_date' => $value['created_date'],
                             'total_like' => (int)$value['total_like'],
                             'total_dis_like' => (int)$value['total_dis_like'],
-                            'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], $value['member_id']),
-                            'isLike' => Like::checkLikeByActivityId($value['activity_id'], $value['member_id']),
+                            'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], Yii::$app->user->identity->member_id),
+                            'isLike' => Like::checkLikeByActivityId($value['activity_id'], Yii::$app->user->identity->member_id)
                         ];
                     }
                 }
@@ -836,21 +840,46 @@ class ActivityController extends Controller
                     $data['count'] = (int)$total;
                     $data['offset'] = $offsetReturn;
                     foreach ($listLike as $key => $value) {
-                        $data['like'][] = [
+                        $data['data_list'][] = [
                             'activity_id' => (int)$value['activity_id'],
                             'quiz_id' => (int)$value['quiz_id'],
                             'content' => $value['content'],
                             'type' => (int)$value['type'],
+                            'member_id' => (int)$value['member_id'],
                             'member_name' => $value['name'],
                             'avatar' => Utility::getImage('member', $value['member_id'], null, true),
+                            'created_date' => $value['created_date'],
                             'total_like' => (int)$value['total_like'],
                             'total_dis_like' => (int)$value['total_dis_like'],
+                            'isDisLike' => Like::checkDisLikeByActivityId($value['activity_id'], Yii::$app->user->identity->member_id),
+                            'isLike' => Like::checkLikeByActivityId($value['activity_id'], Yii::$app->user->identity->member_id)
                         ];
                     }
                 }
                 break;
             case 3:
-                
+                $listNasi = $modelActivity->getListNasiByCategory($limit, $offset);
+                if (count($listNasi) > 0) {
+                    foreach ($listNasi as $key => $value) {
+                        $infoActivity = ActivityApi::getInfoNasiByQuizId($value['quiz_id']);
+                        if ($infoActivity) {
+                            $data['data_list'][] = [
+                                'activity_id' => (int)$infoActivity['activity_id'],
+                                'quiz_id' => (int)$infoActivity['quiz_id'],
+                                'content' => $infoActivity['content'],
+                                'type' => (int)$infoActivity['type'],
+                                'member_id' => (int)$infoActivity['member_id'],
+                                'member_name' => $infoActivity['name'],
+                                'avatar' => Utility::getImage('member', $infoActivity['member_id'], null, true),
+                                'created_date' => $infoActivity['created_date'],
+                                'total_like' => (int)$infoActivity['total_like'],
+                                'total_dis_like' => (int)$infoActivity['total_dis_like'],
+                                'isDisLike' => Like::checkDisLikeByActivityId($infoActivity['activity_id'], Yii::$app->user->identity->member_id),
+                                'isLike' => Like::checkLikeByActivityId($infoActivity['activity_id'], Yii::$app->user->identity->member_id),
+                            ];
+                        }
+                    }
+                }
                 break;
             default :
         }
@@ -867,6 +896,10 @@ class ActivityController extends Controller
             'total_time_view' => (int)MemberCategoryTime::getTotalTimeViewByMainCategory($param['category_main_id']),
             'total_quiz' => (int)Quiz::getTotalQuizByCategory($param['category_main_id']),
             'total_ans_quiz' => (int)Quiz::getTotalQuizNasiByCategory($param['category_main_id']),
+            'total_comment' => (int)Activity::getTotalQuizActivityByCategory($param['category_main_id'], Activity::TYPE_COMMENT),
+            'total_like' => (int)Activity::getTotalQuizActivityByCategory($param['category_main_id'], Activity::TYPE_LIKE),
+            'total_nasi' => (int)Quiz::getTotalQuizNasiByCategory($param['category_main_id']),
+            'sub_menu' => Quiz::renderListSubCat($param['category_main_id'], null),
             'data' => $data
         ];
     }

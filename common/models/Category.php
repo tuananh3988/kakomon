@@ -276,6 +276,7 @@ class Category extends \yii\db\ActiveRecord
                 ->from('category');
         $query->join('LEFT JOIN', 'member_category_time', 'category.cateory_id = member_category_time.category_id AND member_category_time.member_id = ' . Yii::$app->user->identity->member_id);
         $query->where(['category.parent_id' => 0]);
+        $query->orderBy(['category.cateory_id' => SORT_ASC]);
         if ($flag) {
             return $query->count();
         }

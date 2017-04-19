@@ -317,7 +317,7 @@ class ActivityApi extends \yii\db\ActiveRecord
     
     public function getListLikeByCategory($limit, $offset ,$flag = false){
         $query = new \yii\db\Query();
-        $query->select(['activity_like.activity_id', 'quiz.quiz_id','activity_like.content AS content', 'activity_like.type', 'quiz.question','activity_sumary_like.total AS total_like' ,
+        $query->select(['activity_like.activity_id', 'quiz.quiz_id','activity_like.content AS content', 'activity_like.type', 'activity_like.created_date', 'quiz.question','activity_sumary_like.total AS total_like' ,
             'activity_sumary_dis_like.total AS total_dis_like', 'member.name' ,'member.member_id'])
                 ->from('quiz');
         $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
@@ -345,24 +345,36 @@ class ActivityApi extends \yii\db\ActiveRecord
     
     public function getListNasiByCategory($limit, $offset ,$flag = false){
         $query = new \yii\db\Query();
-        $query->select(['activity_like.activity_id', 'quiz.quiz_id','activity_like.content AS content', 'activity_like.type', 'quiz.question','activity_sumary_like.total AS total_like' ,
-            'activity_sumary_dis_like.total AS total_dis_like', 'member.name' ,'member.member_id'])
+        $query->select(['quiz.quiz_id'])
                 ->from('quiz');
         $query->join('INNER JOIN', 'activity', 'quiz.quiz_id = activity.quiz_id');
-        $query->join('INNER JOIN', 'activity AS activity_like', 'activity_like.activity_id = activity.relate_id');
-        $query->join('INNER JOIN', 'member', 'member.member_id = activity_like.member_id');
-        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_like', 'activity_sumary_like.activity_id = activity_like.activity_id AND activity_sumary_like.type = '. ActivitySumary::TYPE_LIKE);
-        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_dis_like', 'activity_sumary_dis_like.activity_id = activity_like.activity_id AND activity_sumary_dis_like.type = '. ActivitySumary::TYPE_DIS_LIKE);
         $query->where(['=', 'quiz.category_main_id', $this->category_main_id]);
-        $query->andWhere(['=', 'activity.type', Activity::TYPE_LIKE]);
-        $query->andWhere(['=', 'activity.member_id', Yii::$app->user->identity->member_id]);
+        $query->andWhere(['=', 'activity.type', Activity::TYPE_COMMENT]);
         $query->andWhere(['=', 'activity.status', Activity::STATUS_ACTIVE]);
-        $query->andWhere(['NOT IN','quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->asArray()->all()]);
+        $query->andWhere(['NOT IN','quiz.quiz_id',  MemberQuizActivity::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'delete_flag' => MemberQuizActivity::DELETE_ACTIVE])->indexBy('quiz_id')->column()]);
+        $query->groupBy(['activity.quiz_id']);
         if ($flag) {
             return $query->count();
         }
         $query->offset($offset);
         $query->limit($limit);
         return $query->all();
+    }
+    
+    public static function getInfoNasiByQuizId($quizID) {
+        $query = new \yii\db\Query();
+        $query->select(['activity.*', 'activity_sumary_like.total AS total_like' ,
+                'activity_sumary_dis_like.total AS total_dis_like', 'member.name' ,'member.member_id'])
+                ->from('activity');
+        $query->join('INNER JOIN', 'activity_sumary', 'activity_sumary.activity_id = activity.activity_id');
+        $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
+        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_like', 'activity_sumary_like.activity_id = activity.activity_id AND activity_sumary_like.type = '. ActivitySumary::TYPE_LIKE);
+        $query->join('LEFT JOIN', 'activity_sumary AS activity_sumary_dis_like', 'activity_sumary_dis_like.activity_id = activity.activity_id AND activity_sumary_dis_like.type = '. ActivitySumary::TYPE_DIS_LIKE);
+        $query->where(['=', 'activity.quiz_id', $quizID]);
+        $query->andWhere(['=', 'activity.type', Activity::TYPE_COMMENT]);
+        $query->andWhere(['=', 'activity.status', Activity::STATUS_ACTIVE]);
+        $query->andWhere(['=', 'activity_sumary.type', ActivitySumary::TYPE_LIKE]);
+        $query->orderBy(['activity_sumary.total' => SORT_DESC]);
+        return $query->one();
     }
 }
