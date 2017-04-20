@@ -79,8 +79,8 @@ AppAsset::register($this);
                     <li>
                       <a><i class="fa fa-connectdevelop"></i> Push Notification <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu" >
-                          <li><a href="<?= Url::to(['/notification/create']) ?>"><i class="fa fa-pencil-square-o"></i>Create Notification</a></li>
-                          <li><a href="<?= Url::to(['/notification/index']) ?>"><i class="fa fa-list-alt"></i>List Notification</a></li>
+                            <li><a href="javascript:void(0)"><i class="fa fa-pencil-square-o"></i>Create Notification</a></li>
+                            <li><a href="<?= Url::to(['/notification/index']) ?>"><i class="fa fa-list-alt"></i>List Notification</a></li>
                       </ul>
                     </li>
                 </ul>

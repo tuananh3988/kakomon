@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use yii\data\ActiveDataProvider;
 use common\models\Activity;
 use common\models\Follow;
 use common\models\Quiz;
@@ -30,7 +31,16 @@ class Notification extends \yii\db\ActiveRecord
     const TYPE_FOLLOW = 3;
     const TYPE_QUICK_QUIZ = 4;
     const TYPE_EXAM = 5;
-    const TYPE_COLLECT_QUIZ = 5;
+    const TYPE_COLLECT_QUIZ = 6;
+    
+    public static $NOTIFICATION_TYPE = [
+        1 => 'LIKE',
+        2 => 'REPLY',
+        3 => 'FOLLOW',
+        4 => 'QUICK QUIZ',
+        5 => 'EXAM',
+        6 => 'COLLECT QUIZ'
+    ];
     /**
      * @inheritdoc
      */
@@ -198,5 +208,68 @@ class Notification extends \yii\db\ActiveRecord
             }
         }
         return $listData;
+    }
+    
+    
+    /**
+     * get list user
+     * @Date 19-02-2017 
+     */
+    public function getData() {
+        $query = new \yii\db\Query();
+        $query->select(['notification.*'])
+                ->from('notification');
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => Yii::$app->params['pageSize']
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'notification_id' => SORT_DESC,
+                    'created_date' => SORT_DESC
+                ]
+            ],
+        ]);
+        $dataProvider->sort->attributes['notification_id'] = [
+            'desc' => ['notification.notification_id' => SORT_DESC],
+            'asc' => ['notification.notification_id' => SORT_ASC],
+        ];
+        $dataProvider->sort->attributes['created_date'] = [
+            'desc' => ['notification.created_date' => SORT_DESC],
+            'asc' => ['notification.created_date' => SORT_ASC],
+        ];
+        return $dataProvider;
+    }
+    
+    public static function getInfoNotification($type, $relatedId){
+        $content = '';
+        $type = (int)$type;
+        switch ($type) {
+            case 1:
+                $activity = Activity::getInforNotification($relatedId);
+                $content = $activity['content'];
+                break;
+            case 2:
+                $reply = Reply::getInforNotification($relatedId);
+                $content = $reply['content'];
+                break;
+            case 3:
+                $follow = Follow::getInforNotification($relatedId);
+                $content = $follow['name'] . 'さんからフォローされました。';
+                break;
+            case 4:
+                $quiz = Quiz::getInforNotification($relatedId);
+                $content = $quiz['question'];
+                break;
+            case 5:
+                $exam = Exam::getInforNotification($relatedId);
+                $content = $exam['name'];
+                break;
+            case 6:
+                break;
+            default :
+        }
+        return $content;
     }
 }
