@@ -899,7 +899,7 @@ class ActivityController extends Controller
             'total_comment' => (int)Activity::getTotalQuizActivityByCategory($param['category_main_id'], Activity::TYPE_COMMENT),
             'total_like' => (int)Activity::getTotalQuizActivityByCategory($param['category_main_id'], Activity::TYPE_LIKE),
             'total_nasi' => (int)Quiz::getTotalQuizNasiByCategory($param['category_main_id']),
-            'sub_menu' => Quiz::renderListSubCat($param['category_main_id'], null),
+            'sub_menu' => Category::find()->select('name')->where(['parent_id' => $param['category_main_id']])->indexBy('cateory_id')->column(),
             'data' => $data
         ];
     }

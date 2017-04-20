@@ -41,7 +41,14 @@ class Exam extends \yii\db\ActiveRecord
         1 => 'Active',
         2 => 'End'
     ];
-	
+    
+    const EXAM_STATUS_CREATED = 0;
+    const EXAM_STATUS_ACTIVE = 1;
+    const EXAM_STATUS_END = 2;
+    
+    const SCENARIO_EXAM_DETAIL = 'detail-exam';
+    const SCENARIO_EXAM_DETAIL_ACTIVE = 'detail-exam-active';
+    
     public function behaviors()
     {
         return [
@@ -72,9 +79,30 @@ class Exam extends \yii\db\ActiveRecord
             [['start_date', 'end_date', 'created_date', 'updated_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
             //['end_date', 'validateEndDate'],
+            
+            [['exam_id'], 'required', 'on' => self::SCENARIO_EXAM_DETAIL],
+            [['exam_id'], 'integer', 'on' => self::SCENARIO_EXAM_DETAIL],
+            ['exam_id', 'validateExamId', 'on' => self::SCENARIO_EXAM_DETAIL],
+            
+            [['exam_id'], 'required', 'on' => self::SCENARIO_EXAM_DETAIL_ACTIVE],
+            [['exam_id'], 'integer', 'on' => self::SCENARIO_EXAM_DETAIL_ACTIVE],
+            ['exam_id', 'validateExamIdActive', 'on' => self::SCENARIO_EXAM_DETAIL_ACTIVE],
+            
+            [['exam_id'], 'safe'],
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        
+        $scenarios[self::SCENARIO_EXAM_DETAIL] = ['exam_id'];
+        return $scenarios;
+    }
+    
     /**
      * @inheritdoc
      */
@@ -92,7 +120,7 @@ class Exam extends \yii\db\ActiveRecord
             'updated_date' => 'Updated Date',
         ];
     }
-	
+    
     /*
      * validate end_date
      * 
@@ -103,6 +131,38 @@ class Exam extends \yii\db\ActiveRecord
     public function validateEndDate($attribute){
         if (strtotime($this->$attribute) < strtotime($this->start_date)) {
             $this->addError($attribute, \Yii::t('app', 'End time must be greater than the Start time', ['attribute' => $this->attributeLabels()[$attribute]]));
+        }
+    }
+    
+    /*
+     * validate exam-id
+     * 
+     * Auth:
+     * Create : 19-02-2017 
+     */
+    
+    public function validateExamId($attribute){
+        if (!$this->hasErrors()) {
+            $examDetail = Exam::findOne(['exam_id' => $this->$attribute]);
+            if (!$examDetail) {
+                $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
+            }
+        }
+    }
+    
+    /*
+     * validate exam-id active
+     * 
+     * Auth:
+     * Create : 19-02-2017 
+     */
+    
+    public function validateExamIdActive($attribute){
+        if (!$this->hasErrors()) {
+            $examDetail = Exam::findOne(['exam_id' => $this->$attribute, 'status' => self::EXAM_STATUS_ACTIVE]);
+            if (!$examDetail) {
+                $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
+            }
         }
     }
     
@@ -183,5 +243,21 @@ class Exam extends \yii\db\ActiveRecord
                 ->from('exam');
         $query->where(['exam.exam_id' => $examId]);
         return $query->one();
+    }
+    
+    /*
+     * Get list quiz exam
+     * 
+     * Auth : 
+     * Created : 20-04-2017
+     */
+    
+    public function getListQuizIdByExam() {
+        $query = new \yii\db\Query();
+        $query->select(['exam_quiz.quiz_id'])
+                ->from('exam_quiz');
+        $query->where(['exam_quiz.exam_id' => $this->exam_id]);
+        $query->orderBy(['exam_quiz_id' => SORT_ASC]);
+        return $query->all();
     }
 }
