@@ -109,7 +109,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
                 $pathFolder = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName  . '/images';
                 
                 //upload images question
-                $fileNameQuestion = 'question-' . $data[0] . '-' . $data[1];
+                $fileNameQuestion = 'question-' . $data[0] . '-' . $data[5] . '-' . $data[1];
                 if ($flagFolder) {
                     $listFile = Utility::getImagesInFolder($fileNameQuestion, $pathFolder);
                     if (count($listFile) > 0) {
@@ -133,7 +133,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
                         $modelAnswer->save();
                     }
                     //upload images ans
-                    $fileNameQuestion = 'ans-' . $data[0] . '-' . $data[1] . '-' . $i;
+                    $fileNameQuestion = 'ans-' . $data[0] . '-' . $data[5] . '-' . $data[1] . '-' . $i;
                     if ($flagFolder) {
                         $listFileAns = Utility::getImagesInFolder($fileNameQuestion, $pathFolder);
                         if (count($listFileAns) > 0) {
