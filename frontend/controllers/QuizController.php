@@ -36,7 +36,8 @@ class QuizController extends Controller
                     'history-search' => ['get'],
                     'history-ans' => ['get'],
                     'history-ans-wrong' => ['get'],
-                    'ans' => ['post']
+                    'ans' => ['post'],
+                    'add-question' => ['post']
                 ],
             ],
             'authenticator' => [
@@ -511,5 +512,26 @@ class QuizController extends Controller
             $dataReturn .= ')';
         }
         return $dataReturn;
+    }
+    
+    /*
+     * Add question
+     * 
+     * Auth :
+     * Created : 23-04-2017
+     */
+    
+    public function actionAddQuestion() {
+        $request = Yii::$app->request;
+        $dataPost = $request->post();
+        var_dump($dataPost);die;
+        $modelAns = new Ans();
+        $modelAns->setAttributes($dataPost);
+        if (!$modelAns->validate()) {
+            return [
+                    'status' => 400,
+                    'messages' => $modelAns->errors
+                ];
+        }
     }
 }

@@ -26,7 +26,11 @@ class Ans extends \yii\db\ActiveRecord
     public $quiz_answer7;
     public $quiz_answer8;
     public $quiz_answer;
+    public $exam_id;
+    public $type_ans;
     
+    const TYPE_ANS_DEFAULT = 1;
+    const TYPE_ANS_EXAM = 2;
 
     /**
      * @inheritdoc
@@ -42,10 +46,11 @@ class Ans extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['quiz_id', 'time'], 'required'],
-            [['quiz_id', 'time'], 'integer'],
+            [['quiz_id', 'time', 'type_ans'], 'required'],
+            [['quiz_id', 'time', 'type_ans'], 'integer'],
+            [['quiz_answer'], 'each', 'rule' => ['integer']],
             ['quiz_id', 'validateQuizId'],
-            [['quiz_id' , 'quiz_answer', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'time',
+            [['quiz_id' , 'quiz_answer', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'time', 'exam_id', 'type_ans',
                 'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'created_date', 'updated_date'], 'safe'],
         ];
     }
@@ -112,7 +117,10 @@ class Ans extends \yii\db\ActiveRecord
     public function validateQuizId($attribute)
     {
         if (!$this->hasErrors()) {
-            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'type' => Quiz::TYPE_NORMAL, 'delete_flag' => Quiz::QUIZ_ACTIVE]);
+            $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_NORMAL]);
+            if ($this->type_ans == self::TYPE_ANS_EXAM) {
+                $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_COLLECT]);
+            }
             if (!$quizDetail) {
                 $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
             }
@@ -158,6 +166,7 @@ class Ans extends \yii\db\ActiveRecord
             $modelMemberQuizHistory->answer = $quizAnswer;
             $modelMemberQuizHistory->correct_flag = $correctFlag;
             $modelMemberQuizHistory->time = $this->time;
+            $modelMemberQuizHistory->exam_id = $this->exam_id;
             $modelMemberQuizHistory->save();
             
             //update or inset table member_category_time
