@@ -9,7 +9,7 @@ use common\models\Category;
     <div id="w0-detail" class="kv-detail-container">
         <div class="kv-detail-heading">
             <div class="pull-right">
-                <button type="button" class="btn btn-default tooltip-f" id="add-sub-cat" title="add-sub-category" <?php if($firstCategory->cateory_id == NULL || $firstCategory->level == 4) echo 'disabled="disabled"'?>>
+                <button type="button" class="btn btn-default tooltip-f" id="add-sub-cat" title="add-sub-category" <?php if($firstCategory->cateory_id == NULL || $firstCategory->level == Category::$MAXCAT) echo 'disabled="disabled"'?>>
                     <i class="fa fa-plus"></i>
                 </button>
                 <button type="button" class="btn btn-default tooltip-f" id="add-cat" title="add-category">

@@ -106,3 +106,6 @@ span.fa{
     background-color: #c9302c;
     color: #fff;
 }
+.table.table-striped.table-bordered.table-csv tbody tr{
+    cursor: default;
+}

@@ -30,7 +30,7 @@ class Category extends \yii\db\ActiveRecord
     }
 
     public static $TYPE = [0, 1, 2];
-    public static $MAXCAT = 4;
+    public static $MAXCAT = 3;
     
     /**
      * @inheritdoc

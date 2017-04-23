@@ -94,7 +94,7 @@ Yii::$app->view->title = 'List Log Upload CSV';
                                     }
                                 ],
                             ],
-                            'tableOptions' => ['class' => 'table table-striped table-bordered'],
+                            'tableOptions' => ['class' => 'table table-striped table-bordered table-csv'],
                             'pager' => [
                                 'prevPageLabel' => 'Prev',
                                 'nextPageLabel' => 'Next',

@@ -64,7 +64,7 @@ AppAsset::register($this);
                         </ul>
                     </li>
                     
-                    <li><a href="<?= Url::to(['/collect/index']); ?>"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Collect </a>
+                    <li><a href="<?= Url::to(['/collect/index']); ?>"><i class="glyphicon glyphicon-question-sign"></i> &nbsp;&nbsp;&nbsp;&nbsp;Collect Question</a>
                         
                     <li class="<?= (Yii::$app->controller->id == 'exam') ? 'active' : '';?>">
                         <a href="javascript:void(0)"><i class="glyphicon glyphicon-education"></i> &nbsp;&nbsp;&nbsp;&nbsp;Exam  <span class="fa fa-chevron-down"></span></a>
@@ -74,15 +74,8 @@ AppAsset::register($this);
                         </ul>
                     </li>
                     
-                    <li><a href="<?= Url::to(['/csv/index']); ?>"><i class="fa fa-cloud-upload"></i> &nbsp;&nbsp;&nbsp;&nbsp;CSV </a>
-                        
-                    <li>
-                      <a><i class="fa fa-connectdevelop"></i> Push Notification <span class="fa fa-chevron-down"></span></a>
-                      <ul class="nav child_menu" >
-                            <li><a href="javascript:void(0)"><i class="fa fa-pencil-square-o"></i>Create Notification</a></li>
-                            <li><a href="<?= Url::to(['/notification/index']) ?>"><i class="fa fa-list-alt"></i>List Notification</a></li>
-                      </ul>
-                    </li>
+                    <li><a href="<?= Url::to(['/csv/index']); ?>"><i class="fa fa-cloud-upload"></i> &nbsp;CSV </a>
+                    <li><a href="<?= Url::to(['/notification/index']) ?>"><i class="fa fa-connectdevelop"></i> &nbsp;Push Notification</a></li>
                 </ul>
               </div>
             </div>
@@ -106,7 +99,6 @@ AppAsset::register($this);
                             <span class=" fa fa-angle-down"></span>
                           </a>
                           <ul class="dropdown-menu dropdown-usermenu pull-right">
-                            <li><a href="javascript:;"> Profile</a></li>
                             <li><a href="<?= Url::to(['/site/logout']) ?>" class=""><i class="fa fa-sign-out pull-right"></i>Log Out</a></li>
                           </ul>
                         </li>

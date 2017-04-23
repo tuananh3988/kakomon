@@ -17,8 +17,6 @@ $(document).ready(function () {
         //        scrollTop: $('#'+idCat).offset().top
         //    }, 2000);
     }
-    
-    
 });
 $(".select_cat > span > a").click(function (event) {
     event.preventDefault();
@@ -42,7 +40,7 @@ $(".select_cat > span > a").click(function (event) {
                 $('#id-parent').val(data.data.id);
                 $('#level').val(data.data.level);
                 $('.kv-detail-crumbs').html(data.data.breadcrumbs);
-                if (data.data.level == 4) {
+                if (data.data.level == 3) {
                     $('#add-sub-cat').attr('disabled', 'disabled');
                 } else {
                     $('#add-sub-cat').removeAttr('disabled');
