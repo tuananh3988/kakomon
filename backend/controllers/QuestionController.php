@@ -133,7 +133,7 @@ class QuestionController extends Controller {
             $dataPost = $request->Post();
             $question->addQuiz($dataPost, $answer, $flag);
         }
-        //var_dump($question);die;
+        
         return $this->render('save', [
             'rootCat' => $rootCat,
             'question' => $question,

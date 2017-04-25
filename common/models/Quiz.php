@@ -31,6 +31,7 @@ use common\models\Notification;
  */
 class Quiz extends \yii\db\ActiveRecord
 {
+    public $file;
     public $question_img;
     public $remove_img_question_flg;
     public $quiz_answer1;
@@ -157,7 +158,7 @@ class Quiz extends \yii\db\ActiveRecord
     public function extraFields()
     {
         return ['question_img', 'quiz_year', 'quiz_number', 'test_times', 'answer', 'remove_img_question_flg', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4',
-            'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8'];
+            'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'file'];
     }
     
     /*
@@ -210,8 +211,14 @@ class Quiz extends \yii\db\ActiveRecord
             if ($flag == 1){
                 $idQuiz = $this->quiz_id;
             }
-            
-            if ($this->validate() && $this->validateAnswer($dataPost, $answer, $flag, $idQuiz)) {
+            $flagValidateImages = true;
+            for ($i = 1; $i <= 8; $i++) {
+                if (!$answer['answer'.$i]->validate()) {
+                    $flagValidateImages = false;
+                    break;
+                }
+            }
+            if ($this->validate() && $flagValidateImages && $this->validateAnswer($dataPost, $answer, $flag, $idQuiz)) {
                 $utility = new Utility();
                 //insert table quiz
                 $this->type = $type;
@@ -312,9 +319,8 @@ class Quiz extends \yii\db\ActiveRecord
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'quiz_year' => SORT_DESC,
-                    
                     'quiz_id' => SORT_DESC,
+                    'quiz_year' => SORT_DESC,
                     'category_main_id' => SORT_DESC,
                     'category_a_id' => SORT_DESC,
                     'category_b_id' => SORT_DESC,
@@ -322,13 +328,13 @@ class Quiz extends \yii\db\ActiveRecord
                 ]
             ],
         ]);
-        $dataProvider->sort->attributes['quiz_year'] = [
-            'desc' => ['quiz.quiz_year' => SORT_DESC],
-            'asc' => ['quiz.quiz_year' => SORT_ASC],
-        ];
         $dataProvider->sort->attributes['quiz_id'] = [
             'desc' => ['quiz.quiz_id' => SORT_DESC],
             'asc' => ['quiz.quiz_id' => SORT_ASC],
+        ];
+        $dataProvider->sort->attributes['quiz_year'] = [
+            'desc' => ['quiz.quiz_year' => SORT_DESC],
+            'asc' => ['quiz.quiz_year' => SORT_ASC],
         ];
         $dataProvider->sort->attributes['category_main_id'] = [
             'desc' => ['quiz.category_main_id' => SORT_DESC],

@@ -52,7 +52,7 @@ class Answer extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['quiz_id'], 'required'],
+            //[['quiz_id'], 'required'],
             [['quiz_id', 'order'], 'integer'],
             [['content'], 'string'],
             [['created_date', 'updated_date'], 'safe'],

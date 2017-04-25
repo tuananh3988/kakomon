@@ -97,3 +97,31 @@ $('#delete-cat').click(function() {
 function submitformDeleteCat(){
     $('form#form').submit();
 }
+
+$('#quiz-question_img').on('filecleared', function(event) {
+    $('#quiz-remove_img_question_flg').val('1');
+});
+$('#answer-answer1-answer_img').on('filecleared', function(event) {
+    $('#answer-answer1-remove_img_flg').val('1');
+});
+$('#answer-answer2-answer_img').on('filecleared', function(event) {
+    $('#answer-answer2-remove_img_flg').val('1');
+});
+$('#answer-answer3-answer_img').on('filecleared', function(event) {
+    $('#answer-answer3-remove_img_flg').val('1');
+});
+$('#answer-answer4-answer_img').on('filecleared', function(event) {
+    $('#answer-answer4-remove_img_flg').val('1');
+});
+$('#answer-answer5-answer_img').on('filecleared', function(event) {
+    $('#answer-answer5-remove_img_flg').val('1');
+});
+$('#answer-answer6-answer_img').on('filecleared', function(event) {
+    $('#answer-answer6-remove_img_flg').val('1');
+});
+$('#answer-answer7-answer_img').on('filecleared', function(event) {
+    $('#answer-answer7-remove_img_flg').val('1');
+});
+$('#answer-answer8-answer_img').on('filecleared', function(event) {
+    $('#answer-answer8-remove_img_flg').val('1');
+});

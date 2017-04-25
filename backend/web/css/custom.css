@@ -2,8 +2,13 @@
     min-height: 250px;
     overflow: hidden;
 }
-
-//category detail
+.input-group-btn button{
+    margin-bottom: 5px;
+    margin-right: 0px;
+}
+.file-preview .close.fileinput-remove, .file-actions button.kv-file-remove, .file-thumbnail-footer span.text-info, .file-thumbnail-footer div.file-upload-indicator{
+    display: none;
+}
 .nav-md .main_container .kv-detail-container{
     min-height: 250px;
     overflow: hidden;

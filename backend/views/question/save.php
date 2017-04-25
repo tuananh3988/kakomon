@@ -7,6 +7,7 @@ use common\models\Quiz;
 use common\models\Category;
 use common\components\Utility;
 use dosamigos\tinymce\TinyMce;
+use kartik\file\FileInput;
 
 $this->title = 'Add Question!';
 $subCat1 = [];
@@ -36,6 +37,7 @@ if ($question->category_b_id) {
             <div class="x_panel">
                 <div class="x_content">
                     <?php $form = ActiveForm::begin(['options' => ['class' => 'form-horizontal form-label-left', 'role' => 'form']]); ?>
+                    <?= $form->field($question, 'file')->fileInput(['style' => 'display: none'])->label(''); ?>
                     <div class="form-group"> 
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Category</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
@@ -95,28 +97,39 @@ if ($question->category_b_id) {
                         </div>
                         
                     </div>
-                    
+                    <?php $img = '';?>
                     <?php if ($flag == 1) : ?>
-                    <?php $img = Utility::getImage('question', $question->quiz_id);?>
-                        <?php if ($img) : ?>
-                            <div class="form-group detail-img" id="img-question">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
-                                <div class="col-md-9 col-sm-9 col-xs-12 img-answer">
-                                    <a href="<?= $img ?>" class="group1"><img src="<?= $img ?>" class="avatar" style="max-width: 100px;"/></a><br/>
-                                    <a href="javascript:void(0)" class="remove" onclick="removeImgQuestion()"><i class="glyphicon glyphicon-trash"></i>&nbsp;</a>
-                                </div>
-                            </div>
-                        <?php endif;?>
-                    <?= $form->field($question, 'remove_img_question_flg')->hiddenInput()->label(false);?>
+                    <?php $img = Utility::getImage('question', $question->quiz_id, null, true);?>
                     <?php endif;?>
-                    
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Question Img</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($question, 'question_img')->fileInput()->label(false) ?>
+                            <?= $form->field($question, 'question_img')->widget(FileInput::classname(), ['options' => ['accept' => 'image/*'],
+                                'pluginOptions' => [
+                                        'showCaption' => true,
+                                        'showRemove' => true,
+                                        'showUpload' => false,
+                                        'browseClass' => 'btn btn-primary btn-file',
+                                        'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+                                        //'allowedFileExtensions' => ['jpg','gif','png'],
+                                        'overwriteInitial' => true,
+                                        'initialPreview' => [
+                                            ($img) ? Html::img("/".$img, ['class'=>'file-preview-image', 'alt'=>'', 'title'=>'']) : null
+                                        ],
+                                        'initialPreviewConfig' => [
+                                            ['caption' => ($img) ? basename("/".$img).PHP_EOL : NULL],
+                                        ],
+                                        'initialCaption' => ($img) ? basename("/".$img).PHP_EOL : NULL,
+                                        
+                                        'pluginEvents' => [
+                                            "fileclear" => "function() {console.log('212121')}",
+                                            "filereset" => "function() {console.log('12dsds')}",
+                                        ]
+                                    ]])->label(FALSE) ?>
                         </div>
+                        <?= $form->field($question, 'remove_img_question_flg')->hiddenInput()->label(false);?>
                     </div>
-
+                    
                     <?php for ($i= 1; $i <= 8; $i++) : ?>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer <?= $i;?></label>
@@ -136,24 +149,32 @@ if ($question->category_b_id) {
                         </div>
                     </div>
                     
+                    <?php $img = '';?>
                     <?php if ($flag == 1) : ?>
-                    <?php $img = Utility::getImage('answer', $question->quiz_id, $i);?>
-                        <?php if ($img) : ?>
-                        <div class="form-group detail-img" id="img-ans-<?=$i?>">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">&nbsp;</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12 img-answer">
-                                <a href="<?= $img ?>" class="group1"><img src="<?= $img ?>" class="avatar" style="max-width: 100px;"/></a>
-                                <a href="javascript:void(0)" class="remove" onclick="removeImgAns(<?=$i?>)"><i class="glyphicon glyphicon-trash"></i>&nbsp;</a>
-                            </div>
-                        </div>
-                        <?php endif;?>
+                    <?php $img = Utility::getImage('answer', $question->quiz_id, $i, true);?>
                     <?php endif;?>
-                    <?= $form->field($answer['answer'.$i], '[answer'.$i.']remove_img_flg')->hiddenInput()->label(false);?>
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Answer <?= $i; ?> Img</label>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <?= $form->field($answer['answer'.$i], '[answer'.$i.']answer_img')->fileInput()->label(false) ?>
+                            <?= $form->field($answer['answer'.$i], '[answer'.$i.']answer_img')->widget(FileInput::classname(), ['options' => ['accept' => 'image/*'],
+                                'pluginOptions' => [
+                                        'showCaption' => true,
+                                        'showRemove' => true,
+                                        'showUpload' => false,
+                                        'browseClass' => 'btn btn-primary btn-file ans-images',
+                                        'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+                                        //'allowedFileExtensions' => ['jpg','jpeg','png'],
+                                        'overwriteInitial' => true,
+                                        'initialPreview' => [
+                                            ($img) ? Html::img("/".$img, ['class'=>'file-preview-image', 'alt'=> '', 'title'=> '']) : null
+                                        ],
+                                        'initialPreviewConfig' => [
+                                            ['caption' => ($img) ? basename("/".$img).PHP_EOL : NULL],
+                                        ],
+                                        'initialCaption' => ($img) ? basename("/".$img).PHP_EOL : NULL,
+                                    ]])->label(FALSE) ?>
                         </div>
+                        <?= $form->field($answer['answer'.$i], '[answer'.$i.']remove_img_flg')->hiddenInput()->label(false);?>
                     </div>
                     
                     <?php endfor;?>
