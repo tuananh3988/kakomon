@@ -45,7 +45,7 @@ class FormImportCSV extends \yii\db\ActiveRecord
     public function saveData($data, $fileName, $flagFolder)
     {
         //insert main category
-        $mainCatName = trim($data[5]);
+        $mainCatName = !empty($data[5]) ? trim($data[5]) : null;
         if (empty($mainCatName)) {
             return FALSE;
         } else {
