@@ -18,7 +18,7 @@ class CsvController extends \yii\console\Controller
         $error = [];
         if (count($listLogCsv) > 0) {
             foreach ($listLogCsv as $key => $value) {
-                $lineErrors = 0;
+                $lineErrors = 1;
                 $messageErrors = [];
                 $fileName = $value->file_name.'.csv';
                 $dataLog = $modelLogCsv->findOne(['log_id' => $value->log_id]);
@@ -48,7 +48,7 @@ class CsvController extends \yii\console\Controller
                 }
                 //read and insert file csv
                 $handle = fopen(Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['csvUpload']['process'] . $fileName, "r");
-                while (($fileop = fgetcsv($handle, 1000, ",")) !== false) {
+                while (($fileop = fgetcsv($handle, 0, ",")) !== false) {
                     if ($fileop[0] != 'year') {
                         $lineErrors++;
                         if (!$model->saveData($fileop, $value->file_name, $flagFolder)) {
