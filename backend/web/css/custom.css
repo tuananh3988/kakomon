@@ -114,3 +114,7 @@ span.fa{
 .table.table-striped.table-bordered.table-csv tbody tr{
     cursor: default;
 }
+.kv-preview-thumb .kv-file-content{
+    max-width: 100%;
+    height: auto;
+}
