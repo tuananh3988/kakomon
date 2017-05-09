@@ -172,7 +172,7 @@ class ActivityApi extends \yii\db\ActiveRecord
     
     public function getListActivityForMember($limit, $offset ,$flag = false){
         $query = new \yii\db\Query();
-        $query->select(['activity.*', 'quiz.question', 'quiz.category_main_id', 'main_category.name as main_name',
+        $query->select(['activity.*', 'quiz.question', 'quiz.quiz_id as quizId','quiz.category_main_id', 'main_category.name as main_name',
             'sub_category.name as sub_name', 'quiz.category_a_id', 'member.name as name_member', 'activity_sumary_like.total AS total_like', 'activity_sumary_dis_like.total AS total_dis_like', 
             'activity_is_like.activity_id AS isLike', 'activity_is_dis_like.activity_id AS isDisLike'])
                 ->from('activity');

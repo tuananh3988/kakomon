@@ -70,6 +70,11 @@ class ExamController extends Controller
         }
         
         $examDetail = Exam::findOne(['exam_id' => $modelExam->exam_id]);
+        $listQuiz = $modelExam->getListQuizIdByExam();
+        $dataQuiz = [];
+        foreach ($listQuiz as $key => $value) {
+            $dataQuiz[] = $value['quiz_id'];
+        }
         return [
             'status' => 200,
             'data' => [
@@ -79,7 +84,8 @@ class ExamController extends Controller
                 'total_quiz' => (int) $examDetail->total_quiz,
                 'start_date' => $examDetail->start_date,
                 'end_date' => $examDetail->end_date,
-                'created_date' => $examDetail->created_date
+                'created_date' => $examDetail->created_date,
+                'data_quiz' => $dataQuiz
             ]
             
         ];

@@ -763,6 +763,8 @@ class ActivityController extends Controller
                 'sub_category_id' => ($value['category_a_id']) ? (int)$value['category_a_id'] : null,
                 'sub_category_name' => $value['sub_name'],
                 'type' => (int)$value['type'],
+                'quiz_id' =>  (int)$value['quizId'],
+                'activity_id' => (int)$value['activity_id'],
                 'member_name' => (!in_array($value['type'], $listLikeAndDisLike)) ? $value['name_member'] : Activity::getInforNameByActivity($value['activity_id']),
                 'content' => (!in_array($value['type'], $listLikeAndDisLike)) ? $value['content'] : Activity::getInforContentByActivity($value['activity_id']),
                 'total_like' => (!in_array($value['type'], $listLikeAndDisLike)) ? (int)$value['total_like'] : Activity::getInforTotalLikeOrDisLikeByActivity($value['activity_id'], ActivitySumary::TYPE_LIKE),

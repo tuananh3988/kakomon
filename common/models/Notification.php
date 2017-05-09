@@ -145,7 +145,9 @@ class Notification extends \yii\db\ActiveRecord
                             'avatar' => Utility::getImage('member', $activity['member_id'], null, true),
                             'quiz_id' => (int)$activity['quiz_id'],
                             'content' => $activity['content'],
-                            'title' => $activity['name'] . 'さんから「いいね！」GET!' . $activity['total'],
+                            'member_name' => $activity['name'],
+                            'total_like' => $activity['total'],
+                            //'title' => $activity['name'] . 'さんから「いいね！」GET!' . $activity['total'],
                             'created_date' => $value['created_date']
                         ];
                         break;
@@ -158,7 +160,8 @@ class Notification extends \yii\db\ActiveRecord
                             'avatar' => Utility::getImage('member', $reply['member_id'], null, true),
                             'quiz_id' => (int)$reply['quiz_id'],
                             'content' => $reply['content'],
-                            'title' => $reply['name'] . 'さんから「いいね！」GET!',
+                            'member_name' => $reply['name'],
+                            //'title' => $reply['name'] . 'さんから「いいね！」GET!',
                             'created_date' => $value['created_date']
                         ];
                         break;
@@ -171,7 +174,8 @@ class Notification extends \yii\db\ActiveRecord
                             'avatar' => Utility::getImage('member', $follow['member_id'], null, true),
                             'quiz_id' => null,
                             'content' => null,
-                            'title' => $follow['name'] . 'さんからフォローされました。',
+                            'member_name' => $follow['name'],
+                            //'title' => $follow['name'] . 'さんからフォローされました。',
                             'created_date' => $value['created_date']
                         ];
                         break;
