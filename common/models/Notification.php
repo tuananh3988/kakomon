@@ -196,6 +196,7 @@ class Notification extends \yii\db\ActiveRecord
                         $exam = Exam::getInforNotification($value['related_id']);
                         $listData[] = [
                             'type' => (int)$value['type'],
+                            'exam_id' => (int)$value['related_id'],
                             'activity_id' => null,
                             'member_id' => null,
                             'avatar' => null,
