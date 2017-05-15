@@ -202,7 +202,8 @@ class Notification extends \yii\db\ActiveRecord
                             'avatar' => null,
                             'quiz_id' => null,
                             'content' => $exam['name'],
-                            'title' => date("Y-m-d H:i", strtotime($exam['start_date'])) . ' ' . $exam['name'] . '<br/>これを逃すと、もうできない！ ',
+                            'start_date' => $exam['start_date'],
+                            'title' => $exam['name'] . 'これを逃すと、もうできない！ ',
                             'created_date' => $value['created_date']
                         ];
                         break;
