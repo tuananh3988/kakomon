@@ -293,7 +293,7 @@ class QuizController extends Controller
                 ];
         }
         
-        $quizDetail = Quiz::find()->where(['quiz_id' => $modelQuiz->quiz_id, 'type' => Quiz::TYPE_NORMAL, 'delete_flag' => Quiz::QUIZ_ACTIVE])->one();
+        $quizDetail = Quiz::find()->where(['quiz_id' => $modelQuiz->quiz_id, 'type' => $modelQuiz->type, 'delete_flag' => Quiz::QUIZ_ACTIVE])->one();
         if (!$quizDetail) {
             return [
                 'status' => 204,

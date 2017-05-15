@@ -44,8 +44,8 @@ class Question extends \yii\db\ActiveRecord
         return [
             [['quiz_class'], 'required', 'on' => self::SCENARIO_LIST_QUIZ],
             [['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search'], 'validateType', 'on' => self::SCENARIO_LIST_QUIZ],
-            [['quiz_id'], 'required', 'on' => self::SCENARIO_DETAIL_QUIZ],
-            [['quiz_class', 'quiz_id', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
+            [['quiz_id', 'type'], 'required', 'on' => self::SCENARIO_DETAIL_QUIZ],
+            [['quiz_class', 'quiz_id', 'type', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
         ];
     }
     
