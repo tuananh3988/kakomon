@@ -30,7 +30,8 @@ class Ans extends \yii\db\ActiveRecord
     public $type_ans;
     
     const TYPE_ANS_DEFAULT = 1;
-    const TYPE_ANS_EXAM = 2;
+    const TYPE_ANS_QUICK_QUIZ = 2;
+    const TYPE_ANS_EXAM = 3;
 
     /**
      * @inheritdoc
@@ -118,6 +119,9 @@ class Ans extends \yii\db\ActiveRecord
     {
         if (!$this->hasErrors()) {
             $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_NORMAL]);
+            if ($this->type_ans == self::TYPE_ANS_QUICK_QUIZ) {
+                $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_QUICK_QUIZ]);
+            }
             if ($this->type_ans == self::TYPE_ANS_EXAM) {
                 $quizDetail = Quiz::findOne(['quiz_id' => $this->$attribute, 'delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_COLLECT]);
             }
