@@ -122,7 +122,7 @@ class Question extends \yii\db\ActiveRecord
                 case 4:
                         $listQuiz = $this->getListQuizCorrectAndIncorrect();
                         if (!is_null($listQuiz)) {
-                            $sql .= ' WHERE `quiz`.`quiz_id` NOT IN '. $listQuiz;
+                            $sql .= ' WHERE `quiz`.`quiz_id` NOT IN '. $listQuiz . ' AND ';
                         } else {
                             $sql .= ' WHERE ';
                         }
