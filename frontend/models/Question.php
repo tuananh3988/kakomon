@@ -123,12 +123,14 @@ class Question extends \yii\db\ActiveRecord
                         $listQuiz = $this->getListQuizCorrectAndIncorrect();
                         if (!is_null($listQuiz)) {
                             $sql .= ' WHERE `quiz`.`quiz_id` NOT IN '. $listQuiz;
+                        } else {
+                            $sql .= ' WHERE ';
                         }
                         break;
                 default :
             }
             if ($type == 4) {
-                $sql .= ' AND `quiz`.`delete_flag` = '. Quiz::QUIZ_ACTIVE;
+                $sql .= ' `quiz`.`delete_flag` = '. Quiz::QUIZ_ACTIVE;
             } else {
                 $sql .= ' WHERE `quiz`.`delete_flag` = '. Quiz::QUIZ_ACTIVE;
             }
