@@ -25,6 +25,13 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['info_post'],
+                    'logFile' => '@app/runtime/logs/info_post.log',
+                    'logVars' => ['_POST'],
+                ],
             ],
         ],
         'errorHandler' => [

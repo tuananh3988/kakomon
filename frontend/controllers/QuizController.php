@@ -524,6 +524,7 @@ class QuizController extends Controller
     public function actionAddQuestion() {
         $request = Yii::$app->request;
         $dataPost = $request->post();
+        Yii::info('info_post:' . serialize($dataPost), 'info_post');
         var_dump($dataPost);die;
         $modelAns = new Ans();
         $modelAns->setAttributes($dataPost);
