@@ -30,7 +30,7 @@ return [
                     'levels' => ['info'],
                     'categories' => ['info_post'],
                     'logFile' => '@app/runtime/logs/info_post.log',
-                    'logVars' => ['_POST'],
+                    'logVars' => ['_POST', '_FILES'],
                 ],
             ],
         ],
