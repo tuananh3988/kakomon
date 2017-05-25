@@ -4,12 +4,15 @@ namespace frontend\models;
 
 use Yii;
 use yii\base\Model;
+use yii\web\UploadedFile;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use common\models\MemberQuizHistory;
 use common\models\Quiz;
+use common\models\Answer;
 use common\models\MemberQuizSearchHistory;
 use common\models\MemberQuizActivity;
+use common\components\Utility;
 /**
  * ContactForm is the model behind the contact form.
  */
@@ -20,6 +23,41 @@ class Question extends \yii\db\ActiveRecord
     public $category_a_search;
     public $category_b_search;
     public $quiz_year_search;
+    
+    public $question;
+    public $category_main_id;
+    public $category_a_id;
+    public $category_b_id;
+    public $answer1_content;
+    public $answer2_content;
+    public $answer3_content;
+    public $answer4_content;
+    public $answer5_content;
+    public $answer6_content;
+    public $answer7_content;
+    public $answer8_content;
+    public $quiz_answer1;
+    public $quiz_answer2;
+    public $quiz_answer3;
+    public $quiz_answer4;
+    public $quiz_answer5;
+    public $quiz_answer6;
+    public $quiz_answer7;
+    public $quiz_answer8;
+    public $quiz_number;
+    public $quiz_year;
+    public $test_times;
+    
+    //images
+    public $question_img;
+    public $answer1_img;
+    public $answer2_img;
+    public $answer3_img;
+    public $answer4_img;
+    public $answer5_img;
+    public $answer6_img;
+    public $answer7_img;
+    public $answer8_img;
 
     const TYPE_ALL = 1;
     const TYPE_RIGHT = 2;
@@ -28,6 +66,7 @@ class Question extends \yii\db\ActiveRecord
     
     const SCENARIO_LIST_QUIZ = 'list';
     const SCENARIO_DETAIL_QUIZ = 'detail';
+    const SCENARIO_ADD_QUIZ = 'add';
     /**
      * @inheritdoc
      */
@@ -46,6 +85,9 @@ class Question extends \yii\db\ActiveRecord
             [['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search'], 'validateType', 'on' => self::SCENARIO_LIST_QUIZ],
             [['quiz_id', 'type'], 'required', 'on' => self::SCENARIO_DETAIL_QUIZ],
             [['quiz_class', 'quiz_id', 'type', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
+            //add question
+            [['question'], 'required', 'on' => self::SCENARIO_ADD_QUIZ],
+            [['type', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'test_times', 'quiz_number'], 'integer',  'on' => self::SCENARIO_ADD_QUIZ],
         ];
     }
     
@@ -77,7 +119,43 @@ class Question extends \yii\db\ActiveRecord
      */
     public function extraFields()
     {
-        return ['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search'];
+        return ['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search', 'question', 'category_main_id',
+            'category_a_id', 'category_b_id', 'answer1_content', 'answer2_content', 'answer3_content', 'answer4_content', 'answer5_content',
+            'answer6_content', 'answer7_content', 'answer8_content', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'quiz_answer5',
+            'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'quiz_number', 'quiz_number', 'quiz_year', 'quiz_year', 'test_times'];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'quiz_id' => 'Quiz ID',
+            'type' => 'Type',
+            'question' => 'Question',
+            'category_main_id' => 'Category Id 1',
+            'category_a_id' => 'Category Id 2',
+            'category_b_id' => 'Category Id 3',
+            'answer_id' => 'Answer',
+            'quiz_year' => 'Quiz Year',
+            'quiz_number' => 'Quiz Number',
+            'quiz_answer' => 'Quiz Answer',
+            'test_times' => 'Test Times',
+            'staff_create' => 'Staff Create',
+            'delete_flag' => 'Delete Flag',
+            'created_date' => 'Created Date',
+            'updated_date' => 'Updated Date',
+            'question_img' => 'Question Img',
+            'quiz_answer1' => 'Quiz Answer1',
+            'quiz_answer2' => 'Quiz Answer2',
+            'quiz_answer3' => 'Quiz Answer3',
+            'quiz_answer4' => 'Quiz Answer4',
+            'quiz_answer5' => 'Quiz Answer5',
+            'quiz_answer6' => 'Quiz Answer6',
+            'quiz_answer7' => 'Quiz Answer7',
+            'quiz_answer8' => 'Quiz Answer8',
+        ];
     }
     
      /*
@@ -93,6 +171,47 @@ class Question extends \yii\db\ActiveRecord
                 $this->addError($attribute, 'Data must be an array');
             }
         }
+    }
+    
+    /*
+     * Validate Answer
+     * 
+     * Auth :
+     * Create : 15-02-2017
+     */
+    public function validateAnswer($fileUpload)
+    {
+        for($i = 1 ; $i <= Quiz::MAX_ANS; $i++) {
+            $keyAnswer = 'answer' . $i . '_content';
+            $keyAnswerImg = 'answer' . $i . '_img';
+            $keyQuizAnswer = 'quiz_answer' . $i;
+            if (($this->$keyQuizAnswer == 1) && (empty($this->$keyAnswer)) && (count($fileUpload) > 0 && empty($fileUpload[$keyAnswerImg]) || count($fileUpload) == 0)) {
+                $this->addError('answer', \Yii::t('app', 'Answer not map!'));
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+    
+    /*
+     * Validate extension file
+     * 
+     * Auth :
+     * Create : 15-02-2017
+     */
+    public function validateExtensions($fileUpload){
+        if ((count($fileUpload) > 0 && !empty($fileUpload['question_img'])) && !in_array(pathinfo($fileUpload['question_img']['name'], PATHINFO_EXTENSION), ['png', 'jpg', 'jpeg'])) {
+            $this->addError('question_img', \Yii::t('app', 'Only files with these extensions are allowed: png, jpg, jpeg.!'));
+            return FALSE;
+        }
+        for($i = 1 ; $i <= Quiz::MAX_ANS; $i++) {
+            $keyAnswerImg = 'answer' . $i . '_img';
+            if ((count($fileUpload) > 0 && !empty($fileUpload[$keyAnswerImg])) && !in_array(pathinfo($fileUpload[$keyAnswerImg]['name'], PATHINFO_EXTENSION), ['png', 'jpg', 'jpeg'])) {
+                $this->addError($keyAnswerImg, \Yii::t('app', 'Only files with these extensions are allowed: png, jpg, jpeg.!'));
+                return FALSE;
+            }
+        }
+        return TRUE;
     }
     
     /*
@@ -245,5 +364,75 @@ class Question extends \yii\db\ActiveRecord
             $dataReturn .= ')';
         }
         return $dataReturn;
+    }
+    
+    /*
+     * save question
+     * 
+     * Auth : 
+     * Created : 25/05/2017
+     */
+    public function saveQuestion($fileUpload){
+        $transaction = \yii::$app->getDb()->beginTransaction();
+        try {
+            $utility = new Utility();
+            $quiz = new Quiz();
+            $quiz->type = Quiz::TYPE_COLLECT;
+            $quiz->question = $this->question;
+            $quiz->category_main_id = $this->category_main_id;
+            $quiz->category_a_id = $this->category_a_id;
+            $quiz->category_b_id = $this->category_b_id;
+            $quiz->quiz_year = $this->quiz_year;
+            $quiz->test_times = $this->test_times;
+            $quiz->quiz_answer = $this->renderQuizAnswerForApi();
+            $quiz->quiz_answer = $this->quiz_answer;
+            $quiz->staff_create = Yii::$app->user->identity->member_id;
+            $quiz->save();
+            //upload image question
+            
+            if (count($fileUpload) > 0 && !empty($fileUpload['question_img'])) {
+                $utility->uploadImagesQuizForApi($fileUpload, 'question', 'question_img' , $quiz->quiz_id);
+            }
+            
+            for($i = 1 ; $i <= Quiz::MAX_ANS; $i++) {
+                $keyAnswer = 'answer' . $i . '_content';
+                $keyAnswerImg = 'answer' . $i . '_img';
+                if (($this->$keyAnswer) || (count($fileUpload) > 0 && !empty($fileUpload[$keyAnswerImg]))) {
+                    $modelAnswer = new Answer();
+                    $modelAnswer->quiz_id = $quiz->quiz_id;
+                    $modelAnswer->content = $this->$keyAnswer;
+                    $modelAnswer->order = $i;
+                    $modelAnswer->save();
+                }
+                //upload images ans
+                if (count($fileUpload) > 0 && !empty($fileUpload[$keyAnswerImg])) {
+                    $utility->uploadImagesQuizForApi($fileUpload, 'answer', $keyAnswerImg , $quiz->quiz_id, $i);
+                }
+            }
+            $transaction->commit();
+            return $quiz->quiz_id;
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+            return false;
+        }
+    }
+    
+    /*
+     * render quiz answer
+     * 
+     * Auth : 
+     * Create : 28-02-2017
+     */
+    
+    public function renderQuizAnswerForApi()
+    {
+        $dataQuizAnswer = Quiz::QUIZ_ANSWER;
+        for ($i = 1; $i <= 8; $i++) {
+            $keyquiz_answer = 'quiz_answer' . $i;
+            if ($this->$keyquiz_answer == 1) {
+                $dataQuizAnswer = substr_replace($dataQuizAnswer, '1', ($i-1), 1);
+            }
+        }
+        return $dataQuizAnswer;
     }
 }

@@ -524,15 +524,30 @@ class QuizController extends Controller
     public function actionAddQuestion() {
         $request = Yii::$app->request;
         $dataPost = $request->post();
-        Yii::info('info_post:' . serialize($dataPost), 'info_post');
-        var_dump($dataPost);die;
-        $modelAns = new Ans();
-        $modelAns->setAttributes($dataPost);
-        if (!$modelAns->validate()) {
+        $modelQuestion = new Question();
+        $fileUpload = $_FILES;
+        $modelQuestion->setAttributes($dataPost);
+        $modelQuestion->scenario  = Question::SCENARIO_ADD_QUIZ;
+        //check validate
+        if ($modelQuestion->validate() && $modelQuestion->validateAnswer($fileUpload) && $modelQuestion->validateExtensions($fileUpload)) {
+            //update data
+            $quiz_id = $modelQuestion->saveQuestion($fileUpload);
+            if (!$quiz_id) {
+                throw new \yii\base\Exception( "System error" );
+
+            }
             return [
-                    'status' => 400,
-                    'messages' => $modelAns->errors
-                ];
+                'status' => 200,
+                'data' => [
+                        'quiz_id' => $quiz_id
+                ]
+            ];
+        } else {
+            return [
+                'status' => 400,
+                'messages' => $modelQuestion->errors
+            ];
         }
+        
     }
 }

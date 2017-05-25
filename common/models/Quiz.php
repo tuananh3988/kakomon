@@ -58,6 +58,8 @@ class Quiz extends \yii\db\ActiveRecord
     
     const QUIZ_ACTIVE = 0;
     const QUIZ_DELETED = 1;
+    
+    const MAX_ANS = 8;
     /**
      * @inheritdoc
      */

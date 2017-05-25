@@ -80,7 +80,6 @@ class ExamQuiz extends \yii\db\ActiveRecord
         $examQuiz = ExamQuiz::find()->where(['exam_id' => $this->$attribute, 'quiz_id' => $this->quiz_id])->one();
         $totalExam = Exam::findOne(['exam_id' => $this->$attribute]);
         if (!is_null($examQuiz)) {
-            die('2121');
             $this->addError($attribute, \Yii::t('app', 'This question was added to the test!'));
         }
         if ($totalExam->total_quiz == $totalQuiz) {

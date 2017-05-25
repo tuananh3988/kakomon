@@ -186,6 +186,30 @@ class Utility extends Component
     }
     
     /*
+     * upload image for api
+     * 
+     * Auth :
+     * Create : 09-03-2017
+     */
+    
+    public function uploadImagesQuizForApi($infoImages, $type, $key, $idParent, $id = null){
+        $dirParent = Url::to(Yii::$app->params['imgPath']) . 'uploads';
+        if (!is_dir($dirParent)) {
+            mkdir($dirParent, 0777);
+        }
+        $dir = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type];
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777);
+        }
+        $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '.jpg';
+        if ($id) {
+            $path = Url::to(Yii::$app->params['imgPath']) . Yii::$app->params['imgUpload'][$type] . $type .'_' . $idParent. '_' . $id . '.jpg';
+        }
+        
+        move_uploaded_file($infoImages[$key]["tmp_name"], $path);
+    }
+    
+    /*
      * upload csv
      * 
      * Auth :
