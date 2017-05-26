@@ -529,7 +529,8 @@ class QuizController extends Controller
         $modelQuestion->setAttributes($dataPost);
         $modelQuestion->scenario  = Question::SCENARIO_ADD_QUIZ;
         //check validate
-        if ($modelQuestion->validate() && $modelQuestion->validateAnswer($fileUpload) && $modelQuestion->validateExtensions($fileUpload)) {
+        if ($modelQuestion->validate() && $modelQuestion->validateAnswer($fileUpload)
+                && $modelQuestion->validateExtensions($fileUpload) && $modelQuestion->validateRequireAnswer($fileUpload)) {
             //update data
             $quiz_id = $modelQuestion->saveQuestion($fileUpload);
             if (!$quiz_id) {

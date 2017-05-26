@@ -36,6 +36,7 @@ class Question extends \yii\db\ActiveRecord
     public $answer6_content;
     public $answer7_content;
     public $answer8_content;
+    public $quiz_answer;
     public $quiz_answer1;
     public $quiz_answer2;
     public $quiz_answer3;
@@ -122,7 +123,7 @@ class Question extends \yii\db\ActiveRecord
         return ['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search', 'question', 'category_main_id',
             'category_a_id', 'category_b_id', 'answer1_content', 'answer2_content', 'answer3_content', 'answer4_content', 'answer5_content',
             'answer6_content', 'answer7_content', 'answer8_content', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'quiz_answer5',
-            'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'quiz_number', 'quiz_number', 'quiz_year', 'quiz_year', 'test_times'];
+            'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'quiz_number', 'quiz_number', 'quiz_year', 'quiz_year', 'test_times', 'quiz_answer'];
     }
     
     /**
@@ -177,7 +178,7 @@ class Question extends \yii\db\ActiveRecord
      * Validate Answer
      * 
      * Auth :
-     * Create : 15-02-2017
+     * Create : 26/05/2017
      */
     public function validateAnswer($fileUpload)
     {
@@ -191,6 +192,30 @@ class Question extends \yii\db\ActiveRecord
             }
         }
         return TRUE;
+    }
+    
+    /*
+     * Validate require answer
+     * 
+     * Auth :
+     * Created : 26/05/2017
+     */
+    public function validateRequireAnswer($fileUpload)
+    {
+        $flag = FALSE;
+        for($i = 1 ; $i <= Quiz::MAX_ANS; $i++) {
+            $keyQuizAnswer = 'quiz_answer' . $i;
+            if ($this->$keyQuizAnswer == 1) {
+                $flag = TRUE;
+                break;
+            }
+        }
+        if ($flag) {
+            return TRUE;
+        } else {
+            $this->addError('answer', \Yii::t('app', 'Answer require!'));
+            return FALSE;
+        }
     }
     
     /*
@@ -384,8 +409,8 @@ class Question extends \yii\db\ActiveRecord
             $quiz->category_b_id = $this->category_b_id;
             $quiz->quiz_year = $this->quiz_year;
             $quiz->test_times = $this->test_times;
+            $quiz->quiz_number = $this->quiz_number;
             $quiz->quiz_answer = $this->renderQuizAnswerForApi();
-            $quiz->quiz_answer = $this->quiz_answer;
             $quiz->staff_create = Yii::$app->user->identity->member_id;
             $quiz->save();
             //upload image question
