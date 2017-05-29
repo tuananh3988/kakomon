@@ -216,7 +216,7 @@ class Notification extends \yii\db\ActiveRecord
                             'member_id' => null,
                             'avatar' => null,
                             'quiz_id' => null,
-                            'status' => $exam['status'],
+                            'status' => (int)$exam['status'],
                             'content' => $exam['exam_desc'],
                             'start_date' => $exam['start_date'],
                             'end_date' => $exam['end_date'],
