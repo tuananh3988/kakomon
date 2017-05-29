@@ -74,11 +74,11 @@ class Exam extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'total_quiz', 'end_date'], 'required'],
+            [['name', 'total_quiz', 'end_date', 'exam_desc'], 'required'],
             [['status', 'type', 'total_quiz'], 'integer'],
             [['start_date', 'end_date', 'created_date', 'updated_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
-            //['end_date', 'validateEndDate'],
+            ['end_date', 'validateEndDate'],
             
             [['exam_id'], 'required', 'on' => self::SCENARIO_EXAM_DETAIL],
             [['exam_id'], 'integer', 'on' => self::SCENARIO_EXAM_DETAIL],
@@ -129,8 +129,8 @@ class Exam extends \yii\db\ActiveRecord
      */
     
     public function validateEndDate($attribute){
-        if (strtotime($this->$attribute) < strtotime($this->start_date)) {
-            $this->addError($attribute, \Yii::t('app', 'End time must be greater than the Start time', ['attribute' => $this->attributeLabels()[$attribute]]));
+        if (strtotime($this->$attribute) < strtotime(date('Y-m-d H:i:s'))) {
+            $this->addError($attribute, \Yii::t('app', 'End time must be greater than the current time', ['attribute' => $this->attributeLabels()[$attribute]]));
         }
     }
     

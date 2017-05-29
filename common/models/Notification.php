@@ -208,6 +208,20 @@ class Notification extends \yii\db\ActiveRecord
                         ];
                         break;
                     case 6:
+                        $exam = Exam::getInforNotification($value['related_id']);
+                        $listData[] = [
+                            'type' => (int)$value['type'],
+                            'exam_id' => (int)$value['related_id'],
+                            'activity_id' => null,
+                            'member_id' => null,
+                            'avatar' => null,
+                            'quiz_id' => null,
+                            'content' => $exam['exam_desc'],
+                            'start_date' => $exam['start_date'],
+                            'end_date' => $exam['end_date'],
+                            'title' => '',
+                            'created_date' => $value['created_date']
+                        ];
                         break;
                     default :
                 }

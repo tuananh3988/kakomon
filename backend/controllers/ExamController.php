@@ -104,6 +104,10 @@ class ExamController extends Controller {
             if ($exam->validate()) {
                 $exam->save();
                 if ($flag == 0) {
+                    $modelNotification = new Notification();
+                    $modelNotification->type = Notification::TYPE_COLLECT_QUIZ;
+                    $modelNotification->related_id = $exam->exam_id;
+                    $modelNotification->save();
                     $message = 'Your create successfully exam!';
                 } elseif($flag == 1){
                     $message = 'You update successfully exam!';

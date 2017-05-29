@@ -31,6 +31,12 @@ $this->title = $title;
                         </div>
                     </div>
                     <div class="form-group"> 
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
+                        <div class="col-md-5 col-sm-9 col-xs-12">
+                            <?= $form->field($exam, 'exam_desc', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textarea(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12', 'rows' => '4'])->label(false); ?>
+                        </div>
+                    </div>
+                    <div class="form-group"> 
                         <label class="control-label col-md-3 col-sm-3 col-xs-12">Total Question</label>
                         <div class="col-md-5 col-sm-9 col-xs-12">
                             <?= $form->field($exam, 'total_quiz', ['options' => ['class' => ''], 'template' => '{input}{error}'])->textInput(['autofocus' => false, 'class' => 'form-control col-md-7 col-xs-12'])->label(false); ?>
