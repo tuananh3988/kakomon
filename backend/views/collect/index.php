@@ -64,6 +64,10 @@ if ($formSearch->category_b_id) {
                     </div>
                     
                     <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                    <?= Html::activeDropDownList($formSearch, 'collect_id', $collect, ['prompt' => 'Select name collect', 'class' => 'form-control col-md-7 col-xs-12 select-sub2-cat']); ?>
+                    </div>
+                    
+                    <div class="col-md-4 col-sm-12 col-xs-12 form-group">
                     <?= Html::activeTextInput($formSearch, 'question', ['class' => 'form-control col-md-7 col-xs-12', 'placeholder' => 'question']); ?>
                     </div>
 

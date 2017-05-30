@@ -9,11 +9,10 @@ use yii\filters\VerbFilter;
 use common\models\Category;
 use common\models\Answer;
 use common\models\Quiz;
-use yii\web\Response;
-use yii\web\UploadedFile;
 use yii\web\Session;
 use common\models\Exam;
 use common\models\ExamQuiz;
+use common\models\Collect;
 
 class CollectController extends Controller {
 
@@ -42,7 +41,8 @@ class CollectController extends Controller {
         $request = Yii::$app->request;
         $formSearch = new Quiz();
         $rootCat = Category::find()->select('name')->where(['level' => 1])->indexBy('cateory_id')->column();
-        $year = Quiz::find()->select('quiz_year')->where(['delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_COLLECT])->orderBy(['quiz_year' => SORT_DESC])->distinct()->indexBy('quiz_year')->column();
+        $collect = Collect::find()->select('collect_name')->indexBy('collect_id')->column();
+        $year = Quiz::find()->select('quiz_year')->where(['delete_flag' => Quiz::QUIZ_ACTIVE, 'type' => Quiz::TYPE_COLLECT])->andWhere(['not', ['quiz_year' => null]])->orderBy(['quiz_year' => SORT_DESC])->distinct()->indexBy('quiz_year')->column();
         $param = $request->queryParams;
         if (!empty($param['Quiz'])) {
             $formSearch->setAttributes($param['Quiz']);
@@ -65,7 +65,8 @@ class CollectController extends Controller {
             'dataProvider' => $dataProvider,
             'formSearch' => $formSearch,
             'rootCat' => $rootCat,
-            'year' => $year
+            'year' => $year,
+            'collect' => $collect
         ]);
     }
     
