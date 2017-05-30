@@ -75,7 +75,14 @@ AppAsset::register($this);
                     </li>
                     
                     <li><a href="<?= Url::to(['/csv/index']); ?>"><i class="fa fa-cloud-upload"></i> &nbsp;CSV </a>
-                    <li><a href="<?= Url::to(['/notification/index']) ?>"><i class="fa fa-connectdevelop"></i> &nbsp;Push Notification</a></li>
+                    <li class="<?= (Yii::$app->controller->id == 'notification') ? 'active' : '';?>">
+                        <a href="javascript:void(0)"><i class="fa fa-connectdevelop"></i> &nbsp;Push Notification <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="<?= (Yii::$app->controller->id == 'notification') ? 'display: block;' : '';?>">
+                            <li><a href="<?= Url::to(['/notification/index']) ?>"><i class="glyphicon glyphicon-th-list"></i> &nbsp;List Push Notification</a></li>
+                            <li><a href="<?= Url::to(['/notification/add-push-collect']) ?>"><i class="glyphicon glyphicon-plus"></i> &nbsp;Add Push Collect</a></li>
+                        </ul>
+                        
+                    </li>
                 </ul>
               </div>
             </div>

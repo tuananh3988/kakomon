@@ -48,7 +48,9 @@ class Question extends \yii\db\ActiveRecord
     public $quiz_number;
     public $quiz_year;
     public $test_times;
-    
+    public $collect_id;
+
+
     //images
     public $question_img;
     public $answer1_img;
@@ -87,8 +89,8 @@ class Question extends \yii\db\ActiveRecord
             [['quiz_id', 'type'], 'required', 'on' => self::SCENARIO_DETAIL_QUIZ],
             [['quiz_class', 'quiz_id', 'type', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'type_quiz', 'created_date', 'updated_date'], 'safe'],
             //add question
-            [['question'], 'required', 'on' => self::SCENARIO_ADD_QUIZ],
-            [['type', 'category_main_id', 'category_a_id', 'category_b_id', 'quiz_year', 'test_times', 'quiz_number'], 'integer',  'on' => self::SCENARIO_ADD_QUIZ],
+            [['question', 'collect_id'], 'required', 'on' => self::SCENARIO_ADD_QUIZ],
+            [['type', 'category_main_id', 'collect_id', 'category_a_id', 'category_b_id', 'quiz_year', 'test_times', 'quiz_number'], 'integer',  'on' => self::SCENARIO_ADD_QUIZ],
         ];
     }
     
@@ -123,7 +125,7 @@ class Question extends \yii\db\ActiveRecord
         return ['category_main_search', 'category_a_search', 'category_b_search', 'quiz_year_search', 'question', 'category_main_id',
             'category_a_id', 'category_b_id', 'answer1_content', 'answer2_content', 'answer3_content', 'answer4_content', 'answer5_content',
             'answer6_content', 'answer7_content', 'answer8_content', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'quiz_answer5',
-            'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'quiz_number', 'quiz_number', 'quiz_year', 'quiz_year', 'test_times', 'quiz_answer'];
+            'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'quiz_number', 'quiz_number', 'quiz_year', 'quiz_year', 'test_times', 'quiz_answer', 'collect_id'];
     }
     
     /**

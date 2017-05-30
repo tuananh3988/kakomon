@@ -18,7 +18,11 @@ Yii::$app->view->title = 'List Notification';
     </div>
 </div>
 <div class="clearfix"></div>
-
+<?php if (Yii::$app->session->hasFlash('sucess_notification')): ?>
+    <div class="alert alert-success alert-dismissible fade in" role="alert">
+        <?= Yii::$app->session->getFlash('sucess_notification') ?>
+    </div>
+<?php endif; ?>
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">

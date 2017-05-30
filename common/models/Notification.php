@@ -12,6 +12,7 @@ use common\models\Quiz;
 use common\models\Exam;
 use frontend\models\Reply;
 use common\components\Utility;
+use common\models\Collect;
 /**
  * This is the model class for table "notification".
  *
@@ -208,18 +209,15 @@ class Notification extends \yii\db\ActiveRecord
                         ];
                         break;
                     case 6:
-                        $exam = Exam::getInforNotification($value['related_id']);
+                        $collect = Collect::getInforNotification($value['related_id']);
                         $listData[] = [
                             'type' => (int)$value['type'],
-                            'exam_id' => (int)$value['related_id'],
+                            'collect_id' => (int)$value['related_id'],
                             'activity_id' => null,
                             'member_id' => null,
                             'avatar' => null,
                             'quiz_id' => null,
-                            'status' => (int)$exam['status'],
-                            'content' => $exam['exam_desc'],
-                            'start_date' => $exam['start_date'],
-                            'end_date' => $exam['end_date'],
+                            'content' => $collect['collect_name'],
                             'title' => '',
                             'created_date' => $value['created_date']
                         ];
@@ -288,7 +286,8 @@ class Notification extends \yii\db\ActiveRecord
                 $content = $exam['name'];
                 break;
             case 6:
-                break;
+                $exam = Collect::getInforNotification($relatedId);
+                $content = $exam['collect_name'];
             default :
         }
         return $content;

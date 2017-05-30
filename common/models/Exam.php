@@ -74,7 +74,7 @@ class Exam extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'total_quiz', 'end_date', 'exam_desc'], 'required'],
+            [['name', 'total_quiz', 'end_date'], 'required'],
             [['status', 'type', 'total_quiz'], 'integer'],
             [['start_date', 'end_date', 'created_date', 'updated_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
