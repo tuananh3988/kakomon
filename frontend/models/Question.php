@@ -215,7 +215,7 @@ class Question extends \yii\db\ActiveRecord
         if ($flag) {
             return TRUE;
         } else {
-            $this->addError('answer', \Yii::t('app', 'Answer require!'));
+            $this->addError('answer', \Yii::t('app', 'Correct Answer require!'));
             return FALSE;
         }
     }
@@ -410,6 +410,7 @@ class Question extends \yii\db\ActiveRecord
             $quiz->category_a_id = $this->category_a_id;
             $quiz->category_b_id = $this->category_b_id;
             $quiz->quiz_year = $this->quiz_year;
+            $quiz->collect_id = $this->collect_id;
             $quiz->test_times = $this->test_times;
             $quiz->quiz_number = $this->quiz_number;
             $quiz->quiz_answer = $this->renderQuizAnswerForApi();
