@@ -318,7 +318,8 @@ class QuizController extends Controller
                 'question' => $quizDetail->question,
                 'img_question' => Utility::getImage('question', $quizDetail->quiz_id, null, true),
                 'listAns' => $listAns,
-                'list_ans_two_last' => $this->renderListAnsHistory($quizDetail->quiz_id)
+                'list_ans_two_last' => $this->renderListAnsHistory($quizDetail->quiz_id),
+                'total_ans_correct' => count(Utility::exportQuizAnswer($quizDetail->quiz_answer))
             ]
         ];
     }
