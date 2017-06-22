@@ -70,7 +70,8 @@ class ExamHistoryController extends Controller
         $data = [];
         foreach ($listExam as $key => $value) {
             $totalUser = $modelExamHistory->getTotalMemberJoinByExam($value['exam_id']);
-            $data = [
+            $data[] = [
+                'exam_id' => (int)$value['exam_id'],
                 'flag_not_ans' => ($value['total_not_doing'] == 0) ? 0 : 1,
                 'total_user' => (int)$totalUser,
                 'rate_correct' => $value['rate_correct'] * 100,
