@@ -7,6 +7,8 @@ use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
 use common\models\ExamQuiz;
+use common\models\MemberQuizHistory;
+use common\models\ExamHistory;
 
 /**
  * This is the model class for table "exam".
@@ -23,6 +25,7 @@ use common\models\ExamQuiz;
  */
 class Exam extends \yii\db\ActiveRecord
 {
+    public $contest_times;
     /**
      * @inheritdoc
      */
@@ -48,6 +51,7 @@ class Exam extends \yii\db\ActiveRecord
     
     const SCENARIO_EXAM_DETAIL = 'detail-exam';
     const SCENARIO_EXAM_DETAIL_ACTIVE = 'detail-exam-active';
+    const SCENARIO_EXAM_FINISH = 'exam-finish';
     
     public function behaviors()
     {
@@ -88,6 +92,10 @@ class Exam extends \yii\db\ActiveRecord
             [['exam_id'], 'integer', 'on' => self::SCENARIO_EXAM_DETAIL_ACTIVE],
             ['exam_id', 'validateExamIdActive', 'on' => self::SCENARIO_EXAM_DETAIL_ACTIVE],
             
+            [['exam_id', 'contest_times'], 'required', 'on' => self::SCENARIO_EXAM_FINISH],
+            ['contest_times', 'validateContestTimes', 'on' => self::SCENARIO_EXAM_FINISH],
+            ['exam_id', 'validateExamIdForFinish', 'on' => self::SCENARIO_EXAM_FINISH],
+            
             [['exam_id'], 'safe'],
         ];
     }
@@ -100,6 +108,7 @@ class Exam extends \yii\db\ActiveRecord
         $scenarios = parent::scenarios();
         
         $scenarios[self::SCENARIO_EXAM_DETAIL] = ['exam_id'];
+        $scenarios[self::SCENARIO_EXAM_FINISH] = ['exam_id', 'contest_times'];
         return $scenarios;
     }
     
@@ -118,9 +127,25 @@ class Exam extends \yii\db\ActiveRecord
             'end_date' => 'End Date',
             'created_date' => 'Created Date',
             'updated_date' => 'Updated Date',
+            'contest_times' => 'Contest Times'
         ];
     }
     
+    /**
+     * @inheritdoc
+     */
+    public function safeAttributes()
+    {
+        $safe = parent::safeAttributes();
+        return array_merge($safe, $this->extraFields());
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function extraFields() {
+        return ['contest_times'];
+    }
     /*
      * validate end_date
      * 
@@ -133,7 +158,30 @@ class Exam extends \yii\db\ActiveRecord
             $this->addError($attribute, \Yii::t('app', 'End time must be greater than the current time', ['attribute' => $this->attributeLabels()[$attribute]]));
         }
     }
-    
+    /*
+     * validate contest times
+     * 
+     * Auth:
+     * Create : 21-06-2017 
+     */
+    public function validateContestTimes($attribute){
+        $contestTimesMax = (int)MemberQuizHistory::find()->select('contest_times')->where(['exam_id' => $this->exam_id, 'member_id' => Yii::$app->user->identity->member_id])->max('contest_times');
+        if ( ($this->$attribute) != $contestTimesMax) {
+            $this->addError($attribute, \Yii::t('app', 'data not exist', ['attribute' => $this->attributeLabels()[$attribute]]));
+        }
+    }
+    /*
+     * validate exam id for finish
+     * 
+     * Auth:
+     * Create : 21-06-2017 
+     */
+    public function validateExamIdForFinish($attribute) {
+        $examFinish = ExamHistory::find()->select('exam_history_id')->where(['exam_id' => $this->exam_id, 'member_id' => Yii::$app->user->identity->member_id])->one();
+        if ($examFinish) {
+            $this->addError($attribute, \Yii::t('app', 'Data exists', ['attribute' => $this->attributeLabels()[$attribute]]));
+        }
+    }
     /*
      * validate exam-id
      * 
@@ -259,5 +307,23 @@ class Exam extends \yii\db\ActiveRecord
         $query->where(['exam_quiz.exam_id' => $this->exam_id]);
         $query->orderBy(['exam_quiz_id' => SORT_ASC]);
         return $query->all();
+    }
+    
+    /*
+     * Get info exam
+     * 
+     * Auth : 
+     * Created : 20-06-2017
+     */
+    
+    public function getInfoByExamId() {
+        $query = new \yii\db\Query();
+        $query->select(['member_quiz_history.contest_time', 'exam_history.exam_history_id'])
+                ->from('member_quiz_history');
+        $query->join('LEFT JOIN', 'exam_history', 'member_quiz_history.exam_id = exam_history.exam_id');
+        $query->where(['member_quiz_history.exam_id' => $this->exam_id]);
+        $query->where(['member_quiz_history.member_id' => Yii::$app->user->identity->member_id]);
+        $query->orderBy(['member_quiz_history.contest_time' => SORT_DESC]);
+        return $query->one();
     }
 }

@@ -132,7 +132,7 @@ class ExamQuiz extends \yii\db\ActiveRecord
      * Creat : 21-02-2017
      */
     
-    public static function getCountQuizByIdExam($idExam){
+    public static function getCountQuizByIdExam($idExam, $categoryId = null){
         $query = new \yii\db\Query();
         $query->select('exam_quiz.exam_quiz_id')
                 ->from('exam_quiz');
@@ -140,6 +140,29 @@ class ExamQuiz extends \yii\db\ActiveRecord
         $query->andWhere(['exam_quiz.exam_id' => $idExam]);
         $query->andWhere(['quiz.delete_flag' => 0]);
         $query->andWhere(['quiz.type' => 3]);
+        if ($categoryId) {
+            $query->andWhere(['quiz.category_main_id' => $categoryId]);
+        }
         return $query->count();
     }
+    
+    /*
+     * Get All category by exam
+     * 
+     * Auth : 
+     * Created : 21-06-2017
+     */
+    public function getAllCategoryByExam($examId) {
+        $query = new \yii\db\Query();
+        $query->select(['category.cateory_id', 'category.name'])
+                ->from('exam_quiz');
+        $query->join('INNER JOIN', 'quiz', 'quiz.quiz_id = exam_quiz.quiz_id');
+        $query->join('INNER JOIN', 'category', 'quiz.category_main_id = category.cateory_id');
+        $query->andWhere(['exam_quiz.exam_id' => $examId]);
+        $query->andWhere(['quiz.delete_flag' => 0]);
+        $query->andWhere(['quiz.type' => 3]);
+        $query->groupBy(['quiz.category_main_id']);
+        return $query->all();
+    }
+    
 }

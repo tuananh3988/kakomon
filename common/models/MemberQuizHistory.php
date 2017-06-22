@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use common\models\ExamQuiz;
 /**
  * This is the model class for table "member_quiz_history".
  *
@@ -138,5 +139,78 @@ class MemberQuizHistory extends \yii\db\ActiveRecord
         $query->andWhere(['IN','quiz_id',  $quizId]);
         $query->andWhere(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
         return $query->all();
+    }
+    /*
+     * Get total ans correct for exam
+     * 
+     * Auth : 
+     * Create : 20-06-2017
+     */
+    public function getTotalAnsCorrectByExam($examId, $contestTimes, $categoryId = null, $memberId = null) {
+        $query = new \yii\db\Query();
+        $query->select(['member_quiz_history.member_quiz_history_id'])
+                ->from('member_quiz_history');
+        //check for category
+        if ($categoryId) {
+            $query->join('INNER JOIN', 'quiz', 'quiz.quiz_id = member_quiz_history.quiz_id');
+        }
+        $query->where(['=', 'exam_id', $examId]);
+        $query->andWhere(['=','correct_flag', self::FLAG_CORRECT_CORRECT]);
+        if ($memberId) {
+            $query->andWhere(['=','member_id',  $memberId]);
+        } else {
+            $query->andWhere(['=','member_id',  Yii::$app->user->identity->member_id]);
+        }
+        $query->andWhere(['=', 'contest_times', $contestTimes]);
+        $query->andWhere(['=', 'last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
+        if ($categoryId) {
+            $query->andWhere(['=', 'quiz.category_main_id', $categoryId]);
+        }
+        return $query->count();
+    }
+    
+    /*
+     * Get total ans not correct for exam
+     * 
+     * Auth :
+     * Created : 20-06-2017
+     */
+    public function getTotalNotAnsByExam($examId, $contestTimes) {
+        $quizIdCorrect = MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_CORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST, 'exam_id' => $examId, 'contest_times' => $contestTimes])->indexBy('quiz_id')->column();
+        $quizIdInCorrect = MemberQuizHistory::find()->select('quiz_id')->where(['member_id' => Yii::$app->user->identity->member_id, 'correct_flag' => MemberQuizHistory::FLAG_CORRECT_INCORRECT, 'last_ans_flag' => MemberQuizHistory::FLAG_ANS_LAST, 'exam_id' => $examId, 'contest_times' => $contestTimes])->indexBy('quiz_id')->column();
+        $quizId = array_merge($quizIdCorrect,$quizIdInCorrect);
+        $query = new \yii\db\Query();
+        $query->select(['exam_quiz.exam_quiz_id'])
+                ->from('exam_quiz');
+        $query->where(['=', 'exam_quiz.exam_id', $examId]);
+        $total = $query->count();
+        return (int)($total- count($quizId));
+    }
+    
+    /*
+     * Get total not ans
+     * 
+     * Auth : 
+     * Created : 
+     */
+    public function getTotalNotAnsByExamAndCategory($examId, $contestTimes, $categoryId) {
+        $modelExamQuiz = new ExamQuiz();
+        $totalQuiz = $modelExamQuiz->getCountQuizByIdExam($examId, $categoryId);
+        $query = new \yii\db\Query();
+        $query->select(['member_quiz_history.member_quiz_history_id'])
+                ->from('member_quiz_history');
+        $query->join('INNER JOIN', 'quiz', 'quiz.quiz_id = member_quiz_history.quiz_id');
+        $query->where(['=', 'exam_id', $examId]);
+        $query->andWhere(['=','member_id', Yii::$app->user->identity->member_id]);
+        $query->andWhere(['=', 'contest_times', $contestTimes]);
+        $query->andWhere(['=', 'last_ans_flag', MemberQuizHistory::FLAG_ANS_LAST]);
+        $query->andWhere(['=', 'quiz.category_main_id', $categoryId]);
+        $query->andWhere([
+            'OR' ,
+            ['=','correct_flag', self::FLAG_CORRECT_CORRECT],
+            ['=','correct_flag', self::FLAG_CORRECT_INCORRECT]
+        ]);
+        $totalAns = $query->count();
+        return (int)($totalQuiz - $totalAns);
     }
 }

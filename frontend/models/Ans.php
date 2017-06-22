@@ -28,7 +28,9 @@ class Ans extends \yii\db\ActiveRecord
     public $quiz_answer;
     public $exam_id;
     public $type_ans;
-    
+    public $contest_times;
+
+
     const TYPE_ANS_DEFAULT = 1;
     const TYPE_ANS_QUICK_QUIZ = 2;
     const TYPE_ANS_EXAM = 3;
@@ -50,9 +52,10 @@ class Ans extends \yii\db\ActiveRecord
             [['quiz_id', 'time', 'type_ans'], 'required'],
             [['quiz_id', 'time', 'type_ans'], 'integer'],
             [['quiz_answer'], 'each', 'rule' => ['integer']],
+            ['type_ans', 'validateAnsExam'],
             ['quiz_id', 'validateQuizId'],
             [['quiz_id' , 'quiz_answer', 'quiz_answer1', 'quiz_answer2', 'quiz_answer3', 'quiz_answer4', 'time', 'exam_id', 'type_ans',
-                'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'created_date', 'updated_date'], 'safe'],
+                'quiz_answer5', 'quiz_answer6', 'quiz_answer7', 'quiz_answer8', 'created_date', 'updated_date', 'contest_times'], 'safe'],
         ];
     }
 
@@ -130,7 +133,20 @@ class Ans extends \yii\db\ActiveRecord
             }
         }
     }
-    
+    /*
+     * Validate ans exam
+     * 
+     * Auth :
+     * Create : 21-06-2017
+     * 
+     */
+    public function validateAnsExam($attribute) {
+        if ($this->type_ans == self::TYPE_ANS_EXAM) {
+            if (empty($this->exam_id) || empty($this->contest_times)) {
+                $this->addError('exam', \Yii::t('app', 'Please input exam_id and contest_times!'));
+            }
+        }
+    }
     /*
      * save ans
      * 
@@ -148,8 +164,12 @@ class Ans extends \yii\db\ActiveRecord
             $quizDetail = Quiz::findOne(['quiz_id' => $this->quiz_id, 'delete_flag' => Quiz::QUIZ_ACTIVE]);
             $quizAnswer = Utility::renderQuizAnswer($data);
             //update all data table member_quiz_history for quiz_id and member_id
-            if ($quizAnswer != Quiz::QUIZ_ANSWER) {
+            if ($quizAnswer != Quiz::QUIZ_ANSWER && $this->type_ans !== self::TYPE_ANS_EXAM) {
                 MemberQuizHistory::updateAll(['last_ans_flag' => MemberQuizHistory::FLAG_ANS_BEFORE], 'quiz_id = '. $this->quiz_id . ' AND member_id = ' . Yii::$app->user->identity->member_id);
+            }
+            // case ans exam ==> update all data old
+            if ($this->type_ans == self::TYPE_ANS_EXAM) {
+                MemberQuizHistory::updateAll(['last_ans_flag' => MemberQuizHistory::FLAG_ANS_BEFORE], 'quiz_id = '. $this->quiz_id . ' AND member_id = ' . Yii::$app->user->identity->member_id . ' AND contest_times = ' . $this->contest_times);
             }
             
             //insert new data table member_quiz_history
@@ -162,6 +182,8 @@ class Ans extends \yii\db\ActiveRecord
             } else {
                 $correctFlag = MemberQuizHistory::FLAG_CORRECT_INCORRECT;
             }
+            //case ans exam 
+            if ($this->type_ans == self::TYPE_ANS_EXAM) {$lastAnsFlag = MemberQuizHistory::FLAG_ANS_LAST;}
             
             $modelMemberQuizHistory = new MemberQuizHistory();
             $modelMemberQuizHistory->quiz_id = $this->quiz_id;
@@ -171,19 +193,22 @@ class Ans extends \yii\db\ActiveRecord
             $modelMemberQuizHistory->correct_flag = $correctFlag;
             $modelMemberQuizHistory->time = $this->time;
             $modelMemberQuizHistory->exam_id = $this->exam_id;
+            $modelMemberQuizHistory->contest_times = ($this->type_ans == self::TYPE_ANS_EXAM) ? ($this->contest_times) : null;
             $modelMemberQuizHistory->save();
             
             //update or inset table member_category_time
-            $memberCategoryTime = MemberCategoryTime::findOne(['member_id' => Yii::$app->user->identity->member_id, 'category_id' => $quizDetail->category_main_id]);
-            if (!$memberCategoryTime) {
-                $modelMemberCategoryTime = new MemberCategoryTime();
-                $modelMemberCategoryTime->member_id = Yii::$app->user->identity->member_id;
-                $modelMemberCategoryTime->category_id = $quizDetail->category_main_id;
-                $modelMemberCategoryTime->total_time = $this->time;
-                $modelMemberCategoryTime->save();
-            } else {
-                $memberCategoryTime->total_time = $memberCategoryTime->total_time + $this->time;
-                $memberCategoryTime->save();
+            if ($this->type_ans != self::TYPE_ANS_EXAM) {
+                $memberCategoryTime = MemberCategoryTime::findOne(['member_id' => Yii::$app->user->identity->member_id, 'category_id' => $quizDetail->category_main_id]);
+                if (!$memberCategoryTime) {
+                    $modelMemberCategoryTime = new MemberCategoryTime();
+                    $modelMemberCategoryTime->member_id = Yii::$app->user->identity->member_id;
+                    $modelMemberCategoryTime->category_id = $quizDetail->category_main_id;
+                    $modelMemberCategoryTime->total_time = $this->time;
+                    $modelMemberCategoryTime->save();
+                } else {
+                    $memberCategoryTime->total_time = $memberCategoryTime->total_time + $this->time;
+                    $memberCategoryTime->save();
+                }
             }
             
             $transaction->commit();
