@@ -173,7 +173,7 @@ class ExamController extends Controller
             throw new \yii\base\Exception( "System error" );
         }
         // get rank and rate
-        $rankExam = $modelExamHistory->getRankExam($modelExamHistory->exam_history_id);
+        $rankExam = $modelExamHistory->getRankExam($modelExamHistory->exam_history_id, $modelExam->exam_id);
         
         $totalAnsCorrectInHistory = $modelExamHistory->getTotalAnsCorrectByExam($modelExam->exam_id);
         $totalQuiz = $modelExamQuiz->getCountQuizByIdExam($modelExam->exam_id);

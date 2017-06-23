@@ -165,9 +165,9 @@ class ExamHistory extends \yii\db\ActiveRecord
      * Auth : 
      * Created : 21-06-2017
      */
-    public function getRankExam($examHistoryId) {
+    public function getRankExam($examHistoryId, $examId) {
         $connection = Yii::$app->getDb();
-        $sql = 'SELECT FIND_IN_SET( total_correct, ( SELECT GROUP_CONCAT( total_correct ORDER BY total_correct DESC ) FROM exam_history ) ) AS rank';
+        $sql = 'SELECT FIND_IN_SET( total_correct, ( SELECT GROUP_CONCAT( total_correct ORDER BY total_correct DESC ) FROM exam_history WHERE exam_id = ' . $examId. ') ) AS rank';
         $sql .= ' FROM exam_history';
         $sql .= ' WHERE exam_history_id = '.$examHistoryId ;
         return $connection->createCommand($sql)->queryAll();
