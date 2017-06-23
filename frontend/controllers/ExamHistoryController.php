@@ -124,7 +124,7 @@ class ExamHistoryController extends Controller
             $totalQuizCategory = $modelExamQuiz->getCountQuizByIdExam($modelExamHistory->exam_id, $value['cateory_id']);
             $totalQuizAnsCorrect = $modelMemberQuizHistory->getTotalAnsCorrectByExam($modelExamHistory->exam_id, $modelExamHistory->contest_times, $value['cateory_id']);
             $rateAnsCategory = round($totalQuizAnsCorrect / $totalQuizCategory, 4);
-            $totalMediumQuizAnsCorrect = $this->getAllAnsCorrectByCategory($modelExamHistory->exam_id, $modelExamHistory->contest_times, $value['cateory_id']);
+            $totalMediumQuizAnsCorrect = $this->getAllAnsCorrectByCategory($modelExamHistory->exam_id, $value['cateory_id']);
             $rateMediumAnsCategory = round($totalMediumQuizAnsCorrect / $totalQuizCategory, 4);
             $totalNotDoing = $modelMemberQuizHistory->getTotalNotAnsByExamAndCategory($modelExamHistory->exam_id, $modelExamHistory->contest_times, $value['cateory_id']);
             $data[] = [
@@ -155,7 +155,7 @@ class ExamHistoryController extends Controller
      * Auth : 
      * Created : 22-06-2017
      */
-    public static function getAllAnsCorrectByCategory($examId ,$contestTimes, $categoryId) {
+    public static function getAllAnsCorrectByCategory($examId , $categoryId) {
         $totalCorrect = 0;
         $totalMediumCorrect = 0;
         $modelExamQuiz = new ExamQuiz();
@@ -165,7 +165,7 @@ class ExamHistoryController extends Controller
         $totalQuizCategory = $modelExamQuiz->getCountQuizByIdExam($examId, $categoryId);
         if (count($listUser) > 0) {
             foreach ($listUser as $key => $value) {
-                $totalQuizAnsCorrect = $modelMemberQuizHistory->getTotalAnsCorrectByExam($examId, $contestTimes, $categoryId, $value['member_id']);
+                $totalQuizAnsCorrect = $modelMemberQuizHistory->getTotalAnsCorrectByExam($examId, $value['contest_times'], $categoryId, $value['member_id']);
                 $totalCorrect = $totalCorrect + $totalQuizAnsCorrect;
             }
         }
