@@ -316,6 +316,7 @@ class QuizController extends Controller
             'data' => [
                 'quiz_id' => $quizDetail->quiz_id,
                 'question' => $quizDetail->question,
+                'quiz_number' => $quizDetail->quiz_number,
                 'img_question' => Utility::getImage('question', $quizDetail->quiz_id, null, true),
                 'listAns' => $listAns,
                 'list_ans_two_last' => $this->renderListAnsHistory($quizDetail->quiz_id),
