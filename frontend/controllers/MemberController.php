@@ -101,6 +101,7 @@ class MemberController extends Controller
     
     public function actionMyInfo()
     {
+        
         $memberDetail = Yii::$app->user->identity;
         return [
             'status' => 200,
@@ -118,8 +119,10 @@ class MemberController extends Controller
                 'mail' => $memberDetail->mail,
                 'avatar' => Utility::getImage('member', $memberDetail->member_id, null, true),
                 'comment' => (int)Activity::getTotalCommentByMember($memberDetail->member_id),
-                'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
-                'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
+                'activity_not_by_member' => $this->getAllLikeAndComment($memberDetail->member_id, false),
+                //'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
+                //'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
+                'activity_by_member' => $this->getAllLikeAndComment($memberDetail->member_id, true),
                 'nashi' => (int)Quiz::getTotalQuizNasiByCategory(),
                 'followed' => (int)Follow::getTotalFollowedByMember($memberDetail->member_id),
                 'following' => (int)Follow::getTotalFollowingByMember($memberDetail->member_id),
@@ -168,8 +171,10 @@ class MemberController extends Controller
                 'isFollow' => Follow::checkFollowing($memberDetail->member_id),
                 'avatar' => Utility::getImage('member', $memberDetail->member_id, null, true),
                 'comment' => (int)Activity::getTotalCommentByMember($memberDetail->member_id),
-                'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
-                'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
+                'activity_not_by_member' => $this->getAllLikeAndComment($memberDetail->member_id, false),
+                'activity_by_member' => $this->getAllLikeAndComment($memberDetail->member_id, true),
+//                'liked' => (int)Activity::getTotalLikeByMember($memberDetail->member_id),
+//                'disLike' => (int)Activity::getTotalDisLikeByMember($memberDetail->member_id),
                 'nashi' => (int)Quiz::getTotalQuizNotAnsByCategory(),
                 'followed' => (int)Follow::getTotalFollowedByMember($memberDetail->member_id),
                 'following' => (int)Follow::getTotalFollowingByMember($memberDetail->member_id),
@@ -328,5 +333,19 @@ class MemberController extends Controller
                 'avatar' => Utility::getImage('member', Yii::$app->user->identity->member_id, null, true)
             ]
         ];
+    }
+    
+    /*
+     * Get all like and comment
+     * 
+     * Auth : 
+     * Created : 07-06-2017
+     */
+    
+    public function getAllLikeAndComment ($memberId, $flagActivity) {
+        $totalLike = Activity::getTotalLike($memberId, $flagActivity);
+        $totalCommentHelpReply = Activity::getTotalCommentHelpReply($memberId, $flagActivity);
+        $total = $totalLike + $totalCommentHelpReply;
+        return $total;
     }
 }

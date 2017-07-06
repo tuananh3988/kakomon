@@ -12,6 +12,7 @@ use common\models\Quiz;
 use common\models\Answer;
 use common\models\MemberQuizSearchHistory;
 use common\models\MemberQuizActivity;
+use common\models\Activity;
 use common\components\Utility;
 /**
  * ContactForm is the model behind the contact form.
@@ -70,6 +71,9 @@ class Question extends \yii\db\ActiveRecord
     const SCENARIO_LIST_QUIZ = 'list';
     const SCENARIO_DETAIL_QUIZ = 'detail';
     const SCENARIO_ADD_QUIZ = 'add';
+    
+    const SEARCH_BY_TEXT_QUESTION = 1;
+    const SEARCH_BY_TEXT_CONTENT = 2;
     /**
      * @inheritdoc
      */
@@ -303,6 +307,44 @@ class Question extends \yii\db\ActiveRecord
         return $connection->createCommand($sql)->queryAll();
     }
     
+    public function getListQuizByText($keyWord, $limit, $offset, $flag = false) {
+        
+        $query1 = new \yii\db\Query();
+        $query1->select(['quiz.*'])
+                ->from('quiz');
+        $query1->where(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
+        $query1->andWhere(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query1->andWhere(['like', 'quiz.question', $keyWord]);
+        
+        $query2 = new \yii\db\Query();
+        $query2->select(['quiz.*'])
+                        ->from('activity');
+        $query2->join('INNER JOIN', 'quiz', 'quiz.quiz_id = activity.quiz_id');
+        $query2->where(['=', 'activity.status', Activity::STATUS_ACTIVE]);
+        $query2->andWhere(['=', 'quiz.type', Quiz::TYPE_NORMAL]);
+        $query2->andWhere(['=', 'quiz.delete_flag', Quiz::QUIZ_ACTIVE]);
+        $query2->andWhere(['like', 'activity.content', $keyWord]);
+        $query2->andWhere([
+            'OR',
+            ['=', 'activity.type', Activity::TYPE_COMMENT],
+            ['=', 'activity.type', Activity::TYPE_HELP],
+            ['=', 'activity.type', Activity::TYPE_REPLY]
+        ]);
+        $query2->groupBy(['activity.quiz_id']);
+        
+        if ($flag) {
+            $unionQuery = (new \yii\db\Query())
+                ->from(['quiz_id' => $query1->union($query2)])
+                ->orderBy(['quiz_id' => SORT_ASC]);
+            return $unionQuery->count();
+        }
+        $unionQuery = (new \yii\db\Query())
+            ->from(['quiz_id' => $query1->union($query2)])
+            ->orderBy(['quiz_id' => SORT_ASC])
+            ->limit($limit)
+            ->offset($offset);
+        return $unionQuery->all();
+    }
     /*
      * Get list year
      * 

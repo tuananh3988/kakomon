@@ -31,6 +31,7 @@ class QuizController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'search' => ['get'],
+                    'search-text' => ['get'],
                     'total' => ['get'],
                     'year' => ['get'],
                     'history-search' => ['get'],
@@ -123,6 +124,55 @@ class QuizController extends Controller
         ];
     }
     
+    /*
+     * function search text
+     * 
+     * Auth : 
+     * Create : 06-07-2017
+     */
+    
+    public function actionSearchText()
+    {
+        $request = Yii::$app->request;
+        $param = $request->queryParams;
+        $limit = isset($param['limit']) ? $param['limit'] : Yii::$app->params['limit']['quiz'];
+        $offset = isset($param['offset']) ? $param['offset'] : Yii::$app->params['offset']['quiz'];
+        $keyWord = !empty($param['key_word']) ? $param['key_word'] : '';
+        $modelQuiz = new Question();
+        
+        $listQuiz = $modelQuiz->getListQuizByText($keyWord, $limit, $offset);
+        
+        //return if not found data
+        if (count($listQuiz) == 0) {
+            return [
+                'status' => 204,
+                'message' => \Yii::t('app', 'data not found')
+            ];
+        }
+        //return data
+        $data = [];
+        foreach ($listQuiz as $key => $value) {
+            $data[] = [
+                'category_main_id' => (int)$value['category_main_id'],
+                'category_main_name' => Category::getDetailNameCategory($value['category_main_id']),
+                'sub_cat' => Quiz::renderListSubCat($value['category_a_id'], $value['category_b_id']),
+                'quiz_id' => (int)$value['quiz_id'],
+                'question' => $value['question'],
+                'img_question' => Utility::getImage('question', $value['quiz_id'], null, true),
+                'list_ans' => $this->renderListAnsHistory($value['quiz_id'])
+            ];
+        }
+        
+        //return success
+        $total = $modelQuiz->getListQuizByText($keyWord, $limit, $offset, true);
+        $offsetReturn = Utility::renderOffset($total, $limit, $offset);
+        return [
+            'status' => 200,
+            'count' => (int)$total,
+            'offset' => $offsetReturn,
+            'data' => $data
+        ];
+    }
     /*
      * render list ans
      * 

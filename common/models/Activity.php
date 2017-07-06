@@ -94,6 +94,35 @@ class Activity extends \yii\db\ActiveRecord
         return Activity::find()->where(['member_id' => $memberId, 'type' => self::TYPE_LIKE, 'status' => self::STATUS_ACTIVE])->count();
     }
     
+    /*
+     * Get total like
+     * 
+     * Auth : 
+     * Creat : 28-02-2017
+     */
+    
+    public static function getTotalLike($memberId, $flagActivity = false)
+    {
+        if ($flagActivity) {
+            return Activity::find()->where(['=' , 'member_id' , $memberId])->andWhere(['type' => self::TYPE_LIKE, 'status' => self::STATUS_ACTIVE])->count();
+        }
+        return Activity::find()->where(['<>' , 'member_id' , $memberId])->andWhere(['type' => self::TYPE_LIKE, 'status' => self::STATUS_ACTIVE])->count();
+    }
+    
+    /*
+     * Get total like
+     * 
+     * Auth : 
+     * Creat : 28-02-2017
+     */
+    
+    public static function getTotalCommentHelpReply($memberId, $flagActivity = false)
+    {
+        if ($flagActivity) {
+            return Activity::find()->where(['=' , 'member_id' , $memberId])->andWhere(['OR', ['=', 'type', self::TYPE_COMMENT], ['=', 'type', self::TYPE_HELP], ['=', 'type', self::TYPE_REPLY]])->andWhere(['status' => self::STATUS_ACTIVE])->count();
+        }
+        return Activity::find()->where(['<>' , 'member_id' , $memberId])->andWhere(['OR', ['=', 'type', self::TYPE_COMMENT], ['=', 'type', self::TYPE_HELP], ['=', 'type', self::TYPE_REPLY]])->andWhere(['status' => self::STATUS_ACTIVE])->count();
+    }
      /*
      * Get total dis like
      * 
