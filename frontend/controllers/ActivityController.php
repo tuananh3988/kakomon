@@ -706,9 +706,10 @@ class ActivityController extends Controller
                     'total_time_view' => (int)$value['total_time'],
                     'total_quiz' => (int)Quiz::getTotalQuizByCategory($value['cateory_id']),
                     'total_ans_quiz' => (int)Quiz::getTotalQuizAnsByCategory($value['cateory_id']),
-                    'total_comment' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_COMMENT),
-                    'total_like' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_LIKE),
-                    'total_nasi' => (int)Quiz::getTotalQuizNasiByCategory($value['cateory_id'])
+//                    'total_comment' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_COMMENT),
+//                    'total_like' => (int)Activity::getTotalQuizActivityByCategory($value['cateory_id'], Activity::TYPE_LIKE),
+//                    'total_nasi' => (int)Quiz::getTotalQuizNasiByCategory($value['cateory_id']),
+                    'rate_activity_category' => $this->getRateActivityByCategory($value['cateory_id'])
                 ];
             }
         }
@@ -904,5 +905,25 @@ class ActivityController extends Controller
             'sub_menu' => Category::find()->select('name')->where(['parent_id' => $param['category_main_id']])->indexBy('cateory_id')->column(),
             'data' => $data
         ];
+    }
+    
+    /*
+     * Get rate activity Category
+     * 
+     * Auth : 
+     * Created : 07-07-2017
+     */
+    public function getRateActivityByCategory($categoryId) {
+        $totalActivityCommentHelpRelpy = Activity::getTotalQuizWithCommentHelpReplyByCat($categoryId);
+        $totalActivityLike = Activity::getTotalQuizLikeByCat($categoryId);
+        
+        $totalActivity = $totalActivityCommentHelpRelpy + $totalActivityLike;
+        $totalQuizByCategory = Quiz::find()->select('quiz_id')->where(['category_main_id' => $categoryId])->andWhere(['delete_flag' => Quiz::QUIZ_ACTIVE])->count();
+        
+        if ($totalQuizByCategory == 0) {
+            return 0;
+        }
+        $rateActivity = round(100 * ($totalActivity / (2 * $totalQuizByCategory)), 2);
+        return $rateActivity;
     }
 }

@@ -314,4 +314,51 @@ class Activity extends \yii\db\ActiveRecord
         //$query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
         return $query->one();
     }
+    
+    /*
+     * Get total quiz comment help reply by member login
+     * 
+     * Auth :
+     * Created : 07-07-2017
+     */
+    public static function getTotalQuizWithCommentHelpReplyByCat($categoryId) {
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'activity', 'activity.quiz_id = quiz.quiz_id');
+        $query->where(['quiz.delete_flag' => Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['quiz.category_main_id' => $categoryId]);
+        $query->andWhere([
+            'or',
+            'activity.type = '.self::TYPE_COMMENT,
+            'activity.type = '. self::TYPE_LIKE,
+            'activity.type = '. self::TYPE_DISLIKE,
+            
+        ]);
+        $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        $query->groupBy(['quiz.quiz_id']);
+        return $query->count();
+    }
+    
+    /*
+     * Get total quiz like comment help reply by member login
+     * 
+     * Auth :
+     * Created : 07-07-2017
+     */
+    public static function getTotalQuizLikeByCat($categoryId) {
+        $query = new \yii\db\Query();
+        $query->select(['quiz.quiz_id'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'activity', 'activity.quiz_id = quiz.quiz_id');
+        $query->join('INNER JOIN', 'activity as like_activity', 'like_activity.relate_id = activity.activity_id');
+        $query->where(['quiz.delete_flag' => Quiz::QUIZ_ACTIVE]);
+        $query->andWhere(['quiz.category_main_id' => $categoryId]);
+        $query->andWhere(['like_activity.type' => self::TYPE_LIKE]);
+        $query->andWhere(['activity.member_id' => Yii::$app->user->identity->member_id]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        $query->groupBy(['quiz.quiz_id']);
+        return $query->count();
+    }
 }
