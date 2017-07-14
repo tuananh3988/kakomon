@@ -111,6 +111,9 @@ class ActivityController extends Controller
                     'messages' => 'System error'
                 ];
             }
+            //Push notification
+            
+            
             //return success
             return  [
                 'status' => 200,
