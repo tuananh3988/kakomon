@@ -366,7 +366,7 @@ class QuizController extends Controller
             'status' => 200,
             'data' => [
                 'quiz_id' => (int)$quizDetail['quiz_id'],
-                'question' =>(int)$quizDetail['question'],
+                'question' => $quizDetail['question'],
                 'quiz_number' => (int)$quizDetail['quiz_number'],
                 'quiz_year' => (int)$quizDetail['quiz_year'],
                 'category_name' => $quizDetail['name'],
