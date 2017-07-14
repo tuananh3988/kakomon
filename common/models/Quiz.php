@@ -516,4 +516,22 @@ class Quiz extends \yii\db\ActiveRecord
         $query->andWhere(['type' => self::TYPE_QUICK_QUIZ]);
         return $query->one();
     }
+    
+    /*
+     * Get info quiz detail
+     * 
+     * Auth :
+     * Created : 14-07-2017
+     */
+    
+    public function getInfoDetailQuiz ($quizID, $type) {
+        $query = new \yii\db\Query();
+        $query->select(['quiz.*', 'category_main.name'])
+                ->from('quiz');
+        $query->join('INNER JOIN', 'category as category_main', 'category_main.cateory_id = quiz.category_main_id');
+        $query->where(['quiz.quiz_id' => $quizID]);
+        $query->andWhere(['=' , 'quiz.type' , $type]);
+        $query->andWhere(['=' , 'quiz.delete_flag' , self::QUIZ_ACTIVE]);
+        return $query->one();
+    }
 }

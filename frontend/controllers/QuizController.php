@@ -342,8 +342,9 @@ class QuizController extends Controller
                     'messages' => $modelQuiz->errors
                 ];
         }
-        
-        $quizDetail = Quiz::find()->where(['quiz_id' => $modelQuiz->quiz_id, 'type' => $modelQuiz->type, 'delete_flag' => Quiz::QUIZ_ACTIVE])->one();
+        $modelQuizDetail = new Quiz();
+        //$quizDetail = Quiz::find()->where(['quiz_id' => $modelQuiz->quiz_id, 'type' => $modelQuiz->type, 'delete_flag' => Quiz::QUIZ_ACTIVE])->one();
+        $quizDetail = $modelQuizDetail->getInfoDetailQuiz($modelQuiz->quiz_id, $modelQuiz->type);
         if (!$quizDetail) {
             return [
                 'status' => 204,
@@ -352,29 +353,27 @@ class QuizController extends Controller
         }
         $listAns = [];
         for ($i = 1; $i <= Answer::MAX_ANS; $i++) {
-            $ansDetail = Answer::findOne(['quiz_id' => $quizDetail->quiz_id, 'order' => $i]);
-            if ($ansDetail || Utility::getImage('answer', $quizDetail->quiz_id, $i, true)) {
+            $ansDetail = Answer::findOne(['quiz_id' => $quizDetail['quiz_id'], 'order' => $i]);
+            if ($ansDetail || Utility::getImage('answer', $quizDetail['quiz_id'], $i, true)) {
                 $listAns[] = [
                     'ans_id' => $i,
                     'content' => ($ansDetail) ? $ansDetail->content : '',
-                    'img_ans' => Utility::getImage('answer', $quizDetail->quiz_id, $i, true)
+                    'img_ans' => Utility::getImage('answer', $quizDetail['quiz_id'], $i, true)
                 ];
             }
         }
         return [
             'status' => 200,
             'data' => [
-                'quiz_id' => $quizDetail->quiz_id,
-                'question' => $quizDetail->question,
-                'quiz_number' => $quizDetail->quiz_number,
-                'quiz_year' => $quizDetail->quiz_year,
-                'category_main_id' => $quizDetail->category_main_id,
-                'category_a_id' => $quizDetail->category_a_id,
-                'category_b_id' => $quizDetail->category_b_id,
-                'img_question' => Utility::getImage('question', $quizDetail->quiz_id, null, true),
+                'quiz_id' => (int)$quizDetail['quiz_id'],
+                'question' =>(int)$quizDetail['question'],
+                'quiz_number' => (int)$quizDetail['quiz_number'],
+                'quiz_year' => (int)$quizDetail['quiz_year'],
+                'category_name' => $quizDetail['name'],
+                'img_question' => Utility::getImage('question', $quizDetail['quiz_id'], null, true),
                 'listAns' => $listAns,
-                'list_ans_two_last' => $this->renderListAnsHistory($quizDetail->quiz_id),
-                'total_ans_correct' => count(Utility::exportQuizAnswer($quizDetail->quiz_answer))
+                'list_ans_two_last' => $this->renderListAnsHistory($quizDetail['quiz_id']),
+                'total_ans_correct' => count(Utility::exportQuizAnswer($quizDetail['quiz_answer']))
             ]
         ];
     }
