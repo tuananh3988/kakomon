@@ -76,4 +76,39 @@ class MemberDevices extends \yii\db\ActiveRecord
             'updated_date' => 'Updated Date',
         ];
     }
+    
+    /*
+     * Get List member divice push notification
+     * 
+     * Auth : 
+     * Created : 15-07-2017
+     */
+    
+    public static function getListDiviceToken($member) {
+        $listDivice = [];
+        if (is_array($member)) {
+            if (count($member) > 0) {
+                foreach ($member as $key => $value) {
+                    $listDataDivice = MemberDevices::find()->where(['member_id' => $value, 'delete_flag' => self::DEVICE_ACTIVE])->all();
+                    if (count($listDataDivice) > 0) {
+                        foreach ($listDataDivice as $key1 => $value1) {
+                            if (preg_match('~^[a-f0-9]{64}$~i', $value1->device_token)) {
+                                $listDivice[] = $value1->device_token;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            $listDataDivice = MemberDevices::find()->where(['member_id' => $member, 'delete_flag' => self::DEVICE_ACTIVE])->all();
+            if (count($listDataDivice) > 0) {
+                foreach ($listDivice as $key1 => $value1) {
+                    if (preg_match('~^[a-f0-9]{64}$~i', $value1->device_token)) {
+                        $listDivice[] = $value1->device_token;
+                    }
+                }
+            }
+        }
+        return $listDivice;
+    }
 }

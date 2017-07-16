@@ -18,7 +18,8 @@ use frontend\models\Help;
 use frontend\models\Reply;
 use frontend\models\ActivityApi;
 use common\models\MemberCategoryTime;
-
+use common\models\Notification;
+use common\components\PushNotification;
 
 /**
  * Site controller
@@ -112,7 +113,7 @@ class ActivityController extends Controller
                 ];
             }
             //Push notification
-            
+            PushNotification::pushNotification(Notification::TYPE_LIKE, $modelLike->activity_id);
             
             //return success
             return  [
@@ -536,6 +537,9 @@ class ActivityController extends Controller
         if (!$dataSave) {
             throw new \yii\base\Exception( "System error" );
         }
+        //Push notification
+        PushNotification::pushNotification(Notification::TYPE_REPLY, $modelReply->activity_id);
+        
         //return success
         return  [
             'status' => 200,

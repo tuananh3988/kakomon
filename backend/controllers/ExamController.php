@@ -11,6 +11,7 @@ use yii\web\Session;
 use common\models\Exam;
 use common\models\ExamQuiz;
 use common\models\Notification;
+use common\components\PushNotification;
 
 class ExamController extends Controller {
 
@@ -76,6 +77,10 @@ class ExamController extends Controller {
             $modelNotification->type = Notification::TYPE_EXAM;
             $modelNotification->related_id = $examId;
             $modelNotification->save();
+            
+            //push notification
+            PushNotification::pushNotification(Notification::TYPE_EXAM, NULL, NULL, NULL, $examItem->name);
+            
             $message = 'You start exam!';
             Yii::$app->session->setFlash('sucess_exam',$message);
         }

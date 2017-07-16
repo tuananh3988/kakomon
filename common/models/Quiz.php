@@ -13,6 +13,7 @@ use yii\web\Session;
 use common\models\MemberQuizHistory;
 use common\models\MemberQuizActivity;
 use common\models\Notification;
+use common\components\PushNotification;
 /**
  * This is the model class for table "quiz".
  *
@@ -290,6 +291,9 @@ class Quiz extends \yii\db\ActiveRecord
                 if ($type == 1) {
                     return Yii::$app->response->redirect(['/question/index']);
                 } else {
+                    //push notification
+                    PushNotification::pushNotification(Notification::TYPE_QUICK_QUIZ, NULL, NULL, NULL, $this->question);
+                    
                     return Yii::$app->response->redirect(['/quick/index']);
                 }
             }

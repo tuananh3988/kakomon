@@ -9,6 +9,7 @@ use yii\filters\auth\QueryParamAuth;
 use common\models\Follow;
 use common\models\Member;
 use common\components\Utility;
+use common\components\PushNotification;
 
 /**
  * Site controller
@@ -157,6 +158,8 @@ class FollowController extends Controller
         }
         //return after save data
         if ($modelFollow->addFollow()) {
+            //push notification
+            PushNotification::pushNotification(\common\models\Notification::TYPE_FOLLOW, NULL, Yii::$app->user->identity->name, $dataPost['member_id']);
             return [
                 'status' => 200
             ];

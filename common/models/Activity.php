@@ -305,7 +305,7 @@ class Activity extends \yii\db\ActiveRecord
      */
     public static function getInforNotification($activityId){
         $query = new \yii\db\Query();
-        $query->select(['activity_like.activity_id','member.name', 'member.member_id', 'activity_sumary.total', 'activity_like.quiz_id', 'activity_like.content'])
+        $query->select(['activity_like.activity_id','member.name', 'member.member_id', 'activity_sumary.total', 'activity_like.quiz_id', 'activity_like.content', 'activity_like.member_id as member_id_push'])
                 ->from('activity');
         $query->join('INNER JOIN', 'activity as activity_like', 'activity_like.activity_id = activity.relate_id');
         $query->join('INNER JOIN', 'member', 'member.member_id = activity.member_id');
@@ -360,5 +360,21 @@ class Activity extends \yii\db\ActiveRecord
         $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
         $query->groupBy(['quiz.quiz_id']);
         return $query->count();
+    }
+    
+    /*
+     * Get info puss notification
+     * 
+     * Auth : 
+     * Created : 06-04-2017
+     */
+    public static function getInforPushNotification($activityId){
+        $query = new \yii\db\Query();
+        $query->select(['activity.*', 'activity_sumary.total'])
+                ->from('activity');
+        $query->join('LEFT JOIN', 'activity_sumary', 'activity_sumary.activity_id = activity.activity_id');
+        $query->where(['activity.activity_id' => $activityId]);
+        $query->andWhere(['activity.status' => self::STATUS_ACTIVE]);
+        return $query->one();
     }
 }

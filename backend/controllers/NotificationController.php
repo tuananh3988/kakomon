@@ -10,6 +10,7 @@ use yii\web\Response;
 use yii\web\Session;
 use common\models\Notification;
 use common\models\Collect;
+use common\components\PushNotification;
 
 class NotificationController extends Controller {
     public function behaviors() {
@@ -68,6 +69,9 @@ class NotificationController extends Controller {
                 $modelNotification->related_id = $collect->collect_id;
                 $modelNotification->save();
                 $message = 'Your create successfully collect question!';
+                
+                //push notification
+                PushNotification::pushNotification(Notification::TYPE_COLLECT_QUIZ, NULL, NULL, NULL, $collect->collect_name);
                 
                 Yii::$app->session->setFlash('sucess_notification',$message);
                 return Yii::$app->response->redirect(['/notification/index']);

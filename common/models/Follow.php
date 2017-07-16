@@ -197,9 +197,10 @@ class Follow extends \yii\db\ActiveRecord
      */
     public static function getInforNotification($followId){
         $query = new \yii\db\Query();
-        $query->select(['member.member_id','member.name'])
+        $query->select(['member.member_id','member.name', 'member_devices.device_token'])
                 ->from('follow');
         $query->join('INNER JOIN', 'member', 'member.member_id = follow.member_id_followed');
+        $query->join('LEFT JOIN', 'member_devices', 'member_devices.member_id = follow.member_id_followed');
         $query->where(['follow.follow_id' => $followId]);
         return $query->one();
     }

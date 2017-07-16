@@ -13,6 +13,8 @@ use common\models\Exam;
 use frontend\models\Reply;
 use common\components\Utility;
 use common\models\Collect;
+use common\models\MemberDevices;
+use common\models\Member;
 /**
  * This is the model class for table "notification".
  *
@@ -291,5 +293,60 @@ class Notification extends \yii\db\ActiveRecord
             default :
         }
         return $content;
+    }
+    
+    /*
+     * Render List Comment
+     * 
+     * Auth : 
+     * Create : 02-03-2017
+     */
+    
+    public static function renderTitleNotificationAndListMemeber($type, $relatedId, $nameMember, $memberId, $message)
+    {
+        $title = '';
+        $listDivice = [];
+        switch ($type) {
+            case 1:
+                $activity = Activity::getInforPushNotification($relatedId);
+                $title = Yii::$app->user->identity->name . 'さんから「いいね！」GET!' . $activity['total'];
+                if ($activity['member_id'] != Yii::$app->user->identity->member_id) {
+                    $listDivice = MemberDevices::getListDiviceToken($activity['member_id']);
+                }
+                break;
+            case 2:
+                $activityDetail = Activity::find()->where(['activity_id' => $relatedId])->one();
+                $title = Yii::$app->user->identity->name . 'さんから「いいね！」GET!';
+                if ($activityDetail->member_id != Yii::$app->user->identity->member_id) {
+                    $listDivice = MemberDevices::getListDiviceToken($activityDetail->member_id);
+                }
+                break;
+            case 3:
+                $title = $nameMember . 'さんからフォローされました。';
+                $listDivice = MemberDevices::getListDiviceToken($memberId);
+                break;
+            case 4:
+                $title = $message;
+                $listMember = Member::find()->select('member_id')->where(['status' => Member::STATUS_ACTIVE])->indexBy('member_id')->column();
+                $listDivice = MemberDevices::getListDiviceToken($listMember);
+                break;
+            case 5:
+                $title = $message . 'これを逃すと、もうできない！ ';
+                $listMember = Member::find()->select('member_id')->where(['status' => Member::STATUS_ACTIVE])->indexBy('member_id')->column();
+                $listDivice = MemberDevices::getListDiviceToken($listMember);
+                break;
+            case 6:
+                $title = $message;
+                $listMember = Member::find()->select('member_id')->where(['status' => Member::STATUS_ACTIVE])->indexBy('member_id')->column();
+                $listDivice = MemberDevices::getListDiviceToken($listMember);
+                break;
+            default :
+        }
+        $result = [
+            'title' => $title,
+            'divice' => $listDivice
+        ];
+        
+        return $result;
     }
 }
