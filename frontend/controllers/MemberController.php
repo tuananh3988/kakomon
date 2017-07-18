@@ -286,7 +286,7 @@ class MemberController extends Controller
         //return success
         $member = Member::findOne(['mail' => $dataPost['mail']]);
         //update or insert member device
-        $memberDevice = MemberDevices::findOne(['member_id' => $member->member_id, 'device_id' => $modelLogin->device_id]);
+        $memberDevice = MemberDevices::findOne(['member_id' => $member->member_id, 'device_token' => $modelLogin->device_token]);
         if (!$memberDevice) {
             $modelMemberDevices = new MemberDevices();
             $modelMemberDevices->member_id = $member->member_id;
