@@ -102,7 +102,7 @@ class MemberDevices extends \yii\db\ActiveRecord
         } else {
             $listDataDivice = MemberDevices::find()->where(['member_id' => $member, 'delete_flag' => self::DEVICE_ACTIVE])->all();
             if (count($listDataDivice) > 0) {
-                foreach ($listDivice as $key1 => $value1) {
+                foreach ($listDataDivice as $key1 => $value1) {
                     if (preg_match('~^[a-f0-9]{64}$~i', $value1->device_token)) {
                         $listDivice[] = $value1->device_token;
                     }
