@@ -4,7 +4,7 @@ return [
     'components' => [
         'apns' => [
 		'class' => 'bryglen\apnsgcm\Apns',
-		'environment' => \bryglen\apnsgcm\Apns::ENVIRONMENT_PRODUCTION,
+		'environment' => \bryglen\apnsgcm\Apns::ENVIRONMENT_SANDBOX,
 		'pemFile' => dirname(__FILE__).'/apnssert/cer.pem',
 		// 'retryTimes' => 3,
 		'options' => [
