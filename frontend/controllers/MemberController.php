@@ -292,7 +292,7 @@ class MemberController extends Controller
             $modelMemberDevices->member_id = $member->member_id;
             $modelMemberDevices->device_id = $modelLogin->device_id;
             $modelMemberDevices->device_type = MemberDevices::DEVICE_TYPE_IOS;
-            $modelMemberDevices->device_token = $modelLogin->device_token;
+            $modelMemberDevices->device_token = str_replace(' ', '', $modelLogin->device_token);
             $modelMemberDevices->save();
         } else {
             $memberDevice->delete_flag = MemberDevices::DEVICE_ACTIVE;

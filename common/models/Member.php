@@ -192,7 +192,7 @@ class Member extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             $modelMemberDevices->member_id = $this->member_id;
             $modelMemberDevices->device_id = $this->device_id;
             $modelMemberDevices->device_type = MemberDevices::DEVICE_TYPE_IOS;
-            $modelMemberDevices->device_token = $this->device_token;
+            $modelMemberDevices->device_token = str_replace(' ', '', $this->device_token);
             $modelMemberDevices->save();
             $transaction->commit();
             return TRUE;
