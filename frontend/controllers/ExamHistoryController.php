@@ -77,6 +77,8 @@ class ExamHistoryController extends Controller
                 'rate_correct' => $value['rate_correct'] * 100,
                 'rank_exam' => (int)$value['rank_exam'],
                 'contest_times' => (int)$value['contest_times'],
+                'title' => $value['name'],
+                'date' => $value['created_date'],
             ];
         }
         return [

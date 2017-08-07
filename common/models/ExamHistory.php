@@ -120,8 +120,9 @@ class ExamHistory extends \yii\db\ActiveRecord
      */
     public function getListExamByMember() {
         $query = new \yii\db\Query();
-        $query->select(['exam_history.*'])
+        $query->select(['exam_history.*', 'exam.name'])
                 ->from('exam_history');
+        $query->join('INNER JOIN', 'exam', 'exam.exam_id = exam_history.exam_id');
         $query->where(['exam_history.member_id' => Yii::$app->user->identity->member_id]);
         $query->orderBy(['exam_history_id' => SORT_ASC]);
         return $query->all();
